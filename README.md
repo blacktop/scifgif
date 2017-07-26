@@ -36,16 +36,6 @@ $ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif
 
 Find a bug? Want more features? Find something missing in the documentation? Let me know! Please don't hesitate to [file an issue](https://github.com/blacktop/scifgif/issues/new)
 
-### CHANGELOG
-
-See [`CHANGELOG.md`](https://github.com/blacktop/scifgif/blob/master/CHANGELOG.md)
-
-### Contributing
-
-[See all contributors on GitHub](https://github.com/blacktop/scifgif/graphs/contributors).
-
-Please update the [CHANGELOG.md](https://github.com/blacktop/scifgif/blob/master/CHANGELOG.md) and submit a [Pull Request on GitHub](https://help.github.com/articles/using-pull-requests/).
-
 ### License
 
 MIT Copyright (c) 2017 **blacktop**
