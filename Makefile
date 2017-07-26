@@ -6,10 +6,10 @@ REPO=$(ORG)/$(NAME)
 VERSION?=$(shell cat VERSION)
 
 build: dockerfile node ## Build docker image
-	docker build --squash --build-arg VERSION=$(VERSION) -t $(ORG)/$(NAME):$(VERSION) .
+	docker build -t $(ORG)/$(NAME):$(VERSION) .
 
 dev: base ## Build docker dev image
-	docker build --squash --build-arg NODE_VERSION=${NODE_VERSION} -f Dockerfile.dev -t $(ORG)/$(NAME):$(VERSION) .
+	docker build -f Dockerfile.dev -t $(ORG)/$(NAME):$(VERSION) .
 
 size: tags ## Update docker image size in README.md
 	sed -i.bu 's/docker%20image-.*-blue/docker%20image-$(shell docker images --format "{{.Size}}" $(ORG)/$(NAME):$(VERSION)| cut -d' ' -f1)-blue/' README.md
@@ -22,7 +22,7 @@ tags: ## Show all docker image tags
 
 run: stop ## Run kibana plugin env
 	@echo "===> Starting kibana elasticsearch..."
-	@docker run --init -d --name kplug -p 9200:9200 -p 5601:5601 $(ORG)/$(NAME):$(VERSION)
+	@docker run --init -d --name scifgif -p 3993:3993 $(ORG)/$(NAME):$(VERSION)
 
 ssh: ## SSH into docker image
 	@docker run --init -it --rm --entrypoint=sh $(ORG)/$(NAME):$(VERSION)
@@ -32,11 +32,12 @@ tar: ## Export tar of docker image
 
 test: ## Test build plugin
 	@echo "===> Starting kibana tests..."
-	@docker run --init --rm -p 9200:9200 -p 5601:5601 $(ORG)/$(NAME):$(VERSION) npm run test:quick --force
+	@docker run --init --rm -p 3993:3993 $(ORG)/$(NAME):$(VERSION)
+	@http 127.0.0.1:3993/xkcd/city.jpg > city.jpg
+	@ls -lah city.jpg
+	@rm city.jpg
 
 push: build ## Push docker image to docker registry
-	@echo "===> Pushing $(ORG)/$(NAME):node to docker hub..."
-	@docker push $(ORG)/$(NAME):node
 	@echo "===> Pushing $(ORG)/$(NAME):$(VERSION) to docker hub..."
 	@docker push $(ORG)/$(NAME):$(VERSION)
 
@@ -58,7 +59,7 @@ clean: ## Clean docker image and stop all running containers
 	rm -rf images
 
 stop: ## Kill running kibana-plugin docker containers
-	@docker rm -f kplug || true
+	@docker rm -f scifgif || true
 
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
