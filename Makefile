@@ -1,11 +1,11 @@
-.PHONY: build dev size tags tar test run ssh circle node push dockerfile
+.PHONY: build dev size tags tar test run ssh circle push
 
 ORG=blacktop
 NAME=scifgif
 REPO=$(ORG)/$(NAME)
 VERSION?=$(shell cat VERSION)
 
-build: dockerfile node ## Build docker image
+build: ## Build docker image
 	docker build -t $(ORG)/$(NAME):$(VERSION) .
 
 dev: base ## Build docker dev image
@@ -19,8 +19,8 @@ size: tags ## Update docker image size in README.md
 tags: ## Show all docker image tags
 	docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" $(ORG)/$(NAME)
 
-run: stop ## Run kibana plugin env
-	@echo "===> Starting kibana elasticsearch..."
+run: stop ## Run scifgif web-service
+	@echo "===> Starting scifgif..."
 	@docker run --init -d --name scifgif -p 3993:3993 $(ORG)/$(NAME):$(VERSION)
 
 ssh: ## SSH into docker image
@@ -30,7 +30,7 @@ tar: ## Export tar of docker image
 	@docker save $(ORG)/$(NAME):$(VERSION) -o $(NAME).tar
 
 test: ## Test build plugin
-	@echo "===> Starting kibana tests..."
+	@echo "===> Starting scifgif tests..."
 	@docker run --init --rm -p 3993:3993 $(ORG)/$(NAME):$(VERSION)
 	@http 127.0.0.1:3993/xkcd/city.jpg > city.jpg
 	@ls -lah city.jpg
@@ -57,7 +57,7 @@ clean: ## Clean docker image and stop all running containers
 	docker rmi $(ORG)/$(NAME):$(VERSION) || true
 	rm -rf images
 
-stop: ## Kill running kibana-plugin docker containers
+stop: ## Kill running scifgif-plugin docker containers
 	@docker rm -f scifgif || true
 
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
