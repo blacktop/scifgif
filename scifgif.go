@@ -6,14 +6,17 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"path"
 	"path/filepath"
 	"reflect"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
-	"github.com/maliceio/malice/utils"
+	"github.com/malice-plugins/go-plugin-utils/utils"
 	xkcd "github.com/nishanths/go-xkcd"
+	"github.com/urfave/cli"
 	elastic "gopkg.in/olivere/elastic.v5"
 )
 
@@ -59,6 +62,10 @@ const (
 )
 
 var (
+	// Version stores the plugin's version
+	Version string
+	// BuildTime stores the plugin's build time
+	BuildTime string
 	// ElasticAddr elasticsearch address to user for connections
 	ElasticAddr string
 )
@@ -89,7 +96,7 @@ func SearchImages(query string) error {
 	}
 
 	// Search with a term query
-	termQuery := elastic.NewTermQuery("title", query)
+	termQuery := elastic.NewQueryStringQuery(query)
 	searchResult, err := client.Search().
 		Index("scifgif").    // search in index "twitter"
 		Query(termQuery).    // specify the query
@@ -209,25 +216,27 @@ func downloadImage(url string) {
 		log.Fatal(err)
 	}
 
-	err = ioutil.WriteFile(filepath.Join("images/xkcd", path.Base(url)), contents, 0644)
+	err = ioutil.WriteFile(filepath.Join(xkcdFolder, path.Base(url)), contents, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func getAllXkcd() {
+func getAllXkcd() error {
 	client := xkcd.NewClient()
 	latest, err := client.Latest()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
-	for i := 1; i <= latest.Number; i++ {
+	// for i := 1; i <= latest.Number; i++ {
+	for i := latest.Number - 10; i <= latest.Number; i++ {
 		comic, err := client.Get(i)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 		downloadImage(comic.ImageURL)
 	}
+	return nil
 }
 
 func getXKCD(w http.ResponseWriter, r *http.Request) {
@@ -239,11 +248,54 @@ func getXKCD(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	var elastic string
 
-	// static := os.Getenv("STATIC_DIR")
+	cli.AppHelpTemplate = utils.AppHelpTemplate
+	app := cli.NewApp()
 
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/xkcd/{file}", getXKCD).Methods("GET")
-	log.Info("web service listening on port :3993")
-	log.Fatal(http.ListenAndServe(":3993", router))
+	app.Name = "scifgif"
+	app.Author = "blacktop"
+	app.Email = "https://github.com/blacktop"
+	app.Version = Version + ", BuildTime: " + BuildTime
+	app.Compiled, _ = time.Parse("20060102", BuildTime)
+	app.Usage = "Humorous Image Micro-Service"
+	app.Flags = []cli.Flag{
+		cli.BoolFlag{
+			Name:  "verbose, V",
+			Usage: "verbose output",
+		},
+		cli.StringFlag{
+			Name:        "elasitcsearch",
+			Value:       "",
+			Usage:       "elasitcsearch address for scifgif to store results",
+			EnvVar:      "ELASTICSEARCH",
+			Destination: &elastic,
+		},
+		cli.IntFlag{
+			Name:   "timeout",
+			Value:  60,
+			Usage:  "timeout (in seconds)",
+			EnvVar: "TIMEOUT",
+		},
+	}
+	app.Commands = []cli.Command{
+		{
+			Name:    "update",
+			Aliases: []string{"u"},
+			Usage:   "Update images",
+			Action: func(c *cli.Context) error {
+				return getAllXkcd()
+			},
+		},
+	}
+	app.Action = func(c *cli.Context) error {
+		router := mux.NewRouter().StrictSlash(true)
+		router.HandleFunc("/xkcd/{file}", getXKCD).Methods("GET")
+		log.Info("web service listening on port :3993")
+		log.Fatal(http.ListenAndServe(":3993", router))
+		return nil
+	}
+
+	err := app.Run(os.Args)
+	utils.Assert(err)
 }
