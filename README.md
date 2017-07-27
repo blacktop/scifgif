@@ -3,7 +3,9 @@ scifgif
 
 [![Circle CI](https://circleci.com/gh/blacktop/scifgif.png?style=shield)](https://circleci.com/gh/blacktop/scifgif) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif) [![Docker Pulls](https://img.shields.io/docker/pulls/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif) [![Docker Image](https://img.shields.io/badge/docker%20image-10.9MB-blue.svg)](https://store.docker.com/community/images/blacktop/scifgif)
 
-> Humorous Image Micro-Service 
+> Humorous Image Micro-Service
+
+![giphy]()
 
 ---
 
@@ -28,9 +30,9 @@ $ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif
 
 ### TODO
 
- - [ ] Add meta-data DB for keyword text search (elasticsearch)
- - [ ] Add Giphy (use tag to control types of images available)
- - [ ] Add docs for creating [Mattermost](https://github.com/mattermost/platform) slash command or integration
+-	[ ] Add meta-data DB for keyword text search (elasticsearch)
+-	[ ] Add Giphy (use tag to control types of images available)
+-	[ ] Add docs for creating [Mattermost](https://github.com/mattermost/platform) slash command or integration
 
 ### Issues
 

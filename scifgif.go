@@ -27,7 +27,7 @@ const (
 		"number_of_replicas": 0
 	},
 	"mappings":{
-		"tweet":{
+		"image":{
 			"properties":{
 				"user":{
 					"type":"keyword"
@@ -72,10 +72,11 @@ func init() {
 
 // ImageMetaData image meta-data object
 type ImageMetaData struct {
-	ID    string `json:"id"`
-	Name  string
-	Title string
-	Path  string
+	ID      string                `json:"id,omitempty"`
+	Name    string                `json:"name,omitempty"`
+	Title   string                `json:"title,omitempty"`
+	Path    string                `json:"path,omitempty"`
+	Suggest *elastic.SuggestField `json:"suggest_field,omitempty"`
 }
 
 // SearchImages searches elasticsearch for images
