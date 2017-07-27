@@ -228,12 +228,23 @@ func getAllXkcd() error {
 	if err != nil {
 		return err
 	}
-	// for i := 1; i <= latest.Number; i++ {
-	for i := latest.Number - 10; i <= latest.Number; i++ {
+
+	log.Infof("there are %d xkcd comics availble\n", latest.Number)
+
+	for i := 1; i <= latest.Number; i++ {
+		// for i := latest.Number - 10; i <= latest.Number; i++ {
 		comic, err := client.Get(i)
 		if err != nil {
-			return err
+			log.Error(err)
+			continue
+			// return err
 		}
+
+		log.WithFields(log.Fields{
+			"id":    comic.Number,
+			"title": comic.SafeTitle,
+		}).Debug("downloading file")
+
 		downloadImage(comic.ImageURL)
 	}
 	return nil
@@ -241,8 +252,16 @@ func getAllXkcd() error {
 
 func getXKCD(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	file := vars["file"]
-	path := filepath.Join("images/xkcd", file)
+	file := filepath.Clean(filepath.Base(vars["file"]))
+	path := filepath.Join(xkcdFolder, file)
+	log.Println(path)
+	http.ServeFile(w, r, path)
+}
+
+func getGiphy(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	file := filepath.Clean(filepath.Base(vars["file"]))
+	path := filepath.Join(giphyFolder, file)
 	log.Println(path)
 	http.ServeFile(w, r, path)
 }
@@ -284,13 +303,18 @@ func main() {
 			Aliases: []string{"u"},
 			Usage:   "Update images",
 			Action: func(c *cli.Context) error {
+				log.SetLevel(log.DebugLevel)
 				return getAllXkcd()
 			},
 		},
 	}
 	app.Action = func(c *cli.Context) error {
+		if c.Bool("verbose") {
+			log.SetLevel(log.DebugLevel)
+		}
 		router := mux.NewRouter().StrictSlash(true)
 		router.HandleFunc("/xkcd/{file}", getXKCD).Methods("GET")
+		router.HandleFunc("/giphy/{file}", getGiphy).Methods("GET")
 		log.Info("web service listening on port :3993")
 		log.Fatal(http.ListenAndServe(":3993", router))
 		return nil

@@ -60,7 +60,7 @@ jobs:
           no_output_timeout: 1m
           command: |
             set -x
-            docker run --rm app
+            docker run --rm app --help
       # - deploy:
       #     name: Push application Docker image
       #     command: |
