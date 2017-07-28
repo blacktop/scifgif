@@ -5,6 +5,7 @@ WORKDIR /go/src/github.com/maliceio/malice-engine/
 
 # RUN go get -u github.com/golang/dep/cmd/dep
 # RUN dep ensure
+RUN go get -v
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo \
   -ldflags "-X main.Version=$(cat VERSION) -X main.BuildTime=$(date -u +%Y%m%d)" -o app .
 
