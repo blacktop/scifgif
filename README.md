@@ -1,7 +1,7 @@
 scifgif
 =======
 
-[![Circle CI](https://circleci.com/gh/blacktop/scifgif.png?style=shield)](https://circleci.com/gh/blacktop/scifgif) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif) [![Docker Pulls](https://img.shields.io/docker/pulls/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif) [![Docker Image](https://img.shields.io/badge/docker%20image-148MB-blue.svg)](https://store.docker.com/community/images/blacktop/scifgif)
+[![Circle CI](https://circleci.com/gh/blacktop/scifgif.png?style=shield)](https://circleci.com/gh/blacktop/scifgif) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif) [![Docker Pulls](https://img.shields.io/docker/pulls/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif) [![Docker Image](https://img.shields.io/badge/docker%20image-1.17GB-blue.svg)](https://store.docker.com/community/images/blacktop/scifgif)
 
 > Humorous Image Micro-Service
 
@@ -15,8 +15,8 @@ scifgif
 
 ```bash
 REPOSITORY           TAG                 SIZE
-blacktop/scifgif     latest              148MB
-blacktop/scifgif     0.1.0               148MB
+blacktop/scifgif     latest              1.17GB
+blacktop/scifgif     0.1.0               1.17GB
 ```
 
 Getting Started
