@@ -58,7 +58,7 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
-  packages = ["idna","publicsuffix"]
+  packages = ["html","html/atom","idna","publicsuffix"]
   revision = "f5079bd7f6f74e23c4d65efa0f4ce14cbd6a3c0f"
 
 [[projects]]
@@ -82,6 +82,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "bcc81523cbf6e85e3dbfd30b99df8c300540eef9184ede6ad9efc51fe1371351"
+  inputs-digest = "1f7f7b1d185cba0d8803d286b48d26ebfe5984d93499ad784ed189452db71d45"
   solver-name = "gps-cdcl"
   solver-version = 1

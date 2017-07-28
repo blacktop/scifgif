@@ -13,6 +13,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	giphy "github.com/blacktop/scifgif/giphy"
 	"github.com/gorilla/mux"
 	"github.com/malice-plugins/go-plugin-utils/utils"
 	xkcd "github.com/nishanths/go-xkcd"
@@ -68,6 +69,8 @@ var (
 	BuildTime string
 	// ElasticAddr elasticsearch address to user for connections
 	ElasticAddr string
+	// ApiKey stores Giphy's API key
+	// ApiKey string
 )
 
 func init() {
@@ -304,7 +307,15 @@ func main() {
 			Usage:   "Update images",
 			Action: func(c *cli.Context) error {
 				log.SetLevel(log.DebugLevel)
-				return getAllXkcd()
+				err := giphy.GetAllGiphy()
+				if err != nil {
+					return err
+				}
+				err = getAllXkcd()
+				if err != nil {
+					return err
+				}
+				return nil
 			},
 		},
 	}
@@ -312,11 +323,13 @@ func main() {
 		if c.Bool("verbose") {
 			log.SetLevel(log.DebugLevel)
 		}
+
 		router := mux.NewRouter().StrictSlash(true)
 		router.HandleFunc("/xkcd/{file}", getXKCD).Methods("GET")
 		router.HandleFunc("/giphy/{file}", getGiphy).Methods("GET")
 		log.Info("web service listening on port :3993")
 		log.Fatal(http.ListenAndServe(":3993", router))
+
 		return nil
 	}
 

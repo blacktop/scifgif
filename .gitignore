@@ -15,5 +15,6 @@
 
 images/xkcd/*.png
 images/xkcd/*.jpg
+images/giphy/*.gif
 *.bu
 api.key

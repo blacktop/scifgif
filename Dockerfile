@@ -15,7 +15,9 @@ WORKDIR /root/
 
 COPY --from=builder /go/src/github.com/maliceio/malice-engine/app .
 
-RUN mkdir -p images/xkcd && ./app update
+RUN mkdir -p images/xkcd \
+  && mkdir -p images/giphy \
+  && ./app update
 
 # COPY images /root/images
 

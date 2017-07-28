@@ -55,7 +55,8 @@ ci-size: ci-build
 clean: ## Clean docker image and stop all running containers
 	docker-clean stop
 	docker rmi $(ORG)/$(NAME):$(VERSION) || true
-	rm -rf images
+	rm images/giphy/*.gif
+	rm images/xkcd/*.png
 
 stop: ## Kill running scifgif-plugin docker containers
 	@docker rm -f scifgif || true
