@@ -1,10 +1,10 @@
 package giphy
 
 import (
-	"encoding/binary"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"os"
 	"path"
 	"path/filepath"
 	"strings"
@@ -91,28 +91,31 @@ func crawl(url string, ch chan string, chFinished chan bool) {
 
 func downloadImage(url string, filename string) {
 
+	filepath := filepath.Join(giphyFolder, path.Base(filename+".gif"))
+
+	// Create the file
+	out, err := os.Create(filepath)
+	if err != nil {
+		log.Error(err)
+	}
+	defer out.Close()
+
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer resp.Body.Close()
 
-	contents, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	filepath := filepath.Join(giphyFolder, path.Base(filename+".gif"))
-
 	log.WithFields(log.Fields{
 		"status":   resp.Status,
-		"size":     binary.Size(contents),
+		"size":     resp.ContentLength,
 		"filepath": filepath,
 	}).Debug("downloading file")
 
-	err = ioutil.WriteFile(filepath, contents, 0644)
+	// Writer the body to file
+	_, err = io.Copy(out, resp.Body)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 	}
 }
 
@@ -121,13 +124,12 @@ func GetAllGiphy() error {
 	giphy := NewClient()
 
 	for i := 0; i < NumberOfGifs; i += 25 {
-		dataSearch, err := giphy.Search([]string{"reactions"})
+		dataSearch, err := giphy.Search([]string{"reactions"}, i)
 		// dataTrending, err := giphy.GetTrending()
 		if err != nil {
 			return err
 		}
 		for _, gif := range dataSearch.Data {
-			// fmt.Printf("GIPHY %s url: %+v\n", gif.Slug, gif.Images.Downsized.URL)
 			downloadImage(gif.Images.Downsized.URL, gif.Slug)
 			// fmt.Printf("GIPHY tags: %+v\n", gif.Tags)
 		}

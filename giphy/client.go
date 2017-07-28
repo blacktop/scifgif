@@ -66,7 +66,7 @@ func NewClient(httpClients ...*http.Client) *Client {
 
 	c := &Client{
 		APIKey: Getopt("GIPHY_API_KEY", "dc6zaTOxFJmzC"),
-		Rating: Getopt("GIPHY_RATING", "g"),
+		Rating: Getopt("GIPHY_RATING", "PG"),
 		Limit:  GetIntopt("GIPHY_LIMIT", 25),
 		BaseURL: &url.URL{
 			Scheme: Getopt("GIPHY_BASE_URL_SCHEME", "https"),
