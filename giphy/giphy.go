@@ -19,6 +19,11 @@ const (
 	giphyFolder  = "images/giphy"
 )
 
+func init() {
+	// Only log the debug severity or above.
+	log.SetLevel(log.DebugLevel)
+}
+
 // Helper function to pull the tag attribute from a Token
 func getTag(t html.Token) (ok bool, href string) {
 	// Iterate over all of the Token's attributes until we find an "tag"

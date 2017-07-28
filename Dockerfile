@@ -1,20 +1,19 @@
 FROM golang:1.8.3 as builder
 
-COPY . /go/src/github.com/maliceio/malice-engine
-WORKDIR /go/src/github.com/maliceio/malice-engine/
+COPY . /go/src/github.com/blacktop/scifgif
+WORKDIR /go/src/github.com/blacktop/scifgif
 
 # RUN go get -u github.com/golang/dep/cmd/dep
 # RUN dep ensure
-RUN go get -v
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo \
   -ldflags "-X main.Version=$(cat VERSION) -X main.BuildTime=$(date -u +%Y%m%d)" -o app .
 
-FROM alpine:latest
+FROM blacktop/elasticsearch:5.5
 RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
 
-COPY --from=builder /go/src/github.com/maliceio/malice-engine/app .
+COPY --from=builder /go/src/github.com/blacktop/scifgif/app .
 
 RUN mkdir -p images/xkcd \
   && mkdir -p images/giphy \
