@@ -26,6 +26,4 @@ RUN mkdir -p images/xkcd \
   && mkdir -p images/giphy \
   && scifgif update
 
-# COPY images /root/images
-
-CMD ["scifgif"]
+ENTRYPOINT ["scifgif"]

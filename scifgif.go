@@ -75,7 +75,7 @@ var (
 
 func init() {
 	if ElasticAddr == "" {
-		ElasticAddr = fmt.Sprintf("http://%s:9200", utils.Getopt("ELASTICSEARCH", "elasticsearch"))
+		ElasticAddr = fmt.Sprintf("http://%s:9200", utils.Getopt("ELASTICSEARCH", "127.0.0.1"))
 		log.Debug("Using elasticsearch address: ", ElasticAddr)
 	}
 }
@@ -155,6 +155,7 @@ func SearchImages(query string) error {
 
 // WriteImageToDatabase upserts image metadata into Database
 func WriteImageToDatabase(image ImageMetaData) error {
+	var err error
 	ctx := context.Background()
 
 	client, err := elastic.NewSimpleClient(elastic.SetURL(ElasticAddr))
