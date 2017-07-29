@@ -25,7 +25,7 @@ RUN apk --update add --no-cache -t .build-deps \
 COPY config/elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 
 RUN mkdir -p images/xkcd \
-  && mkdir -p images/giphy \
-  && scifgif update
+  && mkdir -p images/giphy
+  # && scifgif update
 
 ENTRYPOINT ["scifgif"]

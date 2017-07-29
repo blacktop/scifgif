@@ -60,16 +60,6 @@ const mapping = `
 }
 }`
 
-// ElasticAddr elasticsearch address to user for connections
-var ElasticAddr string
-
-func init() {
-	if ElasticAddr == "" {
-		ElasticAddr = fmt.Sprintf("http://%s:9200", utils.Getopt("ELASTICSEARCH", "127.0.0.1"))
-		log.Debug("Using elasticsearch address: ", ElasticAddr)
-	}
-}
-
 // ImageMetaData image meta-data object
 type ImageMetaData struct {
 	ID          string                `json:"id,omitempty"`
@@ -93,16 +83,14 @@ func TestConnection() (bool, error) {
 
 	var err error
 
-	client, err := elastic.NewSimpleClient(
-		elastic.SetURL(ElasticAddr),
-	)
+	client, err := elastic.NewClient()
 	if err != nil {
 		return false, err
 	}
 
 	// Ping the Elasticsearch server to get e.g. the version number
-	log.Debugf("Attempting to PING to: %s", ElasticAddr)
-	info, code, err := client.Ping(ElasticAddr).Do(context.Background())
+	log.Debug("attempting to PING elasticsearch")
+	info, code, err := client.Ping("http://127.0.0.1:9200").Do(context.Background())
 	if err != nil {
 		return false, err
 	}
@@ -111,7 +99,6 @@ func TestConnection() (bool, error) {
 		"code":    code,
 		"cluster": info.ClusterName,
 		"version": info.Version.Number,
-		"address": ElasticAddr,
 	}).Debug("ElasticSearch connection successful.")
 
 	if code == 200 {
@@ -153,7 +140,7 @@ func WaitForConnection(ctx context.Context, timeout int) error {
 func SearchImages(query string) error {
 	ctx := context.Background()
 
-	client, err := elastic.NewSimpleClient(elastic.SetURL(ElasticAddr))
+	client, err := elastic.NewClient()
 	if err != nil {
 		return err
 	}
@@ -218,7 +205,7 @@ func WriteImageToDatabase(image ImageMetaData) error {
 	var err error
 	ctx := context.Background()
 
-	client, err := elastic.NewSimpleClient(elastic.SetURL(ElasticAddr))
+	client, err := elastic.NewClient()
 	if err != nil {
 		return err
 	}
