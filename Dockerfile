@@ -29,4 +29,6 @@ RUN echo "===> Updating images..." \
   && mkdir -p images/giphy \
   && scifgif update
 
+EXPOSE 9200
+
 ENTRYPOINT ["scifgif"]
