@@ -10,6 +10,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/blacktop/scifgif/elasticsearch"
 	"github.com/blacktop/scifgif/giphy"
+	"github.com/blacktop/scifgif/xkcd"
 	"github.com/gorilla/mux"
 	"github.com/urfave/cli"
 )
@@ -105,17 +106,16 @@ func main() {
 				if err != nil {
 					log.Fatal(err)
 				}
-				// elasticsearch.WaitForConnection(context.Background(), c.Int("timeout"))
 				// download Giphy gifs and ingest metadata into elasticsearch
 				err = giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, NumberOfGifs)
 				if err != nil {
 					return err
 				}
 				// download xkcd comics and ingest metadata into elasticsearch
-				// err := xkcd.GetAllXkcd(xkcdFolder)
-				// if err != nil {
-				// 	return err
-				// }
+				err = xkcd.GetAllXkcd(xkcdFolder)
+				if err != nil {
+					return err
+				}
 				return nil
 			},
 		},
