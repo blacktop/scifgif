@@ -57,7 +57,7 @@ func GetAllGiphy(folder string, search []string, count int) error {
 		for _, gif := range gifSearch.Data {
 			// download gif
 			filepath := filepath.Join(folder, path.Base(gif.Slug+".gif"))
-			// go elasticsearch.DownloadImage(gif.Images.Downsized.URL, filepath)
+			go elasticsearch.DownloadImage(gif.Images.Downsized.URL, filepath)
 
 			// index into elasticsearch
 			elasticsearch.WriteImageToDatabase(elasticsearch.ImageMetaData{
