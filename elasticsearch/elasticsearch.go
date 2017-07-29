@@ -10,7 +10,7 @@ import (
 	"reflect"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/maliceio/malice/utils"
+	"github.com/malice-plugins/go-plugin-utils/utils"
 	elastic "gopkg.in/olivere/elastic.v5"
 )
 
@@ -78,6 +78,12 @@ type ImageMetaData struct {
 	Description string                `json:"description,omitempty"`
 	Path        string                `json:"path,omitempty"`
 	Suggest     *elastic.SuggestField `json:"suggest_field,omitempty"`
+}
+
+// StartElasticsearch starts the elasticsearch database
+func StartElasticsearch() error {
+	_, err := utils.RunCommand(context.Background(), "/elastic-entrypoint.sh")
+	return err
 }
 
 // SearchImages searches elasticsearch for images
@@ -198,6 +204,7 @@ func WriteImageToDatabase(image ImageMetaData) error {
 	return err
 }
 
+// DownloadImage downloads image to filepath
 func DownloadImage(url, filepath string) {
 	// Create the file
 	out, err := os.Create(filepath)

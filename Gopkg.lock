@@ -20,18 +20,6 @@
   revision = "349dd0209470eabd9514242c688c403c0926d266"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/dustin/go-jsonpointer"
-  packages = ["."]
-  revision = "ba0abeacc3dcca5b9b20f31509c46794edbc9965"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/dustin/gojson"
-  packages = ["."]
-  revision = "2e71ec9dd5adce3b168cd0dbde03b5cc04951c30"
-
-[[projects]]
   name = "github.com/gorilla/context"
   packages = ["."]
   revision = "1ea25387ff6f684839d82767c1733ff4d4d15d0a"
@@ -44,16 +32,10 @@
   version = "v1.4.0"
 
 [[projects]]
-  name = "github.com/jordan-wright/email"
-  packages = ["."]
-  revision = "a62870b0c368c3c29de27027be67d855e308cc37"
-  version = "v2.2"
-
-[[projects]]
-  name = "github.com/maliceio/malice"
-  packages = ["malice/errors","utils"]
-  revision = "9e7f91e08345f227b4ddfe3690bc5ee52d1c6feb"
-  version = "v0.3.11"
+  branch = "master"
+  name = "github.com/malice-plugins/go-plugin-utils"
+  packages = ["utils"]
+  revision = "03a30621cadfe12d68d01228478e873276e8ae4b"
 
 [[projects]]
   branch = "master"
@@ -95,7 +77,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "14ac33bf8474b62c65cae263af2e4d3b543cc699"
+  revision = "0f826bdd13b500be0f1d4004938ad978fcc6031e"
 
 [[projects]]
   branch = "master"
@@ -112,6 +94,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "166199f9747e4f40dea1a05765fbadd698c763b446b7b61a7b6368dacc9bb90c"
+  inputs-digest = "536f3557a3d4dfdd9b4b589b3f878e3728be22e05054548ae93465a573761be1"
   solver-name = "gps-cdcl"
   solver-version = 1

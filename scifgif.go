@@ -7,6 +7,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/blacktop/scifgif/elasticsearch"
 	"github.com/blacktop/scifgif/giphy"
 	"github.com/gorilla/mux"
 	"github.com/urfave/cli"
@@ -87,6 +88,10 @@ func main() {
 			Aliases: []string{"u"},
 			Usage:   "Update images",
 			Action: func(c *cli.Context) error {
+				err := elasticsearch.StartElasticsearch()
+				if err != nil {
+					return err
+				}
 				// download Giphy gifs and ingest metadata into elasticsearch
 				err := giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, NumberOfGifs)
 				if err != nil {
