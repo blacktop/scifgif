@@ -7,11 +7,11 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"reflect"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/malice-plugins/go-plugin-utils/utils"
 	elastic "gopkg.in/olivere/elastic.v5"
 )
 
@@ -19,15 +19,7 @@ const mapping = `
 {
 "settings":{
   "number_of_shards": 1,
-  "number_of_replicas": 0,
-	"analysis": {
-		"filter": {
-			"my_stop": {
-				"type":       "stop",
-				"stopwords":  "_english_"
-				}
-			}
-		}
+  "number_of_replicas": 0
 },
 "mappings":{
   "image":{
@@ -41,7 +33,6 @@ const mapping = `
       "text":{
         "type":"text",
         "store": true,
-				"stopwords": "_english_"
         "fielddata": true
       },
       "text":{
@@ -73,9 +64,12 @@ type ImageMetaData struct {
 
 // StartElasticsearch starts the elasticsearch database
 func StartElasticsearch() error {
-	output, err := utils.RunCommand(context.Background(), "/elastic-entrypoint.sh")
-	log.Info(output)
-	return err
+	// _, err := utils.RunCommand(context.Background(), "/elastic-entrypoint.sh", "elasticsearch")
+	// // log.Info(output)
+	// return err
+	cmd := exec.Command("/elastic-entrypoint.sh", "elasticsearch")
+	cmd.Start()
+	return nil
 }
 
 // TestConnection tests the ElasticSearch connection
@@ -99,7 +93,7 @@ func TestConnection() (bool, error) {
 		"code":    code,
 		"cluster": info.ClusterName,
 		"version": info.Version.Number,
-	}).Debug("ElasticSearch connection successful.")
+	}).Debug("elasticSearch connection successful.")
 
 	if code == 200 {
 		return true, err
@@ -127,7 +121,7 @@ func WaitForConnection(ctx context.Context, timeout int) error {
 		default:
 			ready, connErr = TestConnection()
 			if ready {
-				log.Infof("Elasticsearch came online after %d seconds", secondsWaited)
+				log.Infof("elasticsearch came online after %d seconds", secondsWaited)
 				return connErr
 			}
 			secondsWaited++
@@ -243,7 +237,7 @@ func WriteImageToDatabase(image ImageMetaData) error {
 		"id":    put.Id,
 		"index": put.Index,
 		"type":  put.Type,
-	}).Debug("Indexed image.")
+	}).Debug("indexed image")
 
 	// Flush to make sure the documents got written.
 	_, err = client.Flush().Index("scifgif").Do(ctx)
