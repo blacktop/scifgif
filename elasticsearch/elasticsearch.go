@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/malice-plugins/go-plugin-utils/utils"
@@ -82,8 +83,70 @@ type ImageMetaData struct {
 
 // StartElasticsearch starts the elasticsearch database
 func StartElasticsearch() error {
-	_, err := utils.RunCommand(context.Background(), "/elastic-entrypoint.sh")
+	output, err := utils.RunCommand(context.Background(), "/elastic-entrypoint.sh")
+	log.Info(output)
 	return err
+}
+
+// TestConnection tests the ElasticSearch connection
+func TestConnection() (bool, error) {
+
+	var err error
+
+	client, err := elastic.NewSimpleClient(
+		elastic.SetURL(ElasticAddr),
+	)
+	if err != nil {
+		return false, err
+	}
+
+	// Ping the Elasticsearch server to get e.g. the version number
+	log.Debugf("Attempting to PING to: %s", ElasticAddr)
+	info, code, err := client.Ping(ElasticAddr).Do(context.Background())
+	if err != nil {
+		return false, err
+	}
+
+	log.WithFields(log.Fields{
+		"code":    code,
+		"cluster": info.ClusterName,
+		"version": info.Version.Number,
+		"address": ElasticAddr,
+	}).Debug("ElasticSearch connection successful.")
+
+	if code == 200 {
+		return true, err
+	}
+	return false, err
+}
+
+// WaitForConnection waits for connection to Elasticsearch to be ready
+func WaitForConnection(ctx context.Context, timeout int) error {
+
+	var ready bool
+	var connErr error
+	secondsWaited := 0
+
+	connCtx, cancel := context.WithTimeout(ctx, time.Duration(timeout)*time.Second)
+	defer cancel()
+
+	log.Debug("===> trying to connect to elasticsearch")
+	for {
+		// Try to connect to Elasticsearch
+		select {
+		case <-connCtx.Done():
+			log.WithFields(log.Fields{"timeout": timeout}).Error("connecting to elasticsearch timed out")
+			return connErr
+		default:
+			ready, connErr = TestConnection()
+			if ready {
+				log.Infof("Elasticsearch came online after %d seconds", secondsWaited)
+				return connErr
+			}
+			secondsWaited++
+			time.Sleep(1 * time.Second)
+		}
+	}
 }
 
 // SearchImages searches elasticsearch for images

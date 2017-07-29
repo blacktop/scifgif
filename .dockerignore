@@ -8,6 +8,8 @@ docs*
 tests*
 hooks*
 
+images*
+
 README.md
 *.bu
 LICENSE

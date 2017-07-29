@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -81,6 +82,12 @@ func main() {
 			Name:  "verbose, V",
 			Usage: "verbose output",
 		},
+		cli.IntFlag{
+			Name:   "timeout",
+			Value:  60,
+			Usage:  "elasticsearch timeout (in seconds)",
+			EnvVar: "TIMEOUT",
+		},
 	}
 	app.Commands = []cli.Command{
 		{
@@ -88,12 +95,19 @@ func main() {
 			Aliases: []string{"u"},
 			Usage:   "Update images",
 			Action: func(c *cli.Context) error {
+				// start elasticsearch database
 				err := elasticsearch.StartElasticsearch()
 				if err != nil {
 					return err
 				}
+				// wait for elasticsearch to load
+				err = elasticsearch.WaitForConnection(context.Background(), 60)
+				if err != nil {
+					log.Fatal(err)
+				}
+				// elasticsearch.WaitForConnection(context.Background(), c.Int("timeout"))
 				// download Giphy gifs and ingest metadata into elasticsearch
-				err := giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, NumberOfGifs)
+				err = giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, NumberOfGifs)
 				if err != nil {
 					return err
 				}
@@ -107,10 +121,24 @@ func main() {
 		},
 	}
 	app.Action = func(c *cli.Context) error {
+
 		if c.Bool("verbose") {
 			log.SetLevel(log.DebugLevel)
 		}
 
+		// start elasticsearch database
+		err := elasticsearch.StartElasticsearch()
+		if err != nil {
+			return err
+		}
+
+		// wait for elasticsearch to load
+		err = elasticsearch.WaitForConnection(context.Background(), c.Int("timeout"))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// start web service
 		router := mux.NewRouter().StrictSlash(true)
 		router.HandleFunc("/xkcd/{file}", getXKCD).Methods("GET")
 		router.HandleFunc("/giphy/{file}", getGiphy).Methods("GET")
