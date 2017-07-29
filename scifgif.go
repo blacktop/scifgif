@@ -7,7 +7,6 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	giphy "github.com/blacktop/scifgif/giphy"
 	xkcd "github.com/blacktop/scifgif/xkcd"
 	"github.com/gorilla/mux"
 	"github.com/urfave/cli"
@@ -94,7 +93,7 @@ func main() {
 				// 	return err
 				// }
 				// download xkcd comics and ingest metadata into elasticsearch
-				err = xkcd.GetAllXkcd(xkcdFolder)
+				err := xkcd.GetAllXkcd(xkcdFolder)
 				if err != nil {
 					return err
 				}

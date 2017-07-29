@@ -63,11 +63,13 @@ func init() {
 
 // ImageMetaData image meta-data object
 type ImageMetaData struct {
-	ID      string                `json:"id,omitempty"`
-	Name    string                `json:"name,omitempty"`
-	Title   string                `json:"title,omitempty"`
-	Path    string                `json:"path,omitempty"`
-	Suggest *elastic.SuggestField `json:"suggest_field,omitempty"`
+	ID          int                   `json:"id,omitempty"`
+	Name        string                `json:"name,omitempty"`
+	Title       string                `json:"title,omitempty"`
+	Text        string                `json:"text,omitempty"`
+	Description string                `json:"description,omitempty"`
+	Path        string                `json:"path,omitempty"`
+	Suggest     *elastic.SuggestField `json:"suggest_field,omitempty"`
 }
 
 // SearchImages searches elasticsearch for images

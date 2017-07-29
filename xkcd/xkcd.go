@@ -3,6 +3,7 @@ package xkcd
 import (
 	"path"
 	"path/filepath"
+	"strings"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/blacktop/scifgif/elasticsearch"
@@ -21,7 +22,7 @@ func GetAllXkcd(folder string) error {
 		return err
 	}
 
-	log.Infof("there are %d xkcd comics availble\n", latest.Number)
+	log.Infof("there are %d xkcd comics availble", latest.Number)
 
 	// get all images up to latest
 	for i := 1; i <= latest.Number; i++ {
@@ -30,19 +31,28 @@ func GetAllXkcd(folder string) error {
 			log.Error(err)
 			continue
 		}
-
+		basename := path.Base(comic.ImageURL)
 		// download image
 		log.WithFields(log.Fields{
 			"id":    comic.Number,
 			"title": comic.SafeTitle,
 		}).Debug("downloading file")
-		filepath := filepath.Join(folder, path.Base(comic.ImageURL))
-		go elasticsearch.DownloadImage(comic.ImageURL, filepath)
+		filepath := filepath.Join(folder, basename)
+		// go elasticsearch.DownloadImage(comic.ImageURL, filepath)
 
+		var description string
+		if len(comic.Transcript) == 0 {
+			description = comic.Alt
+		} else {
+			description = comic.Transcript
+		}
 		// index into elasticsearch
 		elasticsearch.WriteImageToDatabase(elasticsearch.ImageMetaData{
-			Name: comic.Title,
-			Path: filepath,
+			Name:        strings.TrimSuffix(basename, path.Ext(basename)),
+			ID:          comic.Number,
+			Text:        comic.Title,
+			Description: description,
+			Path:        filepath,
 		})
 	}
 	return nil
