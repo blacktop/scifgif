@@ -7,7 +7,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	xkcd "github.com/blacktop/scifgif/xkcd"
+	"github.com/blacktop/scifgif/giphy"
 	"github.com/gorilla/mux"
 	"github.com/urfave/cli"
 )
@@ -88,15 +88,15 @@ func main() {
 			Usage:   "Update images",
 			Action: func(c *cli.Context) error {
 				// download Giphy gifs and ingest metadata into elasticsearch
-				// err := giphy.GetAllGiphy(giphyFolder, NumberOfGifs)
-				// if err != nil {
-				// 	return err
-				// }
-				// download xkcd comics and ingest metadata into elasticsearch
-				err := xkcd.GetAllXkcd(xkcdFolder)
+				err := giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, NumberOfGifs)
 				if err != nil {
 					return err
 				}
+				// download xkcd comics and ingest metadata into elasticsearch
+				// err := xkcd.GetAllXkcd(xkcdFolder)
+				// if err != nil {
+				// 	return err
+				// }
 				return nil
 			},
 		},

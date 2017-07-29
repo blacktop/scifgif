@@ -2,10 +2,34 @@
 
 
 [[projects]]
+  name = "github.com/PuerkitoBio/goquery"
+  packages = ["."]
+  revision = "e1271ee34c6a305e38566ecd27ae374944907ee9"
+  version = "v1.1.0"
+
+[[projects]]
   name = "github.com/Sirupsen/logrus"
   packages = ["."]
   revision = "a3f95b5c423586578a4e099b11a46c2479628cac"
   version = "1.0.2"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/andybalholm/cascadia"
+  packages = ["."]
+  revision = "349dd0209470eabd9514242c688c403c0926d266"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/dustin/go-jsonpointer"
+  packages = ["."]
+  revision = "ba0abeacc3dcca5b9b20f31509c46794edbc9965"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/dustin/gojson"
+  packages = ["."]
+  revision = "2e71ec9dd5adce3b168cd0dbde03b5cc04951c30"
 
 [[projects]]
   name = "github.com/gorilla/context"
@@ -20,10 +44,16 @@
   version = "v1.4.0"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/malice-plugins/go-plugin-utils"
-  packages = ["utils"]
-  revision = "03a30621cadfe12d68d01228478e873276e8ae4b"
+  name = "github.com/jordan-wright/email"
+  packages = ["."]
+  revision = "a62870b0c368c3c29de27027be67d855e308cc37"
+  version = "v2.2"
+
+[[projects]]
+  name = "github.com/maliceio/malice"
+  packages = ["malice/errors","utils"]
+  revision = "9e7f91e08345f227b4ddfe3690bc5ee52d1c6feb"
+  version = "v0.3.11"
 
 [[projects]]
   branch = "master"
@@ -82,6 +112,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1f7f7b1d185cba0d8803d286b48d26ebfe5984d93499ad784ed189452db71d45"
+  inputs-digest = "166199f9747e4f40dea1a05765fbadd698c763b446b7b61a7b6368dacc9bb90c"
   solver-name = "gps-cdcl"
   solver-version = 1

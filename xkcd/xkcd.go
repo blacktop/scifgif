@@ -49,7 +49,7 @@ func GetAllXkcd(folder string) error {
 		// index into elasticsearch
 		elasticsearch.WriteImageToDatabase(elasticsearch.ImageMetaData{
 			Name:        strings.TrimSuffix(basename, path.Ext(basename)),
-			ID:          comic.Number,
+			ID:          string(comic.Number),
 			Text:        comic.Title,
 			Description: description,
 			Path:        filepath,

@@ -21,3 +21,5 @@ api.key
 .circleci/build_num
 .vscode/
 debug
+*.html
+*.js

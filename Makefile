@@ -36,6 +36,14 @@ test: ## Test build plugin
 	@ls -lah city.jpg
 	@rm city.jpg
 
+gotest: stop ## Test go code
+	@echo "===> Starting gotests..."
+	@echo " - Starting elasticsearch"
+	@docker run -d --name elasticsearch -p 9200:9200 blacktop/elasticsearch:5.5
+	@echo " - Starting kibana"
+	@sleep 10;docker run -d --name kibana --link elasticsearch -p 5601:5601 blacktop/kibana:5.5
+	@go run scifgif.go update
+
 push: build ## Push docker image to docker registry
 	@echo "===> Pushing $(ORG)/$(NAME):$(VERSION) to docker hub..."
 	@docker push $(ORG)/$(NAME):$(VERSION)
@@ -60,6 +68,8 @@ clean: ## Clean docker image and stop all running containers
 
 stop: ## Kill running scifgif-plugin docker containers
 	@docker rm -f scifgif || true
+	@docker rm -f elasticsearch || true
+	@docker rm -f kibana || true
 
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:

@@ -18,30 +18,38 @@ const mapping = `
 {
 "settings":{
   "number_of_shards": 1,
-  "number_of_replicas": 0
+  "number_of_replicas": 0,
+	"analysis": {
+		"filter": {
+			"my_stop": {
+				"type":       "stop",
+				"stopwords":  "_english_"
+				}
+			}
+		}
 },
 "mappings":{
   "image":{
     "properties":{
-      "user":{
+      "id":{
         "type":"keyword"
       },
-      "message":{
+      "name":{
+        "type":"keyword"
+      },
+      "text":{
+        "type":"text",
+        "store": true,
+				"stopwords": "_english_"
+        "fielddata": true
+      },
+      "text":{
         "type":"text",
         "store": true,
         "fielddata": true
       },
-      "image":{
+      "path":{
         "type":"keyword"
-      },
-      "created":{
-        "type":"date"
-      },
-      "tags":{
-        "type":"keyword"
-      },
-      "location":{
-        "type":"geo_point"
       },
       "suggest_field":{
         "type":"completion"
@@ -63,7 +71,7 @@ func init() {
 
 // ImageMetaData image meta-data object
 type ImageMetaData struct {
-	ID          int                   `json:"id,omitempty"`
+	ID          string                `json:"id,omitempty"`
 	Name        string                `json:"name,omitempty"`
 	Title       string                `json:"title,omitempty"`
 	Text        string                `json:"text,omitempty"`

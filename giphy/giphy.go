@@ -1,16 +1,14 @@
 package giphy
 
 import (
-	"fmt"
-	"io"
-	"net/http"
-	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
 
+	"github.com/PuerkitoBio/goquery"
 	log "github.com/Sirupsen/logrus"
-	"golang.org/x/net/html"
+	"github.com/blacktop/scifgif/elasticsearch"
 )
 
 func init() {
@@ -19,145 +17,57 @@ func init() {
 }
 
 // Helper function to pull the tag attribute from a Token
-func getTag(t html.Token) (ok bool, href string) {
-	// Iterate over all of the Token's attributes until we find an "tag"
-	for _, a := range t.Attr {
-		if a.Key == "href" {
-			href = a.Val
-			ok = true
-		}
-	}
+func getTags(url string) []string {
+	var gifTags []string
 
-	// "bare" return will return the variables (ok, href) as defined in
-	// the function definition
-	return
-}
-
-// Extract all tags from a given webpage
-func crawl(url string, ch chan string, chFinished chan bool) {
-	resp, err := http.Get(url)
-
-	defer func() {
-		// Notify that we're done after this function
-		chFinished <- true
-	}()
-
-	if err != nil {
-		fmt.Println("ERROR: Failed to crawl \"" + url + "\"")
-		return
-	}
-
-	b := resp.Body
-	defer b.Close() // close Body when the function returns
-
-	z := html.NewTokenizer(b)
-
-	for {
-		tt := z.Next()
-
-		switch {
-		case tt == html.ErrorToken:
-			// End of the document, we're done
-			return
-		case tt == html.StartTagToken:
-			t := z.Token()
-
-			// Check if the token is an <a> tag
-			isAnchor := t.Data == "a"
-			if !isAnchor {
-				continue
-			}
-
-			// Extract the href value, if there is one
-			ok, url := getTag(t)
-			if !ok {
-				continue
-			}
-
-			// Make sure the url begines in http**
-			hasProto := strings.Index(url, "http") == 0
-			if hasProto {
-				ch <- url
-			}
-		}
-	}
-}
-
-func downloadImage(url, folder, filename string) {
-
-	filepath := filepath.Join(folder, path.Base(filename+".gif"))
-
-	// Create the file
-	out, err := os.Create(filepath)
+	doc, err := goquery.NewDocument(url)
 	if err != nil {
 		log.Error(err)
 	}
-	defer out.Close()
 
-	resp, err := http.Get(url)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer resp.Body.Close()
+	// Find the script items
+	doc.Find("script").Each(func(i int, s *goquery.Selection) {
+		// extract tags from script
+		re := regexp.MustCompile("\"tags\":.*\"]")
+		if re.MatchString(s.Text()) {
+			tags := re.FindString(s.Text())
+			tags = strings.TrimPrefix(tags, "\"tags\": [")
+			tags = strings.TrimSuffix(tags, "]")
+			tagArray := strings.Split(tags, ",")
+			for _, tag := range tagArray {
+				tag = strings.Trim(strings.TrimSpace(tag), "\"\"")
+				gifTags = append(gifTags, tag)
+			}
+		}
+	})
 
-	log.WithFields(log.Fields{
-		"status":   resp.Status,
-		"size":     resp.ContentLength,
-		"filepath": filepath,
-	}).Debug("downloading file")
-
-	// Writer the body to file
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		log.Error(err)
-	}
+	return gifTags
 }
 
 // GetAllGiphy havest all teh gifts
-func GetAllGiphy(folder string, count int) error {
+func GetAllGiphy(folder string, search []string, count int) error {
 	giphy := NewClient()
 
 	for i := 0; i < count; i += 25 {
-		dataSearch, err := giphy.Search([]string{"reactions"}, i)
+		gifSearch, err := giphy.Search(search, i)
 		// dataTrending, err := giphy.GetTrending()
 		if err != nil {
 			return err
 		}
-		for _, gif := range dataSearch.Data {
-			go downloadImage(gif.Images.Downsized.URL, folder, gif.Slug)
-			// fmt.Printf("GIPHY tags: %+v\n", gif.Tags)
+		for _, gif := range gifSearch.Data {
+			// download gif
+			filepath := filepath.Join(folder, path.Base(gif.Slug+".gif"))
+			// go elasticsearch.DownloadImage(gif.Images.Downsized.URL, filepath)
+
+			// index into elasticsearch
+			elasticsearch.WriteImageToDatabase(elasticsearch.ImageMetaData{
+				Name:  gif.Slug,
+				ID:    gif.ID,
+				Title: gif.Source,
+				Text:  strings.Join(getTags(gif.URL), " "),
+				Path:  filepath,
+			})
 		}
 	}
-
-	// foundUrls := make(map[string]bool)
-	// seedUrls := os.Args[1:]
-
-	// // Channels
-	// chUrls := make(chan string)
-	// chFinished := make(chan bool)
-
-	// // Kick off the crawl process (concurrently)
-	// for _, url := range seedUrls {
-	// 	go crawl(url, chUrls, chFinished)
-	// }
-
-	// // Subscribe to both channels
-	// for c := 0; c < len(seedUrls); {
-	// 	select {
-	// 	case url := <-chUrls:
-	// 		foundUrls[url] = true
-	// 	case <-chFinished:
-	// 		c++
-	// 	}
-	// }
-
-	// // We're done! Print the results...
-	// fmt.Println("Found", len(foundUrls), "unique urls:")
-
-	// for url := range foundUrls {
-	// 	fmt.Println(" - " + url)
-	// }
-
-	// close(chUrls)
 	return nil
 }
