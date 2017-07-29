@@ -13,12 +13,6 @@ import (
 	"golang.org/x/net/html"
 )
 
-const (
-	// NumberOfGifs Total number of gifs to download
-	NumberOfGifs = 1000
-	giphyFolder  = "images/giphy"
-)
-
 func init() {
 	// Only log the debug severity or above.
 	log.SetLevel(log.DebugLevel)
@@ -89,9 +83,9 @@ func crawl(url string, ch chan string, chFinished chan bool) {
 	}
 }
 
-func downloadImage(url string, filename string) {
+func downloadImage(url, folder, filename string) {
 
-	filepath := filepath.Join(giphyFolder, path.Base(filename+".gif"))
+	filepath := filepath.Join(folder, path.Base(filename+".gif"))
 
 	// Create the file
 	out, err := os.Create(filepath)
@@ -120,17 +114,17 @@ func downloadImage(url string, filename string) {
 }
 
 // GetAllGiphy havest all teh gifts
-func GetAllGiphy() error {
+func GetAllGiphy(folder string, count int) error {
 	giphy := NewClient()
 
-	for i := 0; i < NumberOfGifs; i += 25 {
+	for i := 0; i < count; i += 25 {
 		dataSearch, err := giphy.Search([]string{"reactions"}, i)
 		// dataTrending, err := giphy.GetTrending()
 		if err != nil {
 			return err
 		}
 		for _, gif := range dataSearch.Data {
-			downloadImage(gif.Images.Downsized.URL, gif.Slug)
+			go downloadImage(gif.Images.Downsized.URL, folder, gif.Slug)
 			// fmt.Printf("GIPHY tags: %+v\n", gif.Tags)
 		}
 	}

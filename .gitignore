@@ -19,3 +19,4 @@ images/giphy/*.gif
 *.bu
 api.key
 .circleci/build_num
+.vscode/
