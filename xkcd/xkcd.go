@@ -38,7 +38,7 @@ func GetAllXkcd(folder string) error {
 			"title": comic.SafeTitle,
 		}).Debug("downloading file")
 		filepath := filepath.Join(folder, basename)
-		// go elasticsearch.DownloadImage(comic.ImageURL, filepath)
+		go elasticsearch.DownloadImage(comic.ImageURL, filepath)
 
 		var description string
 		if len(comic.Transcript) == 0 {

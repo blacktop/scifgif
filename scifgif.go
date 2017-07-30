@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -31,12 +32,36 @@ var (
 	// ApiKey string
 )
 
+// getRandomXKCD serves a random xkcd comic
+func getRandomXKCD(w http.ResponseWriter, r *http.Request) {
+	path, err := elasticsearch.GetRandomImage("xkcd")
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, "no images found for the xkcd source")
+		log.Error(err)
+	}
+	log.Debug(path)
+	http.ServeFile(w, r, path)
+}
+
 // getXKCD is a request Hander
 func getXKCD(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	file := filepath.Clean(filepath.Base(vars["file"]))
 	path := filepath.Join(xkcdFolder, file)
 	log.Println(path)
+	http.ServeFile(w, r, path)
+}
+
+// getRandomGiphy serves a random giphy gif
+func getRandomGiphy(w http.ResponseWriter, r *http.Request) {
+	path, err := elasticsearch.GetRandomImage("giphy")
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, "no images found for the giphy source")
+		log.Error(err)
+	}
+	log.Debug(path)
 	http.ServeFile(w, r, path)
 }
 
@@ -140,7 +165,9 @@ func main() {
 
 		// start web service
 		router := mux.NewRouter().StrictSlash(true)
+		router.HandleFunc("/xkcd", getRandomXKCD).Methods("GET")
 		router.HandleFunc("/xkcd/{file}", getXKCD).Methods("GET")
+		router.HandleFunc("/giphy", getRandomGiphy).Methods("GET")
 		router.HandleFunc("/giphy/{file}", getGiphy).Methods("GET")
 		log.Info("web service listening on port :3993")
 		log.Fatal(http.ListenAndServe(":3993", router))
