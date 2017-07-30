@@ -63,11 +63,12 @@ func GetAllGiphy(folder string, search []string, count int) error {
 			srchStrs := strings.Join(search, " ")
 			// index into elasticsearch
 			elasticsearch.WriteImageToDatabase(elasticsearch.ImageMetaData{
-				Name:  gif.Slug,
-				ID:    gif.ID,
-				Title: gif.Source,
-				Text:  strings.Join(getTags(gif.URL, srchStrs), " "),
-				Path:  filepath,
+				Name:   gif.Slug,
+				ID:     gif.ID,
+				Source: "giphy",
+				Title:  gif.Source,
+				Text:   strings.Join(getTags(gif.URL, srchStrs), " "),
+				Path:   filepath,
 			})
 		}
 	}

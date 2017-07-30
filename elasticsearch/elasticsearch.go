@@ -27,10 +27,13 @@ const mapping = `
       "id":{
         "type":"keyword"
       },
+			"source":{
+        "type":"keyword"
+      },
       "name":{
         "type":"keyword"
       },
-      "text":{
+      "title":{
         "type":"text",
         "store": true,
         "fielddata": true
@@ -53,13 +56,13 @@ const mapping = `
 
 // ImageMetaData image meta-data object
 type ImageMetaData struct {
-	ID          string                `json:"id,omitempty"`
-	Name        string                `json:"name,omitempty"`
-	Title       string                `json:"title,omitempty"`
-	Text        string                `json:"text,omitempty"`
-	Description string                `json:"description,omitempty"`
-	Path        string                `json:"path,omitempty"`
-	Suggest     *elastic.SuggestField `json:"suggest_field,omitempty"`
+	ID      string                `json:"id,omitempty"`
+	Source  string                `json:"source,omitempty"`
+	Name    string                `json:"name,omitempty"`
+	Title   string                `json:"title,omitempty"`
+	Text    string                `json:"text,omitempty"`
+	Path    string                `json:"path,omitempty"`
+	Suggest *elastic.SuggestField `json:"suggest_field,omitempty"`
 }
 
 // StartElasticsearch starts the elasticsearch database
