@@ -1,4 +1,4 @@
-.PHONY: build dev size tags tar test run update gotest ssh circle push
+.PHONY: build dev size tags tar test run mattermost update gotest ssh circle push
 
 ORG=blacktop
 NAME=scifgif
@@ -43,6 +43,9 @@ web: stop ## Start scifgif web-service
 
 run: ## Run scifgif
 	@docker run --init -it --rm --name scifgif $(ORG)/$(NAME):$(VERSION)
+
+mattermost: ## Start mattermost
+	cd mattermost-docker;docker-compose up -d
 
 test: ## Test build plugin
 	@echo "===> Starting scifgif tests..."
