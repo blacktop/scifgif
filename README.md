@@ -31,10 +31,10 @@ $ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif
 ### Web Routes
 
 ```apib
-GET /xkcd (random xkcd comic)
-GET /xkcd/{number} (xkcd comic by number)
-GET /giphy (random Giphy gif)
-GET /giphy/{search} (Giphy gif matching search term)
+GET /xkcd             (random xkcd comic)
+GET /xkcd/{number}    (xkcd comic by number)
+GET /giphy            (random Giphy gif)
+GET /giphy/{search}   (Giphy gif matching search term)
 ```
 
 ### TODO
