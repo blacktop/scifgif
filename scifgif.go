@@ -35,7 +35,7 @@ var (
 	// Port microservice port
 	Port string
 	// ApiKey stores Giphy's API key
-	// ApiKey string
+	ApiKey string
 )
 
 // WebHookResponse mattermost webhook response struct
@@ -104,7 +104,7 @@ func postXkcdMattermost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	webhook := WebHookResponse{
-		Text:     path,
+		Text:     fmt.Sprintf("http://%s:%s/%s", Host, Port, path),
 		Username: "scifgif",
 		IconURL:  fmt.Sprintf("http://%s:%s/icon", Host, Port),
 	}
@@ -163,7 +163,7 @@ func postGiphyMattermost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	webhook := WebHookResponse{
-		Text:     path,
+		Text:     fmt.Sprintf("http://%s:%s/%s", Host, Port, path),
 		Username: "scifgif",
 		IconURL:  fmt.Sprintf("http://%s:%s/icon", Host, Port),
 	}
