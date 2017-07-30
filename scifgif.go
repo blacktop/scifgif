@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -34,8 +35,8 @@ var (
 	Host string
 	// Port microservice port
 	Port string
-	// ApiKey stores Giphy's API key
-	ApiKey string
+	// APIkey stores Giphy's API key
+	APIkey string
 )
 
 // WebHookResponse mattermost webhook response struct
@@ -181,6 +182,26 @@ func getIcon(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "images/icon.png")
 }
 
+// getImage serves scifgif icon
+func getImage(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	folder := vars["source"]
+	file := vars["file"]
+
+	// protect against directory traversal
+	file = filepath.Clean(filepath.Base(file))
+	log.Infof("GET images/%s/%s", folder, file)
+
+	if _, err := os.Stat(filepath.Join("images", folder, file)); os.IsNotExist(err) {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, "image not found")
+		log.Error(err)
+		return
+	}
+
+	http.ServeFile(w, r, filepath.Join("images", folder, file))
+}
+
 var appHelpTemplate = `Usage: {{.Name}} {{if .Flags}}[OPTIONS] {{end}}COMMAND [arg...]
 
 {{.Usage}}
@@ -300,6 +321,7 @@ func main() {
 		// start web service
 		router := mux.NewRouter().StrictSlash(true)
 		router.HandleFunc("/icon", getIcon).Methods("GET")
+		router.HandleFunc("/images/{source}/{file}", getImage).Methods("GET")
 		// xkcd routes
 		router.HandleFunc("/xkcd", getRandomXKCD).Methods("GET")
 		router.HandleFunc("/xkcd/{number}", getXkcdByNumber).Methods("GET")
