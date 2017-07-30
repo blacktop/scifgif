@@ -49,7 +49,7 @@ Documentation
 
 -	[x] Add meta-data DB for keyword text search (elasticsearch)
 -	[ ] Add Giphy (use tag to control types of images available)
--	[ ] Add docs for creating [Mattermost](https://github.com/mattermost/platform) slash command or integration
+-	[x] Add docs for creating [Mattermost](https://github.com/mattermost/platform) slash command or integration
 
 ### Issues
 
