@@ -3,6 +3,7 @@ package xkcd
 import (
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
@@ -57,7 +58,7 @@ func GetAllXkcd(folder string, count int) error {
 		// index into elasticsearch
 		elasticsearch.WriteImageToDatabase(elasticsearch.ImageMetaData{
 			Name:   strings.TrimSuffix(basename, path.Ext(basename)),
-			ID:     string(comic.Number),
+			ID:     strconv.Itoa(comic.Number),
 			Source: "xkcd",
 			Title:  comic.Title,
 			Text:   description,

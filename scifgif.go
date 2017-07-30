@@ -42,12 +42,15 @@ func getRandomXKCD(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, path)
 }
 
-// getXKCD is a request Hander
-func getXKCD(w http.ResponseWriter, r *http.Request) {
+// getXkcdByNumber serves a comic by it's number
+func getXkcdByNumber(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	file := filepath.Clean(filepath.Base(vars["file"]))
-	path := filepath.Join(xkcdFolder, file)
-	log.Println(path)
+	path, err := elasticsearch.GetImageByID(vars["number"])
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+	}
 	http.ServeFile(w, r, path)
 }
 
@@ -165,7 +168,7 @@ func main() {
 		// start web service
 		router := mux.NewRouter().StrictSlash(true)
 		router.HandleFunc("/xkcd", getRandomXKCD).Methods("GET")
-		router.HandleFunc("/xkcd/{file}", getXKCD).Methods("GET")
+		router.HandleFunc("/xkcd/{number}", getXkcdByNumber).Methods("GET")
 		router.HandleFunc("/giphy", getRandomGiphy).Methods("GET")
 		router.HandleFunc("/giphy/{file}", getGiphy).Methods("GET")
 		log.Info("web service listening on port :3993")
