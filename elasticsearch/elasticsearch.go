@@ -77,7 +77,7 @@ func TestConnection() (bool, error) {
 
 	var err error
 
-	client, err := elastic.NewClient()
+	client, err := elastic.NewSimpleClient()
 	if err != nil {
 		return false, err
 	}
@@ -134,7 +134,7 @@ func WaitForConnection(ctx context.Context, timeout int) error {
 func SearchImages(query string) error {
 	ctx := context.Background()
 
-	client, err := elastic.NewClient()
+	client, err := elastic.NewSimpleClient()
 	if err != nil {
 		return err
 	}
@@ -199,7 +199,7 @@ func WriteImageToDatabase(image ImageMetaData) error {
 	var err error
 	ctx := context.Background()
 
-	client, err := elastic.NewClient()
+	client, err := elastic.NewSimpleClient()
 	if err != nil {
 		return err
 	}

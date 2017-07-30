@@ -17,7 +17,7 @@ func init() {
 }
 
 // Helper function to pull the tag attribute from a Token
-func getTags(url string) []string {
+func getTags(url string, search string) []string {
 	var gifTags []string
 
 	doc, err := goquery.NewDocument(url)
@@ -36,7 +36,9 @@ func getTags(url string) []string {
 			tagArray := strings.Split(tags, ",")
 			for _, tag := range tagArray {
 				tag = strings.Trim(strings.TrimSpace(tag), "\"\"")
-				gifTags = append(gifTags, tag)
+				if !strings.Contains(search, tag) {
+					gifTags = append(gifTags, tag)
+				}
 			}
 		}
 	})
@@ -58,13 +60,13 @@ func GetAllGiphy(folder string, search []string, count int) error {
 			// download gif
 			filepath := filepath.Join(folder, path.Base(gif.Slug+".gif"))
 			go elasticsearch.DownloadImage(gif.Images.Downsized.URL, filepath)
-
+			srchStrs := strings.Join(search, " ")
 			// index into elasticsearch
 			elasticsearch.WriteImageToDatabase(elasticsearch.ImageMetaData{
 				Name:  gif.Slug,
 				ID:    gif.ID,
 				Title: gif.Source,
-				Text:  strings.Join(getTags(gif.URL), " "),
+				Text:  strings.Join(getTags(gif.URL, srchStrs), " "),
 				Path:  filepath,
 			})
 		}
