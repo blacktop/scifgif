@@ -9,15 +9,15 @@ $ docker-compose up -d
 
 ## Add an Integration
 
-![add-integration](docs/imgs/add-integration.png)
+![add-integration](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/add-integration.png)
 
 ## Add an Outgoing Webhook  
 
-![outgoing-integration](docs/imgs/outgoing-integration.png)
+![outgoing-integration](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/outgoing-integration.png)
 
 ### Take note of the new **token**  
 
-![outgoing-token](docs/imgs/outgoing-token.png)
+![outgoing-token](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/outgoing-token.png)
 
 ```sh
 $ docker run --init -d --name scifgif blacktop/scifgif --token
@@ -29,12 +29,12 @@ $ docker run --init -d --name scifgif blacktop/scifgif --token
 
 ### xkcd slash command  
 
-![xkcd-slash](docs/imgs/xkcd-slash.png)
+![xkcd-slash](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/xkcd-slash.png)
 
 ### giphy slash command  
 
-![giphy-slash](docs/imgs/giphy-slash.png)
+![giphy-slash](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/giphy-slash.png)
 
 Registered Slash Commands
 
-![show-slashes](docs/imgs/show-slashes.png)
+![show-slashes](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/show-slashes.png)
