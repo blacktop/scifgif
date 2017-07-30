@@ -1,2 +1,2 @@
-mattermost
-==========
+Use with Mattermost
+===================

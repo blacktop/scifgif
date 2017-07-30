@@ -37,6 +37,11 @@ GET /giphy            (random Giphy gif)
 GET /giphy/{search}   (Giphy gif matching search term)
 ```
 
+Documentation
+-------------
+
+ - [Use with Mattermost](https://github.com/blacktop/scifgif/blob/master/docs/mattermost.md)
+
 ### TODO
 
 -	[x] Add meta-data DB for keyword text search (elasticsearch)
