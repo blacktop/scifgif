@@ -19,8 +19,10 @@ $ docker-compose up -d
 
 ![outgoing-token](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/outgoing-token.png)
 
+Start **scifgif** microservice with new **token**
+
 ```sh
-$ docker run --init -d --name scifgif blacktop/scifgif --token
+$ docker run --init -d --name scifgif blacktop/scifgif --host HOST --token sdqg4tm6jiy1zceyt6p7i8i6jr
 ```
 
 ---
