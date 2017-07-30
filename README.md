@@ -34,10 +34,10 @@ $ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif
 GET  /xkcd                                 (random xkcd comic)
 GET  /xkcd/{number}                        (xkcd comic by number)
 GET  /xkcd/search    [query]               (xkcd comic by text query)
-POST /xkcd/new_post  [token,trigger_word]  (xkcd comic by text query)
+POST /xkcd/new_post  [token,trigger_word]  (webhook post to search xkcd)
 GET  /giphy                                (random Giphy gif)
 GET  /giphy/search   [query]               (Giphy gif matching text query)
-POST /giphy/new_post [token,trigger_word]  (Giphy gif matching text query)
+POST /giphy/new_post [token,trigger_word]  (webhook post to search Giphy)
 ```
 
 Documentation
