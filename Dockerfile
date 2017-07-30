@@ -26,10 +26,14 @@ COPY config/elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 
 ENV IMAGE_NUMBER 25
 
+WORKDIR /scifgif
+
 RUN echo "===> Updating images..." \
-  && mkdir -p images/xkcd \
-  && mkdir -p images/giphy \
+  && mkdir -p /scifgif/images/xkcd \
+  && mkdir -p /scifgif/images/giphy \
   && scifgif update
+
+COPY images/icon.png /scifgif/images/icon.png
 
 EXPOSE 9200
 

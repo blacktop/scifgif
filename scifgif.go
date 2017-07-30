@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
-	"path/filepath"
+	"strings"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -26,9 +28,22 @@ var (
 	Version string
 	// BuildTime stores the plugin's build time
 	BuildTime string
+	// Token stores the webhook api token
+	Token string
+	// Host microservice host
+	Host string
+	// Port microservice port
+	Port string
 	// ApiKey stores Giphy's API key
 	// ApiKey string
 )
+
+// WebHookResponse mattermost webhook response struct
+type WebHookResponse struct {
+	Text     string `json:"text,omitempty"`
+	Username string `json:"username,omitempty"`
+	IconURL  string `json:"icon_url,omitempty"`
+}
 
 // getRandomXKCD serves a random xkcd comic
 func getRandomXKCD(w http.ResponseWriter, r *http.Request) {
@@ -37,6 +52,7 @@ func getRandomXKCD(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, "no images found for the xkcd source")
 		log.Error(err)
+		return
 	}
 	log.Debug(path)
 	http.ServeFile(w, r, path)
@@ -50,8 +66,55 @@ func getXkcdByNumber(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
 		log.Error(err)
+		return
 	}
 	http.ServeFile(w, r, path)
+}
+
+// getSearchXKCD serves a comic by searching for text
+func getSearchXKCD(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	path, err := elasticsearch.SearchImages("xkcd", r.Form["query"])
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+	http.ServeFile(w, r, path)
+}
+
+// postXkcdMattermost handles xkcd webhook POST
+func postXkcdMattermost(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	if !strings.EqualFold(Token, r.Form["token"][0]) {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintln(w, errors.New("unauthorized - bad token"))
+		log.Error(errors.New("unauthorized - bad token"))
+		return
+	}
+
+	path, err := elasticsearch.SearchImages("xkcd", r.Form["trigger_word"])
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+
+	webhook := WebHookResponse{
+		Text:     path,
+		Username: "scifgif",
+		IconURL:  fmt.Sprintf("http://%s:%s/icon", Host, Port),
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(webhook); err != nil {
+		log.Error(err)
+	}
 }
 
 // getRandomGiphy serves a random giphy gif
@@ -61,18 +124,61 @@ func getRandomGiphy(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, "no images found for the giphy source")
 		log.Error(err)
+		return
 	}
 	log.Debug(path)
 	http.ServeFile(w, r, path)
 }
 
-// getGiphy is a request Hander
-func getGiphy(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	file := filepath.Clean(filepath.Base(vars["file"]))
-	path := filepath.Join(giphyFolder, file)
-	log.Println(path)
+// getSearchGiphy serves a comic by searching for text
+func getSearchGiphy(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	path, err := elasticsearch.SearchImages("giphy", r.Form["query"])
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
 	http.ServeFile(w, r, path)
+}
+
+// postGiphyMattermost handles Giphy webhook POST
+func postGiphyMattermost(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	if !strings.EqualFold(Token, r.Form["token"][0]) {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintln(w, errors.New("unauthorized - bad token"))
+		log.Error(errors.New("unauthorized - bad token"))
+		return
+	}
+
+	path, err := elasticsearch.SearchImages("giphy", r.Form["trigger_word"])
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+
+	webhook := WebHookResponse{
+		Text:     path,
+		Username: "scifgif",
+		IconURL:  fmt.Sprintf("http://%s:%s/icon", Host, Port),
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(webhook); err != nil {
+		log.Error(err)
+	}
+}
+
+// getIcon serves scifgif icon
+func getIcon(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "images/icon.png")
 }
 
 var appHelpTemplate = `Usage: {{.Name}} {{if .Flags}}[OPTIONS] {{end}}COMMAND [arg...]
@@ -95,6 +201,7 @@ Run '{{.Name}} COMMAND --help' for more information on a command.
 `
 
 func main() {
+
 	cli.AppHelpTemplate = appHelpTemplate
 	app := cli.NewApp()
 
@@ -120,6 +227,27 @@ func main() {
 			Value:  1000,
 			Usage:  "number of gifs to download",
 			EnvVar: "IMAGE_NUMBER",
+		},
+		cli.StringFlag{
+			Name:        "host",
+			Value:       "",
+			Usage:       "microservice host",
+			EnvVar:      "SCIFGIF_HOST",
+			Destination: &Host,
+		},
+		cli.StringFlag{
+			Name:        "port",
+			Value:       "3993",
+			Usage:       "microservice port",
+			EnvVar:      "SCIFGIF_PORT",
+			Destination: &Port,
+		},
+		cli.StringFlag{
+			Name:        "token",
+			Value:       "",
+			Usage:       "webhook token",
+			EnvVar:      "SCIFGIF_TOKEN",
+			Destination: &Token,
 		},
 	}
 	app.Commands = []cli.Command{
@@ -156,6 +284,10 @@ func main() {
 			log.SetLevel(log.DebugLevel)
 		}
 
+		if len(c.String("token")) == 0 {
+			log.Warn("no webhook token set: --token")
+		}
+
 		// start elasticsearch database
 		elasticsearch.StartElasticsearch()
 
@@ -167,12 +299,19 @@ func main() {
 
 		// start web service
 		router := mux.NewRouter().StrictSlash(true)
+		router.HandleFunc("/icon", getIcon).Methods("GET")
+		// xkcd routes
 		router.HandleFunc("/xkcd", getRandomXKCD).Methods("GET")
 		router.HandleFunc("/xkcd/{number}", getXkcdByNumber).Methods("GET")
+		router.HandleFunc("/xkcd/search", getSearchXKCD).Methods("GET")
+		router.HandleFunc("/xkcd/new_post", postXkcdMattermost).Methods("POST")
+		// Giphy routes
 		router.HandleFunc("/giphy", getRandomGiphy).Methods("GET")
-		router.HandleFunc("/giphy/{file}", getGiphy).Methods("GET")
+		router.HandleFunc("/giphy/search", getSearchGiphy).Methods("GET")
+		router.HandleFunc("/giphy/new_post", postGiphyMattermost).Methods("POST")
+		// start microservice
 		log.Info("web service listening on port :3993")
-		log.Fatal(http.ListenAndServe(":3993", router))
+		log.Fatal(http.ListenAndServe(":"+Port, router))
 
 		return nil
 	}

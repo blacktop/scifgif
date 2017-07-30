@@ -39,7 +39,7 @@ update: stop dbstop ## Update scifgif images
 
 web: stop ## Start scifgif web-service
 	@echo "===> Starting scifgif web service..."
-	@go run scifgif.go
+	@go run scifgif.go --host 127.0.0.1 --token gif
 
 run: ## Run scifgif
 	@docker run --init -it --rm --name scifgif $(ORG)/$(NAME):$(VERSION)
