@@ -39,13 +39,13 @@ update: stop dbstop ## Update scifgif images
 
 web: stop ## Start scifgif web-service
 	@echo "===> Starting scifgif web service..."
-	@go run scifgif.go --host 127.0.0.1 --token gif
+	@go run scifgif.go --host 127.0.0.1 --token wf5fdyardfdxugtf3qk46xuu5a
 
 run: ## Run scifgif
 	@docker run --init -it --rm --name scifgif $(ORG)/$(NAME):$(VERSION)
 
 mattermost: ## Start mattermost
-	cd mattermost-docker;docker-compose up -d
+	cd mattermost-docker;docker-compose up -d --build
 
 test: ## Test build plugin
 	@echo "===> Starting scifgif tests..."

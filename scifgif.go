@@ -284,7 +284,7 @@ func main() {
 				if err != nil {
 					log.Fatal(err)
 				}
-				log.Error(c.GlobalInt("number"))
+
 				// download Giphy gifs and ingest metadata into elasticsearch
 				err = giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, c.GlobalInt("number"))
 				if err != nil {
