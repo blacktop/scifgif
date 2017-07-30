@@ -2,13 +2,8 @@ package elasticsearch
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"io"
-	"net/http"
-	"os"
+	"errors"
 	"os/exec"
-	"reflect"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -75,18 +70,13 @@ type ImageMetaData struct {
 }
 
 // StartElasticsearch starts the elasticsearch database
-func StartElasticsearch() error {
-	// _, err := utils.RunCommand(context.Background(), "/elastic-entrypoint.sh", "elasticsearch")
-	// // log.Info(output)
-	// return err
+func StartElasticsearch() {
 	cmd := exec.Command("/elastic-entrypoint.sh", "elasticsearch")
 	cmd.Start()
-	return nil
 }
 
 // TestConnection tests the ElasticSearch connection
 func TestConnection() (bool, error) {
-
 	var err error
 
 	client, err := elastic.NewSimpleClient()
@@ -115,7 +105,6 @@ func TestConnection() (bool, error) {
 
 // WaitForConnection waits for connection to Elasticsearch to be ready
 func WaitForConnection(ctx context.Context, timeout int) error {
-
 	var ready bool
 	var connErr error
 	secondsWaited := 0
@@ -142,70 +131,6 @@ func WaitForConnection(ctx context.Context, timeout int) error {
 	}
 }
 
-// SearchImages searches elasticsearch for images
-func SearchImages(query string) error {
-	ctx := context.Background()
-
-	client, err := elastic.NewSimpleClient()
-	if err != nil {
-		return err
-	}
-
-	// Search with a term query
-	termQuery := elastic.NewQueryStringQuery(query)
-	searchResult, err := client.Search().
-		Index("scifgif").    // search in index "twitter"
-		Query(termQuery).    // specify the query
-		Sort("title", true). // sort by "user" field, ascending
-		From(0).Size(10).    // take documents 0-9
-		Pretty(true).        // pretty print request and response JSON
-		Do(ctx)              // execute
-	if err != nil {
-		return err
-	}
-
-	// searchResult is of type SearchResult and returns hits, suggestions,
-	// and all kinds of other information from Elasticsearch.
-	fmt.Printf("Query took %d milliseconds\n", searchResult.TookInMillis)
-
-	// Each is a convenience function that iterates over hits in a search result.
-	// It makes sure you don't need to check for nil values in the response.
-	// However, it ignores errors in serialization. If you want full control
-	// over iterating the hits, see below.
-	var ityp ImageMetaData
-	for _, item := range searchResult.Each(reflect.TypeOf(ityp)) {
-		if i, ok := item.(ImageMetaData); ok {
-			fmt.Printf("Image  %s: %s\n", i.Name, i.Path)
-		}
-	}
-	// TotalHits is another convenience function that works even when something goes wrong.
-	fmt.Printf("Found a total of %d tweets\n", searchResult.TotalHits())
-
-	// Here's how you iterate through results with full control over each step.
-	if searchResult.Hits.TotalHits > 0 {
-		fmt.Printf("Found a total of %d tweets\n", searchResult.Hits.TotalHits)
-
-		// Iterate through results
-		for _, hit := range searchResult.Hits.Hits {
-			// hit.Index contains the name of the index
-
-			// Deserialize hit.Source into a Tweet (could also be just a map[string]interface{}).
-			var i ImageMetaData
-			err := json.Unmarshal(*hit.Source, &i)
-			if err != nil {
-				return err
-			}
-
-			// Work with image
-			fmt.Printf("Image  %s: %s\n", i.Name, i.Path)
-		}
-	} else {
-		// No hits
-		fmt.Print("Found no tweets\n")
-	}
-	return nil
-}
-
 // WriteImageToDatabase upserts image metadata into Database
 func WriteImageToDatabase(image ImageMetaData) error {
 	var err error
@@ -219,18 +144,18 @@ func WriteImageToDatabase(image ImageMetaData) error {
 	// Use the IndexExists service to check if a specified index exists.
 	exists, err := client.IndexExists("scifgif").Do(ctx)
 	if err != nil {
-		// Handle error
-		panic(err)
+		return err
 	}
+
 	if !exists {
 		// Create a new index.
-		createIndex, err := client.CreateIndex("scifgif").BodyString(mapping).Do(ctx)
-		if err != nil {
-			// Handle error
-			panic(err)
+		createIndex, cerr := client.CreateIndex("scifgif").BodyString(mapping).Do(ctx)
+		if cerr != nil {
+			return cerr
 		}
 		if !createIndex.Acknowledged {
 			// Not acknowledged
+			log.Error(errors.New("index scifgif creation was not acknowledged"))
 		}
 	}
 
@@ -241,8 +166,7 @@ func WriteImageToDatabase(image ImageMetaData) error {
 		BodyJson(image).
 		Do(ctx)
 	if err != nil {
-		// Handle error
-		panic(err)
+		return err
 	}
 
 	log.WithFields(log.Fields{
@@ -254,36 +178,8 @@ func WriteImageToDatabase(image ImageMetaData) error {
 	// Flush to make sure the documents got written.
 	_, err = client.Flush().Index("scifgif").Do(ctx)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	return err
-}
-
-// DownloadImage downloads image to filepath
-func DownloadImage(url, filepath string) {
-	// Create the file
-	out, err := os.Create(filepath)
-	if err != nil {
-		log.Error(err)
-	}
-	defer out.Close()
-
-	resp, err := http.Get(url)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer resp.Body.Close()
-
-	log.WithFields(log.Fields{
-		"status":   resp.Status,
-		"size":     resp.ContentLength,
-		"filepath": filepath,
-	}).Debug("downloading file")
-
-	// Writer the body to file
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		log.Error(err)
-	}
+	return nil
 }

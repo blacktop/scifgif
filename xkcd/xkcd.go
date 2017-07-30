@@ -15,7 +15,9 @@ func init() {
 }
 
 // GetAllXkcd havest all teh comics
-func GetAllXkcd(folder string) error {
+func GetAllXkcd(folder string, count int) error {
+	var start int
+
 	client := xkcd.NewClient()
 	latest, err := client.Latest()
 	if err != nil {
@@ -24,8 +26,14 @@ func GetAllXkcd(folder string) error {
 
 	log.Infof("there are %d xkcd comics availble", latest.Number)
 
+	// only go back count number of comics from latest
+	if (latest.Number - count) < 0 {
+		start = 1
+	} else {
+		start = latest.Number - count
+	}
 	// get all images up to latest
-	for i := 1; i <= latest.Number; i++ {
+	for i := start; i <= latest.Number; i++ {
 		comic, err := client.Get(i)
 		if err != nil {
 			log.Error(err)

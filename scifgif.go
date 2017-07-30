@@ -19,8 +19,6 @@ import (
 const (
 	xkcdFolder  = "images/xkcd"
 	giphyFolder = "images/giphy"
-	// NumberOfGifs Total number of gifs to download
-	NumberOfGifs = 1000
 )
 
 var (
@@ -114,6 +112,12 @@ func main() {
 			Usage:  "elasticsearch timeout (in seconds)",
 			EnvVar: "TIMEOUT",
 		},
+		cli.IntFlag{
+			Name:   "number, N",
+			Value:  1000,
+			Usage:  "number of gifs to download",
+			EnvVar: "IMAGE_NUMBER",
+		},
 	}
 	app.Commands = []cli.Command{
 		{
@@ -122,22 +126,20 @@ func main() {
 			Usage:   "Update images",
 			Action: func(c *cli.Context) error {
 				// start elasticsearch database
-				err := elasticsearch.StartElasticsearch()
-				if err != nil {
-					return err
-				}
+				elasticsearch.StartElasticsearch()
 				// wait for elasticsearch to load
-				err = elasticsearch.WaitForConnection(context.Background(), 60)
+				err := elasticsearch.WaitForConnection(context.Background(), 60)
 				if err != nil {
 					log.Fatal(err)
 				}
+				log.Error(c.GlobalInt("number"))
 				// download Giphy gifs and ingest metadata into elasticsearch
-				err = giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, NumberOfGifs)
+				err = giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, c.GlobalInt("number"))
 				if err != nil {
 					return err
 				}
 				// download xkcd comics and ingest metadata into elasticsearch
-				err = xkcd.GetAllXkcd(xkcdFolder)
+				err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("number"))
 				if err != nil {
 					return err
 				}
@@ -152,13 +154,10 @@ func main() {
 		}
 
 		// start elasticsearch database
-		err := elasticsearch.StartElasticsearch()
-		if err != nil {
-			return err
-		}
+		elasticsearch.StartElasticsearch()
 
 		// wait for elasticsearch to load
-		err = elasticsearch.WaitForConnection(context.Background(), c.Int("timeout"))
+		err := elasticsearch.WaitForConnection(context.Background(), c.Int("timeout"))
 		if err != nil {
 			log.Fatal(err)
 		}

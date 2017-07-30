@@ -1,4 +1,4 @@
-.PHONY: build dev size tags tar test run ssh circle push
+.PHONY: build dev size tags tar test run update gotest ssh circle push
 
 ORG=blacktop
 NAME=scifgif
@@ -19,15 +19,30 @@ size: tags ## Update docker image size in README.md
 tags: ## Show all docker image tags
 	docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" $(ORG)/$(NAME)
 
-run: stop ## Run scifgif web-service
-	@echo "===> Starting scifgif..."
-	@docker run --init -d --name scifgif -p 3993:3993 $(ORG)/$(NAME):$(VERSION)
+tar: ## Export tar of docker image
+	@docker save $(ORG)/$(NAME):$(VERSION) -o $(NAME).tar
 
 ssh: ## SSH into docker image
 	@docker run --init -it --rm --entrypoint=sh $(ORG)/$(NAME):$(VERSION)
 
-tar: ## Export tar of docker image
-	@docker save $(ORG)/$(NAME):$(VERSION) -o $(NAME).tar
+push: build ## Push docker image to docker registry
+	@echo "===> Pushing $(ORG)/$(NAME):$(VERSION) to docker hub..."
+	@docker push $(ORG)/$(NAME):$(VERSION)
+
+update: stop dbstop ## Update scifgif images
+	@echo "===> Starting scifgif update..."
+	@echo " - Starting elasticsearch"
+	@docker run -d --name elasticsearch -p 9200:9200 blacktop/elasticsearch:5.5
+	@echo " - Starting kibana"
+	@sleep 10;docker run -d --name kibana --link elasticsearch -p 5601:5601 blacktop/kibana:5.5
+	@go run scifgif.go -N 25 update
+
+web: stop ## Start scifgif web-service
+	@echo "===> Starting scifgif web service..."
+	@go run scifgif.go
+
+run: ## Run scifgif
+	@docker run --init -it --rm --name scifgif $(ORG)/$(NAME):$(VERSION)
 
 test: ## Test build plugin
 	@echo "===> Starting scifgif tests..."
@@ -35,18 +50,6 @@ test: ## Test build plugin
 	@http 127.0.0.1:3993/xkcd/city.jpg > city.jpg
 	@ls -lah city.jpg
 	@rm city.jpg
-
-gotest: stop ## Test go code
-	@echo "===> Starting gotests..."
-	@echo " - Starting elasticsearch"
-	@docker run -d --name elasticsearch -p 9200:9200 blacktop/elasticsearch:5.5
-	@echo " - Starting kibana"
-	@sleep 10;docker run -d --name kibana --link elasticsearch -p 5601:5601 blacktop/kibana:5.5
-	@go run scifgif.go update
-
-push: build ## Push docker image to docker registry
-	@echo "===> Pushing $(ORG)/$(NAME):$(VERSION) to docker hub..."
-	@docker push $(ORG)/$(NAME):$(VERSION)
 
 circle: ci-size ## Get docker image size from CircleCI
 	@sed -i.bu 's/docker%20image-.*-blue/docker%20image-$(shell cat .circleci/SIZE)-blue/' README.md
@@ -68,8 +71,10 @@ clean: ## Clean docker image and stop all running containers
 
 stop: ## Kill running scifgif-plugin docker containers
 	@docker rm -f scifgif || true
-	@docker rm -f elasticsearch || true
-	@docker rm -f kibana || true
+
+dbstop: ## Kill DB containers
+		@docker rm -f elasticsearch || true
+		@docker rm -f kibana || true
 
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
