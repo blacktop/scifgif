@@ -29,11 +29,11 @@ $ docker run --init -d --name scifgif blacktop/scifgif --host HOST --token sdqg4
 
 ## Add a Slash Command  
 
-### xkcd slash command  
+### `xkcd` slash command  
 
 ![xkcd-slash](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/xkcd-slash.png)
 
-### giphy slash command  
+### `scifgif` slash command  
 
 ![giphy-slash](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/giphy-slash.png)
 
