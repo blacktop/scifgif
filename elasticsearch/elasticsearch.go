@@ -19,7 +19,15 @@ const mapping = `
 {
 "settings":{
   "number_of_shards": 1,
-  "number_of_replicas": 0
+  "number_of_replicas": 0,
+	"analysis": {
+		"analyzer": {
+			"my_english_analyzer": {
+				"type": "standard",
+				"stopwords": "_english_"
+			}
+		}
+	}
 },
 "mappings":{
   "image":{
@@ -40,6 +48,7 @@ const mapping = `
       },
       "text":{
         "type":"text",
+				"analyzer": "my_english_analyzer",
         "store": true,
         "fielddata": true
       },
