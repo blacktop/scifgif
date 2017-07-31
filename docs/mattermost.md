@@ -28,5 +28,3 @@ $ docker run --init -d --name scifgif blacktop/scifgif --host localhost --token 
 ```
 
 ---
-
-![mattermost](https://raw.githubusercontent.com/blacktop/scifgif/master/ddocs/imgs/mattermost.png)
