@@ -11,6 +11,8 @@ hooks*
 images/giphy*
 images/xkcd*
 
+mattermost-docker*
+
 README.md
 *.bu
 LICENSE

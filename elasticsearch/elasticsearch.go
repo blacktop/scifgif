@@ -69,6 +69,11 @@ type ImageMetaData struct {
 	Suggest *elastic.SuggestField `json:"suggest_field,omitempty"`
 }
 
+func init() {
+	// Only log the debug severity or above.
+	log.SetLevel(log.DebugLevel)
+}
+
 // StartElasticsearch starts the elasticsearch database
 func StartElasticsearch() {
 	cmd := exec.Command("/elastic-entrypoint.sh", "elasticsearch")
@@ -156,6 +161,8 @@ func WriteImageToDatabase(image ImageMetaData) error {
 		if !createIndex.Acknowledged {
 			// Not acknowledged
 			log.Error(errors.New("index scifgif creation was not acknowledged"))
+		} else {
+			log.WithFields(log.Fields{"index": "scifgif"}).Info("index created")
 		}
 	}
 
