@@ -45,6 +45,7 @@ run: stop ## Run scifgif
 	docker run -d --name scifgif -p 3993:3993 -p 9200:9200 $(ORG)/$(NAME):$(VERSION)
 
 mattermost: ## Start mattermost
+	cp docker-compose.mattermost.yml mattermost-docker/docker-compose.yml
 	cd mattermost-docker;docker-compose up -d --build
 
 test: ## Test build plugin

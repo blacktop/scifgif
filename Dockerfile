@@ -35,9 +35,8 @@ RUN echo "===> Updating images..." \
   && mkdir -p /scifgif/images/xkcd \
   && mkdir -p /scifgif/images/giphy \
   && scifgif update \
-  && sleep 10; \
   && echo "===> Stopping elasticsearch pid: $(cat /tmp/epid)" \
-  && kill $(cat /tmp/epid) \
+  && sleep 10; kill $(cat /tmp/epid) \
   && wait $(cat /tmp/epid); exit 0;
 
 COPY images/icon.png /scifgif/images/icon.png
