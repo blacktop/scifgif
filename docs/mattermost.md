@@ -15,7 +15,7 @@ Add an Integration
 Add an Outgoing Webhook
 -----------------------
 
-![outgoing-webhook](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/outgoing-webhook.png
+![outgoing-webhook](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/outgoing-webhook.png)
 
 ### Take note of the new **token**
 

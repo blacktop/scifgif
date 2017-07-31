@@ -28,7 +28,7 @@ Getting Started
 $ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif
 ```
 
-![mattermost](https://raw.githubusercontent.com/blacktop/scifgif/master/ddocs/imgs/mattermost.png)
+![mattermost](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/mattermost.png)
 
 ### Web Routes
 
