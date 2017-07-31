@@ -182,11 +182,26 @@ func WriteImageToDatabase(image ImageMetaData) error {
 		"type":  put.Type,
 	}).Debug("indexed image")
 
+	return nil
+}
+
+// Finalize makes index read only optimized
+func Finalize() error {
+	ctx := context.Background()
+
+	client, err := elastic.NewSimpleClient()
+	if err != nil {
+		return err
+	}
 	// Flush to make sure the documents got written.
-	_, err = client.Flush().Index("scifgif").Do(ctx)
+	_, err = client.Flush().Do(ctx)
 	if err != nil {
 		return err
 	}
 
+	_, err = client.Forcemerge("scifgif").MaxNumSegments(1).Flush(true).Do(ctx)
+	if err != nil {
+		return err
+	}
 	return nil
 }
