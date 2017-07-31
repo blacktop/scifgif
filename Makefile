@@ -6,7 +6,7 @@ REPO=$(ORG)/$(NAME)
 VERSION?=$(shell cat VERSION)
 
 build: ## Build docker image
-	docker build --build-arg IMAGE_NUMBER=25 -t $(ORG)/$(NAME):$(VERSION) .
+	docker build --build-arg IMAGE_NUMBER=200 -t $(ORG)/$(NAME):$(VERSION) .
 
 dev: base ## Build docker dev image
 	docker build -f Dockerfile.dev -t $(ORG)/$(NAME):$(VERSION) .
@@ -45,6 +45,7 @@ run: stop ## Run scifgif
 	docker run -d --name scifgif -p 3993:3993 -p 9200:9200 $(ORG)/$(NAME):$(VERSION)
 
 mattermost: ## Start mattermost
+	git clone https://github.com/mattermost/mattermost-docker.git || true
 	cp docker-compose.mattermost.yml mattermost-docker/docker-compose.yml
 	cd mattermost-docker;docker-compose up -d --build
 
@@ -69,9 +70,10 @@ ci-size: ci-build
 
 clean: ## Clean docker image and stop all running containers
 	docker-clean stop
-	docker rmi $(ORG)/$(NAME):$(VERSION) || true
+	# docker rmi $(ORG)/$(NAME):$(VERSION) || true
 	rm images/giphy/*.gif || true
 	rm images/xkcd/*.png || true
+	rm -rf mattermost-docker
 
 stop: ## Kill running scifgif-plugin docker containers
 	@docker rm -f scifgif || true

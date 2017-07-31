@@ -59,6 +59,15 @@ services:
       - "3993:3993"
     restart: unless-stopped
     environment:
-      # set same as db credentials and dbname
       - SCIFGIF_HOST=localhost
+      - SCIFGIF_TOKEN=3xhw3juacb8xiyh9rthas4zx9y
+
+  xkcd:
+    image: blacktop/scifgif:0.1.0
+    ports:
+      - "3994:3994"
+    restart: unless-stopped
+    environment:
+      - SCIFGIF_HOST=localhost
+      - SCIFGIF_PORT=3994
       - SCIFGIF_TOKEN=qy8eu83otf89bq5yqd3x8g9f8a
