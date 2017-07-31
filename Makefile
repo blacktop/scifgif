@@ -23,7 +23,7 @@ tar: ## Export tar of docker image
 	@docker save $(ORG)/$(NAME):$(VERSION) -o $(NAME).tar
 
 ssh: ## SSH into docker image
-	@docker run -it --rm --entrypoint=sh $(ORG)/$(NAME):$(VERSION)
+	@docker run -it --rm -p 3993:3993 -p 9200:9200 --entrypoint=sh $(ORG)/$(NAME):$(VERSION)
 
 push: build ## Push docker image to docker registry
 	@echo "===> Pushing $(ORG)/$(NAME):$(VERSION) to docker hub..."
@@ -41,7 +41,7 @@ web: stop ## Start scifgif web-service
 	@echo "===> Starting scifgif web service..."
 	@go run scifgif.go --host 127.0.0.1 --token wf5fdyardfdxugtf3qk46xuu5a
 
-run: ## Run scifgif
+run: stop ## Run scifgif
 	docker run -d --name scifgif -p 3993:3993 -p 9200:9200 $(ORG)/$(NAME):$(VERSION)
 
 mattermost: ## Start mattermost

@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "=> Building the binary"
+docker build --build-arg IMAGE_NUMBER=$IMAGE_NUMBER -t $IMAGE_NAME .

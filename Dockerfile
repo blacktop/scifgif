@@ -14,27 +14,34 @@ RUN apk --update add --no-cache -t .build-deps \
                                     git \
                                     gcc \
                                     go \
-  && echo "===> Building scifgif Go binary..." \
+  && echo "===> Building scifgif binary..." \
   && cd /go/src/github.com/blacktop/scifgif \
   && export GOPATH=/go \
-  && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo \
-    -ldflags "-X main.Version=$(cat VERSION) -X main.BuildTime=$(date -u +%Y%m%d)" -o /bin/scifgif . \
+  && go build -ldflags "-X main.Version=$(cat VERSION) -X main.BuildTime=$(date -u +%Y%m%d)" -o /bin/scifgif \
   && rm -rf /go /usr/local/go /usr/lib/go /tmp/* \
   && apk del --purge .build-deps
 
 COPY config/elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 
-ENV IMAGE_NUMBER 25
+ARG IMAGE_NUMBER 25
 
 WORKDIR /scifgif
+
+RUN echo "===> Create elasticsearch data directory..." \
+  && mkdir -p /scifgif/elasticsearch/data \
+  && chown -R elasticsearch:elasticsearch /scifgif/elasticsearch/data
 
 RUN echo "===> Updating images..." \
   && mkdir -p /scifgif/images/xkcd \
   && mkdir -p /scifgif/images/giphy \
-  && scifgif update
+  && scifgif update \
+  && sleep 10; \
+  && echo "===> Stopping elasticsearch pid: $(cat /tmp/epid)" \
+  && kill $(cat /tmp/epid) \
+  && wait $(cat /tmp/epid); exit 0;
 
 COPY images/icon.png /scifgif/images/icon.png
 
-EXPOSE 9200
+EXPOSE 3993
 
 ENTRYPOINT ["scifgif"]

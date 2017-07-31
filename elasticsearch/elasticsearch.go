@@ -76,7 +76,7 @@ func init() {
 
 // StartElasticsearch starts the elasticsearch database
 func StartElasticsearch() {
-	cmd := exec.Command("/elastic-entrypoint.sh", "elasticsearch")
+	cmd := exec.Command("/elastic-entrypoint.sh", "elasticsearch", "-p", "/tmp/epid")
 	cmd.Start()
 }
 
@@ -199,7 +199,7 @@ func Finalize() error {
 		return err
 	}
 
-	_, err = client.Forcemerge("scifgif").MaxNumSegments(1).Flush(true).Do(ctx)
+	_, err = client.Forcemerge("scifgif").MaxNumSegments(1).Do(ctx)
 	if err != nil {
 		return err
 	}

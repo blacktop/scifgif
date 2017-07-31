@@ -19,3 +19,5 @@ LICENSE
 CHANGELOG.md
 Makefile
 NOTES.md
+docker-compose.mattermost.yml
+Vagrantfile
