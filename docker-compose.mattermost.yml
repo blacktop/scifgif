@@ -60,5 +60,5 @@ services:
     restart: unless-stopped
     environment:
       # set same as db credentials and dbname
-      - SCIFGIF_HOST=gif
-      - SCIFGIF_TOKEN=wf5fdyardfdxugtf3qk46xuu5a
+      - SCIFGIF_HOST=localhost
+      - SCIFGIF_TOKEN=qy8eu83otf89bq5yqd3x8g9f8a

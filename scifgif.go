@@ -105,7 +105,7 @@ func postXkcdMattermost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	webhook := WebHookResponse{
-		Text:     fmt.Sprintf("http://%s:%s/%s", Host, Port, path),
+		Text:     fmt.Sprintf("![gif](http://%s:%s/%s)", Host, Port, path),
 		Username: "scifgif",
 		IconURL:  fmt.Sprintf("http://%s:%s/icon", Host, Port),
 	}
@@ -164,7 +164,7 @@ func postGiphyMattermost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	webhook := WebHookResponse{
-		Text:     fmt.Sprintf("http://%s:%s/%s", Host, Port, path),
+		Text:     fmt.Sprintf("![gif](http://%s:%s/%s)", Host, Port, path),
 		Username: "scifgif",
 		IconURL:  fmt.Sprintf("http://%s:%s/icon", Host, Port),
 	}
