@@ -6,7 +6,7 @@ REPO=$(ORG)/$(NAME)
 VERSION?=$(shell cat VERSION)
 
 build: ## Build docker image
-	docker build -t $(ORG)/$(NAME):$(VERSION) .
+	docker build --build-arg IMAGE_NUMBER=25 -t $(ORG)/$(NAME):$(VERSION) .
 
 dev: base ## Build docker dev image
 	docker build -f Dockerfile.dev -t $(ORG)/$(NAME):$(VERSION) .

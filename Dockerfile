@@ -23,7 +23,7 @@ RUN apk --update add --no-cache -t .build-deps \
 
 COPY config/elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 
-ARG IMAGE_NUMBER 25
+ARG IMAGE_NUMBER
 
 WORKDIR /scifgif
 
