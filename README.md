@@ -28,6 +28,11 @@ Getting Started
 $ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif
 ```
 
+Documentation
+-------------
+
+-	[Use with Mattermost](https://github.com/blacktop/scifgif/blob/master/docs/mattermost.md)
+
 ![mattermost](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/mattermost.png)
 
 ### Web Routes
@@ -46,11 +51,6 @@ GET  /giphy                                (random Giphy gif)
 GET  /giphy/search   [query]               (Giphy gif matching text query)
 POST /giphy/new_post [token,trigger_word]  (webhook post to search Giphy)
 ```
-
-Documentation
--------------
-
--	[Use with Mattermost](https://github.com/blacktop/scifgif/blob/master/docs/mattermost.md)
 
 ### TODO
 
