@@ -15,6 +15,7 @@ import (
 	"github.com/blacktop/scifgif/elasticsearch"
 	"github.com/blacktop/scifgif/giphy"
 	"github.com/blacktop/scifgif/xkcd"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/urfave/cli"
 )
@@ -342,7 +343,8 @@ func main() {
 		router.HandleFunc("/giphy/new_post", postGiphyMattermost).Methods("POST")
 		// start microservice
 		log.Info("web service listening on port :", Port)
-		log.Fatal(http.ListenAndServe(":"+Port, router))
+		loggedRouter := handlers.LoggingHandler(os.Stdout, router)
+		log.Fatal(http.ListenAndServe(":"+Port, loggedRouter))
 
 		return nil
 	}

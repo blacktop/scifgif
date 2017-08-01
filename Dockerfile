@@ -35,7 +35,7 @@ RUN echo "===> Updating images..." \
   && mkdir -p /scifgif/images/xkcd \
   && mkdir -p /scifgif/images/giphy \
   && scifgif update \
-  && echo "===> Stopping elasticsearch pid: $(cat /tmp/epid)" \
+  && echo "===> Stopping elasticsearch PID: $(cat /tmp/epid)" \
   && sleep 10; kill $(cat /tmp/epid) \
   && wait $(cat /tmp/epid); exit 0;
 

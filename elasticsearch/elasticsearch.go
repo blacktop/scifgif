@@ -70,7 +70,6 @@ type ImageMetaData struct {
 }
 
 func init() {
-	// Only log the debug severity or above.
 	log.SetLevel(log.DebugLevel)
 }
 

@@ -6,8 +6,13 @@ import (
 	"reflect"
 	"strings"
 
+	log "github.com/Sirupsen/logrus"
 	elastic "gopkg.in/olivere/elastic.v5"
 )
+
+func init() {
+	log.SetLevel(log.DebugLevel)
+}
 
 // SearchImages searches imagess by source and text and returns a random image
 func SearchImages(source string, search []string) (string, error) {
@@ -20,14 +25,14 @@ func SearchImages(source string, search []string) (string, error) {
 
 	searchStr := strings.Join(search, " ")
 
-	// build random query
+	// build randomly sorted search query
 	q := elastic.NewFunctionScoreQuery().
-		Query(elastic.NewTermQuery("source", source)).
-		Add(elastic.NewTermQuery("text", searchStr), elastic.NewWeightFactorFunction(1.5)).
-		AddScoreFunc(elastic.NewWeightFactorFunction(3)).
+		Query(elastic.NewTermQuery("text", searchStr)).
 		AddScoreFunc(elastic.NewRandomFunction()).
-		Boost(5).
-		ScoreMode("multiply")
+		Boost(2.0).
+		MaxBoost(12.0).
+		BoostMode("multiply").
+		ScoreMode("max")
 	// Search with a term query
 	searchResult, err := client.Search().
 		Index("scifgif"). // search in index "scifgif"
@@ -42,6 +47,12 @@ func SearchImages(source string, search []string) (string, error) {
 		var ityp ImageMetaData
 		for _, item := range searchResult.Each(reflect.TypeOf(ityp)) {
 			if i, ok := item.(ImageMetaData); ok {
+
+				log.WithFields(log.Fields{
+					"search_term": searchStr,
+					"text":        i.Text,
+				}).Debug("search found image")
+
 				return i.Path, nil
 			}
 		}
