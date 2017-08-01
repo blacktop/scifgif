@@ -26,6 +26,12 @@
   version = "v1.1"
 
 [[projects]]
+  name = "github.com/gorilla/handlers"
+  packages = ["."]
+  revision = "a4043c62cc2329bacda331d33fc908ab11ef0ec3"
+  version = "v1.2.1"
+
+[[projects]]
   name = "github.com/gorilla/mux"
   packages = ["."]
   revision = "bcd8bc72b08df0f70df986b97f95590779502d31"
@@ -33,27 +39,9 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/malice-plugins/go-plugin-utils"
-  packages = ["utils"]
-  revision = "03a30621cadfe12d68d01228478e873276e8ae4b"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/moul/http2curl"
-  packages = ["."]
-  revision = "4e24498b31dba4683efb9d35c1c8a91e2eda28c8"
-
-[[projects]]
-  branch = "master"
   name = "github.com/nishanths/go-xkcd"
   packages = ["."]
   revision = "9497d909de390b9a8dd0d88975cf0ce7d0b4d688"
-
-[[projects]]
-  name = "github.com/parnurzeal/gorequest"
-  packages = ["."]
-  revision = "a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3"
-  version = "v0.2.15"
 
 [[projects]]
   name = "github.com/pkg/errors"
@@ -70,7 +58,7 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
-  packages = ["html","html/atom","idna","publicsuffix"]
+  packages = ["html","html/atom"]
   revision = "f5079bd7f6f74e23c4d65efa0f4ce14cbd6a3c0f"
 
 [[projects]]
@@ -78,12 +66,6 @@
   name = "golang.org/x/sys"
   packages = ["unix"]
   revision = "0f826bdd13b500be0f1d4004938ad978fcc6031e"
-
-[[projects]]
-  branch = "master"
-  name = "golang.org/x/text"
-  packages = ["internal/gen","internal/triegen","internal/ucd","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable"]
-  revision = "836efe42bb4aa16aaa17b9c155d8813d336ed720"
 
 [[projects]]
   name = "gopkg.in/olivere/elastic.v5"
@@ -94,6 +76,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "536f3557a3d4dfdd9b4b589b3f878e3728be22e05054548ae93465a573761be1"
+  inputs-digest = "f1e3bf3cf6894097eb3d2251261ffbeba38deb02e46d125d96a06b8f76d1592a"
   solver-name = "gps-cdcl"
   solver-version = 1
