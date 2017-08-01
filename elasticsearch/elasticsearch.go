@@ -38,6 +38,7 @@ const mapping = `
       },
       "title":{
         "type":"text",
+				"analyzer": "my_english_analyzer",				
         "store": true,
         "fielddata": true
       },
