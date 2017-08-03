@@ -3,7 +3,7 @@
 scifgif
 =======
 
-[![Circle CI](https://circleci.com/gh/blacktop/scifgif.png?style=shield)](https://circleci.com/gh/blacktop/scifgif) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif) [![Docker Pulls](https://img.shields.io/docker/pulls/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif) [![Docker Image](https://img.shields.io/badge/docker%20image-1.2GB-blue.svg)](https://store.docker.com/community/images/blacktop/scifgif)
+[![Circle CI](https://circleci.com/gh/blacktop/scifgif.png?style=shield)](https://circleci.com/gh/blacktop/scifgif) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif) [![Docker Pulls](https://img.shields.io/docker/pulls/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif) [![Docker Image](https://img.shields.io/badge/docker%20image-3GB-blue.svg)](https://store.docker.com/community/images/blacktop/scifgif)
 
 > Humorous image microservice for isolated networks - xkcd and giphy full text search API
 
@@ -17,9 +17,11 @@ scifgif
 
 ```bash
 REPOSITORY           TAG                 SIZE
-blacktop/scifgif     latest              1.17GB
-blacktop/scifgif     0.1.0               1.17GB
+blacktop/scifgif     latest              3GB
+blacktop/scifgif     0.1.0               3GB
 ```
+
+> **NOTE:** the reason the docker image is so large is that it contains ~3000 animated gifs
 
 Getting Started
 ---------------
