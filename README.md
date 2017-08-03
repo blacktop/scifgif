@@ -1,5 +1,3 @@
-![logo](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/logo.png)
-
 scifgif
 =======
 
