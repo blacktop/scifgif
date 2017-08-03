@@ -25,7 +25,7 @@ Getting Started
 ---------------
 
 ```bash
-$ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif
+$ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif --host localhost
 ```
 
 Documentation
