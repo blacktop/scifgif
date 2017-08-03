@@ -11,11 +11,6 @@ import (
 	"github.com/blacktop/scifgif/elasticsearch"
 )
 
-func init() {
-	// Only log the debug severity or above.
-	log.SetLevel(log.DebugLevel)
-}
-
 // Helper function to pull the tag attribute from a Token
 func getTags(url string, search string) []string {
 	var gifTags []string

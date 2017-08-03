@@ -11,11 +11,8 @@ import (
 	elastic "gopkg.in/olivere/elastic.v5"
 )
 
+// Size is the number of document results to return
 const Size = 20
-
-func init() {
-	log.SetLevel(log.DebugLevel)
-}
 
 // SearchImage searches imagess by text/title and returns a random image
 func SearchImage(search []string, itype string) (string, error) {

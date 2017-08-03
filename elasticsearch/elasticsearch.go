@@ -70,10 +70,6 @@ type ImageMetaData struct {
 	Suggest *elastic.SuggestField `json:"suggest_field,omitempty"`
 }
 
-func init() {
-	log.SetLevel(log.DebugLevel)
-}
-
 // StartElasticsearch starts the elasticsearch database
 func StartElasticsearch() {
 	cmd := exec.Command("/elastic-entrypoint.sh", "elasticsearch", "-p", "/tmp/epid")
@@ -109,10 +105,14 @@ func TestConnection() (bool, error) {
 }
 
 // WaitForConnection waits for connection to Elasticsearch to be ready
-func WaitForConnection(ctx context.Context, timeout int) error {
+func WaitForConnection(ctx context.Context, timeout int, verbose bool) error {
 	var ready bool
 	var connErr error
 	secondsWaited := 0
+
+	if verbose {
+		log.SetLevel(log.DebugLevel)
+	}
 
 	connCtx, cancel := context.WithTimeout(ctx, time.Duration(timeout)*time.Second)
 	defer cancel()

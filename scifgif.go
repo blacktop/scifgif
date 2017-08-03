@@ -46,6 +46,13 @@ func isNumeric(s string) bool {
 	return err == nil
 }
 
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
 // WebHookResponse mattermost webhook response struct
 type WebHookResponse struct {
 	Text         string `json:"text,omitempty"`
@@ -434,26 +441,37 @@ func main() {
 				// start elasticsearch database
 				elasticsearch.StartElasticsearch()
 				// wait for elasticsearch to load
-				err := elasticsearch.WaitForConnection(context.Background(), 60)
+				err := elasticsearch.WaitForConnection(context.Background(), 60, c.GlobalBool("verbose"))
 				if err != nil {
 					log.Fatal(err)
 				}
-				log.Info("* download Giphy gifs and ingest metadata into elasticsearch")
+				log.WithFields(log.Fields{
+					"search_for": "reactions",
+					"number":     c.GlobalInt("number"),
+				}).Info("* download Giphy gifs and ingest metadata into elasticsearch")
 				err = giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, c.GlobalInt("number"))
 				if err != nil {
 					return err
 				}
-				log.Info("* download star wars Giphy gifs and ingest metadata into elasticsearch")
-				err = giphy.GetAllGiphy(giphyFolder, []string{"star", "wars"}, 500)
+				log.WithFields(log.Fields{
+					"search_for": "star wars",
+					"number":     min(c.GlobalInt("number"), 500),
+				}).Info("* download star wars Giphy gifs and ingest metadata into elasticsearch")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"star", "wars"}, min(c.GlobalInt("number"), 500))
 				if err != nil {
 					return err
 				}
-				log.Info("* download futurama Giphy gifs and ingest metadata into elasticsearch")
-				err = giphy.GetAllGiphy(giphyFolder, []string{"futurama"}, 500)
+				log.WithFields(log.Fields{
+					"search_for": "futurama",
+					"number":     min(c.GlobalInt("number"), 500),
+				}).Info("* download futurama Giphy gifs and ingest metadata into elasticsearch")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"futurama"}, min(c.GlobalInt("number"), 500))
 				if err != nil {
 					return err
 				}
-				log.Info("* download xkcd comics and ingest metadata into elasticsearch")
+				log.WithFields(log.Fields{
+					"number": c.GlobalInt("number"),
+				}).Info("* download xkcd comics and ingest metadata into elasticsearch")
 				err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("number"))
 				if err != nil {
 					return err
@@ -481,7 +499,7 @@ func main() {
 		elasticsearch.StartElasticsearch()
 
 		// wait for elasticsearch to load
-		err := elasticsearch.WaitForConnection(context.Background(), c.Int("timeout"))
+		err := elasticsearch.WaitForConnection(context.Background(), c.Int("timeout"), c.Bool("verbose"))
 		if err != nil {
 			log.Fatal(err)
 		}

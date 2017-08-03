@@ -11,10 +11,6 @@ import (
 	xkcd "github.com/nishanths/go-xkcd"
 )
 
-func init() {
-	log.SetLevel(log.DebugLevel)
-}
-
 // GetAllXkcd havest all teh comics
 func GetAllXkcd(folder string, count int) error {
 	var start int
