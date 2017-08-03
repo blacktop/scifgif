@@ -58,21 +58,46 @@ image endpoints
 ### Post xkcd outgoing-webhook query [POST]
 
 + Attributes
-  + channel_id: hawos4dqtby53pd64o4a4cmeoo  (string)
-  + channel_name: town-square  (string)
-  + team_domain: someteam  (string)
-  + team_id: kwoknj9nwpypzgzy78wkw516qe  (string)
-  + post_id: axdygg1957njfe5pu38saikdho  (string)
-  + text: some+text+here  (string)
-  + timestamp: 1445532266  (string)
-  + token: zmigewsanbbsdf59xnmduzypjc  (string)
-  + trigger_word: some  (string)
-  + user_id: rnina9994bde8mua79zqcg5hmo  (string)
-  + user_name: somename  (string)
+  + channel_id: hawos4dqtby53pd64o4a4cmeoo (string)
+  + channel_name: town-square (string)
+  + team_domain: someteam (string)
+  + team_id: kwoknj9nwpypzgzy78wkw516qe (string)
+  + post_id: axdygg1957njfe5pu38saikdho (string)
+  + text: some+text+here (string)
+  + timestamp: 1445532266 (string)
+  + token: zmigewsanbbsdf59xnmduzypjc (string)
+  + trigger_word: some (string)
+  + user_id: rnina9994bde8mua79zqcg5hmo (string)
+  + user_name: somename (string)
 
 + Request (application/json)
 
-+ Response 201
++ Request (application/x-www-form-urlencoded)
+
+  + Body
+
+    channel_id=hawos4dqtby53pd64o4a4cmeoo&
+    channel_name=town-square&
+    team_domain=someteam&
+    team_id=kwoknj9nwpypzgzy78wkw516qe&
+    post_id=axdygg1957njfe5pu38saikdho&
+    text=some+text+here&
+    timestamp=1445532266&
+    token=zmigewsanbbsdf59xnmduzypjc&
+    trigger_word=some&
+    user_id=rnina9994bde8mua79zqcg5hmo&
+    user_name=somename
+
++ Response 200 (application/json; charset=UTF-8)
+
+    + Attributes (object)
+        + text (string) - Response text
+
+    + Body
+
+      {
+        "text": "This is some response text."
+      }
 
 ## giphy Random [/giphy]
 ### Retrieve Random Giphy Gif [GET]
