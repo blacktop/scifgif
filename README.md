@@ -45,6 +45,13 @@ FORMAT: 1A
 ## xkcd [/xkcd]                           
 ### Get Random Xkcd Comic [GET]
 
+## xkcd [/xkcd/number/{number}]                           
+### Get Xkcd by Number [GET]  
+
++ Parameters
+
+    + number: `1319` (number, required) - The xkcd comic ID
+
 ## xkcd [/xkcd/search]                           
 ### Get Xkcd Search [GET]  
 
@@ -78,7 +85,7 @@ FORMAT: 1A
 ### Send Giphy outgoing-webhook query [POST]
 
 + ```token```: Token (string, required) - Integration token
-+ ```trigger_word```: Query (string, required) - Search 
++ ```trigger_word```: Query (string, required) - Search
 ```
 
 ### TODO
