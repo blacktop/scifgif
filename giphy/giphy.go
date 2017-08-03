@@ -36,7 +36,7 @@ func getTags(url string, search string) []string {
 			tagArray := strings.Split(tags, ",")
 			for _, tag := range tagArray {
 				tag = strings.Trim(strings.TrimSpace(tag), "\"\"")
-				if !strings.Contains(search, tag) {
+				if !strings.Contains(search, tag) || len(tagArray) == 1 {
 					gifTags = append(gifTags, tag)
 				}
 			}
