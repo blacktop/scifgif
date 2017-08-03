@@ -8,58 +8,58 @@ Humorous image microservice for isolated networks - xkcd and giphy full text sea
 # xkcd
 xkcd comic endpoints
 
-## Random Xkcd Comic [/xkcd]
+# giphy
+Giphy GIF endpoints
+
+# image
+image endpoints
+
+## xkcd Random [/xkcd]
 ### Retrieve Random Xkcd Comic [GET]
 
-## Xkcd by Number [/xkcd/number/{number}]
+## xkcd Number [/xkcd/number/{number}]
 ### Retrieve Xkcd by Number [GET]
 
 + Parameters
 
     + number: `1319` (number, required) - The xkcd comic ID
 
-## Xkcd Search [/xkcd/search]
-### Retrieve Xkcd Search [GET]
+## xkcd Search [/xkcd/search]
+### Perform Xkcd Search [GET]
 
 + ```query```: Query (string, required) - Search terms
 
-## Xkcd Slash [/xkcd/slash]
+## xkcd Slash [/xkcd/slash]
 ### Post xkcd slash query [POST]
 
 + ```text```: Query (string, required) - Search terms
 
-## Xkcd Webhook [/xkcd/new_post]
+## xkcd Webhook [/xkcd/new_post]
 ### Post xkcd outgoing-webhook query [POST]
 
 + ```token```: Token (string, required) - Integration token
 + ```trigger_word```: Query (string, required) - Search
 
-# giphy
-Giphy GIF endpoints
-
-## Random Giphy [/giphy]
+## giphy Random [/giphy]
 ### Retrieve Random Giphy Gif [GET]
 
-## Giphy Search [/giphy/search]
+## giphy Search [/giphy/search]
 ### Retrieve Giphy Search [GET]
 
 + ```query```: Query (string, required) - Search terms
 
-## Giphy Slash [/giphy/slash]
+## giphy Slash [/giphy/slash]
 ### Post giphy slash query [POST]
 
 + ```text```: Query (string, required) - Search terms
 
-## Giphy Webhook [/giphy/new_post]
+## giphy Webhook [/giphy/new_post]
 ### Post Giphy outgoing-webhook query [POST]
 
 + ```token```: Token (string, required) - Integration token
 + ```trigger_word```: Query (string, required) - Search
 
-# image
-image endpoints
-
-## Get Image [/image/{folder}/{file}]
+## image [/image/{folder}/{file}]
 ### Retrieve Image [GET]
 
 + Parameters
