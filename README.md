@@ -92,8 +92,7 @@ FORMAT: 1A
 
 -	[x] Add meta-data DB for keyword text search (elasticsearch)
 -	[x] Add docs for creating [Mattermost](https://github.com/mattermost/platform) slash command or integration
-- [ ] Add ability to use expansion packs  
-  - Add Giphy (use tag to control types of images available)
+- [ ] Add ability to use expansion packs (use tag to control types of images available)
 - [ ] Add ascii art emojis (table flippers etc)
 - [ ] Add ephemeral slash command help
 
