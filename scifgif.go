@@ -407,6 +407,16 @@ func main() {
 				if err != nil {
 					return err
 				}
+				log.Info("* download star wars Giphy gifs and ingest metadata into elasticsearch")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"star", "wars"}, 500)
+				if err != nil {
+					return err
+				}
+				log.Info("* download futurama Giphy gifs and ingest metadata into elasticsearch")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"futurama"}, 500)
+				if err != nil {
+					return err
+				}
 				log.Info("* download xkcd comics and ingest metadata into elasticsearch")
 				err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("number"))
 				if err != nil {
