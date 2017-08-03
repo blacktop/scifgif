@@ -292,7 +292,7 @@ func getGiphyIcon(w http.ResponseWriter, r *http.Request) {
 
 // getXkcdIcon serves xkcd icon
 func getXkcdIcon(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "images/icons/xkcd-icon.png")
+	http.ServeFile(w, r, "images/icons/xkcd-icon.jpg")
 }
 
 // getDefaultGiphy serves default giphy gif when nothing else is found
@@ -447,8 +447,8 @@ func main() {
 
 		// start web service
 		router := mux.NewRouter().StrictSlash(true)
-		router.HandleFunc("/icon/xkcd", getGiphyIcon).Methods("GET")
-		router.HandleFunc("/icon/giphy", getXkcdIcon).Methods("GET")
+		router.HandleFunc("/icon/xkcd", getXkcdIcon).Methods("GET")
+		router.HandleFunc("/icon/giphy", getGiphyIcon).Methods("GET")
 		router.HandleFunc("/images/{source}/{file}", getImage).Methods("GET")
 		// xkcd routes
 		router.HandleFunc("/xkcd", getRandomXKCD).Methods("GET")
