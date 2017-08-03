@@ -59,6 +59,7 @@ POST /giphy/new_post [token,trigger_word]  (webhook post to search Giphy)
 -	[x] Add docs for creating [Mattermost](https://github.com/mattermost/platform) slash command or integration
 - [ ] Add ability to use expansion packs  
 - [ ] Add ascii art emojis (table flippers etc)
+- [ ] Add ephemeral slash command help
 
 ### Issues
 

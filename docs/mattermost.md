@@ -12,19 +12,22 @@ Add an Integration
 
 ![add-integration](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/add-integration.png)
 
-Add an Outgoing Webhook
------------------------
+Add Slash Commands
+------------------
 
-![outgoing-webhook](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/outgoing-webhook.png)
+`xkcd` slash  
 
-### Take note of the new **token**
+![xkcd-slash](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/xkcd-slash.png)
 
-![webhook-token](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/webhook-token.png)
+`scifgif` slash  
+
+![scifgif-slash](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/scifgif-slash.png)
+
 
 Start **scifgif** microservice with new **token**
 
 ```sh
-$ docker run --init -d --name scifgif blacktop/scifgif --host localhost --token sdqg4tm6jiy1zceyt6p7i8i6jr
+$ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif --host HOST --port PORT --token sdqg4tm6jiy1zceyt6p7i8i6jr
 ```
 
 ---
