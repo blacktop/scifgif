@@ -31,13 +31,10 @@ $ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif --host local
 Documentation
 -------------
 
+- [API Docs](http://docs.scifgif.apiary.io)
 -	[Use with Mattermost](https://github.com/blacktop/scifgif/blob/master/docs/mattermost.md)
 
 ![mattermost](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/mattermost.png)
-
-### Web Routes
-
- - [API Docs](http://docs.scifgif.apiary.io)
 
 ### TODO
 
