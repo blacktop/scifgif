@@ -38,18 +38,47 @@ Documentation
 ### Web Routes
 
 ```apib
-# xkcd
+FORMAT: 1A
 
-GET  /xkcd                                 (random xkcd comic)
-GET  /xkcd/{number}                        (xkcd comic by number)
-GET  /xkcd/search    [query]               (xkcd comic by text query)
-POST /xkcd/new_post  [token,trigger_word]  (webhook post to search xkcd)
+# SCIFgif  
 
-# giphy
+## xkcd [/xkcd]                           
+### Get Random Xkcd Comic [GET]
 
-GET  /giphy                                (random Giphy gif)
-GET  /giphy/search   [query]               (Giphy gif matching text query)
-POST /giphy/new_post [token,trigger_word]  (webhook post to search Giphy)
+## xkcd [/xkcd/search]                           
+### Get Xkcd Search [GET]  
+
++ ```query```: Query (string, required) - Search terms
+
+## xkcd [/xkcd/slash]                           
+### Send xkcd slash query [POST]
+
++ ```text```: Query (string, required) - Search terms
+
+## xkcd [/xkcd/new_post]                           
+### Send xkcd outgoing-webhook query [POST]
+
++ ```token```: Token (string, required) - Integration token
++ ```trigger_word```: Query (string, required) - Search
+
+## Giphy [/giphy]
+### Get Random Giphy Gif [GET]
+
+## Giphy [/giphy/search]                           
+### Get Giphy Search [GET]  
+
++ ```query```: Query (string, required) - Search terms
+
+## Giphy [/giphy/slash]                           
+### Send Giphy slash query [POST]
+
++ ```text```: Query (string, required) - Search terms
+
+## Giphy [/giphy/new_post]                           
+### Send Giphy outgoing-webhook query [POST]
+
++ ```token```: Token (string, required) - Integration token
++ ```trigger_word```: Query (string, required) - Search 
 ```
 
 ### TODO
