@@ -51,9 +51,10 @@ image endpoints
 ## giphy Slash [/giphy/slash{?text}]
 ### Post giphy slash query [POST]
 
-+ ```text```: Query (string, required) - Search terms
++ Attributes
+    + text (string) - Search terms
 
-+ Response 200 (application/json)
++ Response 200 (application/json; charset=UTF-8)
 
     + Attributes (object)
         + icon_url (string) - Slash command icon
