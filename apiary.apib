@@ -5,53 +5,62 @@ HOST: http://localhost:3993
 
 Humorous image microservice for isolated networks - xkcd and giphy full text search API
 
-## xkcd [/xkcd]
-### Get Random Xkcd Comic [GET]
+# xkcd
+xkcd comic endpoints
 
-## xkcd [/xkcd/number/{number}]
-### Get Xkcd by Number [GET]
+## Random Xkcd Comic [/xkcd]
+### Retrieve Random Xkcd Comic [GET]
+
+## Xkcd by Number [/xkcd/number/{number}]
+### Retrieve Xkcd by Number [GET]
 
 + Parameters
 
     + number: `1319` (number, required) - The xkcd comic ID
 
-## xkcd [/xkcd/search]
-### Get Xkcd Search [GET]
+## Xkcd Search [/xkcd/search]
+### Retrieve Xkcd Search [GET]
 
 + ```query```: Query (string, required) - Search terms
 
-## xkcd [/xkcd/slash]
-### Send xkcd slash query [POST]
+## Xkcd Slash [/xkcd/slash]
+### Post xkcd slash query [POST]
 
 + ```text```: Query (string, required) - Search terms
 
-## xkcd [/xkcd/new_post]
-### Send xkcd outgoing-webhook query [POST]
+## Xkcd Webhook [/xkcd/new_post]
+### Post xkcd outgoing-webhook query [POST]
 
 + ```token```: Token (string, required) - Integration token
 + ```trigger_word```: Query (string, required) - Search
 
-## giphy [/giphy]
-### Get Random Giphy Gif [GET]
+# giphy
+Giphy GIF endpoints
 
-## giphy [/giphy/search]
-### Get Giphy Search [GET]
+## Random Giphy [/giphy]
+### Retrieve Random Giphy Gif [GET]
+
+## Giphy Search [/giphy/search]
+### Retrieve Giphy Search [GET]
 
 + ```query```: Query (string, required) - Search terms
 
-## giphy [/giphy/slash]
-### Send Giphy slash query [POST]
+## Giphy Slash [/giphy/slash]
+### Post giphy slash query [POST]
 
 + ```text```: Query (string, required) - Search terms
 
-## giphy [/giphy/new_post]
-### Send Giphy outgoing-webhook query [POST]
+## Giphy Webhook [/giphy/new_post]
+### Post Giphy outgoing-webhook query [POST]
 
 + ```token```: Token (string, required) - Integration token
 + ```trigger_word```: Query (string, required) - Search
 
-## image [/image/{folder}/{file}]
-### Get Image [GET]
+# image
+image endpoints
+
+## Get Image [/image/{folder}/{file}]
+### Retrieve Image [GET]
 
 + Parameters
 
