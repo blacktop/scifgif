@@ -15,19 +15,23 @@ Giphy GIF endpoints
 image endpoints
 
 ## xkcd Random [/xkcd]
-### Retrieve Random Xkcd Comic [GET]
+### Retrieve Random xkcd Comic [GET]
 
 ## xkcd Number [/xkcd/number/{number}]
-### Retrieve Xkcd by Number [GET]
+### Retrieve xkcd by Number [GET]
 
 + Parameters
 
     + number: `1319` (number, required) - The xkcd comic ID
 
 ## xkcd Search [/xkcd/search]
-### Perform Xkcd Search [GET]
+### Perform xkcd Search [GET]
 
-+ ```query```: Query (string, required) - Search terms
++ Request
+
+  + Attributes
+
+    + query: Query (string, required) - Search terms
 
 ## xkcd Slash [/xkcd/slash]
 ### Post xkcd slash query [POST]
@@ -59,7 +63,7 @@ image endpoints
 + ```token```: Token (string, required) - Integration token
 + ```trigger_word```: Query (string, required) - Search
 
-## image [/image/{folder}/{file}]
+## image [/image/{source}/{file}]
 ### Retrieve Image [GET]
 
 + Parameters
