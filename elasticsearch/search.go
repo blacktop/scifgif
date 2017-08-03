@@ -2,6 +2,7 @@ package elasticsearch
 
 import (
 	"context"
+	"errors"
 	"math/rand"
 	"reflect"
 	"strings"
@@ -57,7 +58,12 @@ func SearchImage(search []string, itype string) (string, error) {
 			}
 		}
 	}
-	// TODO: return default image when nothing found
-	return "images/default/nope.gif", nil
-	// return "", errors.New("no images found")
+	// return default 404 images
+	if strings.EqualFold(itype, "xkcd") {
+		return "images/default/xkcd.png", nil
+	}
+	if strings.EqualFold(itype, "giphy") {
+		return "images/default/giphy.gif", nil
+	}
+	return "", errors.New("no images found")
 }
