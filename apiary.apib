@@ -6,11 +6,9 @@ HOST: http://localhost:3993
 Humorous image microservice for isolated networks - xkcd and giphy full text search API
 
 ## xkcd [/xkcd]
-
 ### Get Random Xkcd Comic [GET]
 
 ## xkcd [/xkcd/number/{number}]
-
 ### Get Xkcd by Number [GET]
 
 + Parameters
@@ -18,49 +16,41 @@ Humorous image microservice for isolated networks - xkcd and giphy full text sea
     + number: `1319` (number, required) - The xkcd comic ID
 
 ## xkcd [/xkcd/search]
-
 ### Get Xkcd Search [GET]
 
 + ```query```: Query (string, required) - Search terms
 
 ## xkcd [/xkcd/slash]
-
 ### Send xkcd slash query [POST]
 
 + ```text```: Query (string, required) - Search terms
 
 ## xkcd [/xkcd/new_post]
-
 ### Send xkcd outgoing-webhook query [POST]
 
 + ```token```: Token (string, required) - Integration token
 + ```trigger_word```: Query (string, required) - Search
 
-## Giphy [/giphy]
-
+## giphy [/giphy]
 ### Get Random Giphy Gif [GET]
 
-## giphy GET [/giphy/search]
-
+## giphy [/giphy/search]
 ### Get Giphy Search [GET]
 
 + ```query```: Query (string, required) - Search terms
 
-## Giphy [/giphy/slash]
-
+## giphy [/giphy/slash]
 ### Send Giphy slash query [POST]
 
 + ```text```: Query (string, required) - Search terms
 
-## Giphy [/giphy/new_post]
-
+## giphy [/giphy/new_post]
 ### Send Giphy outgoing-webhook query [POST]
 
 + ```token```: Token (string, required) - Integration token
 + ```trigger_word```: Query (string, required) - Search
 
 ## image [/image/{folder}/{file}]
-
 ### Get Image [GET]
 
 + Parameters
@@ -77,10 +67,5 @@ Allows users to delete possibly offensive images
     + file: `some.png` (string, required) - The image filename
 
 + Response 200 (text/plain)
-
-    HTTP/1.1 200 OK
-    Content-Length: 27
-    Content-Type: text/plain; charset=utf-8
-    Date: Thu, 03 Aug 2017 19:45:20 GMT
 
     image successfully removed
