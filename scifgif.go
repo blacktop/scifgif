@@ -164,7 +164,7 @@ func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
 		ResponseType: "in_channel",
 		Text:         fmt.Sprintf("![gif](http://%s:%s/%s)", Host, Port, path),
 		Username:     "scifgif",
-		IconURL:      fmt.Sprintf("http://%s:%s/icon", Host, Port),
+		IconURL:      fmt.Sprintf("http://%s:%s/icon/xkcd", Host, Port),
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -269,7 +269,7 @@ func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
 		ResponseType: "in_channel",
 		Text:         fmt.Sprintf("![gif](http://%s:%s/%s)", Host, Port, path),
 		Username:     "scifgif",
-		IconURL:      fmt.Sprintf("http://%s:%s/icon", Host, Port),
+		IconURL:      fmt.Sprintf("http://%s:%s/icon/giphy", Host, Port),
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")

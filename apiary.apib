@@ -33,13 +33,46 @@ image endpoints
 ### Post xkcd slash query [POST]
 
 + Parameters
-  + text: `thumbs up` (string, required) - Search terms
+  + text: `automation` (string, required) - Search terms
+
++ Request (application/json)
+
++ Response 200 (application/json; charset=UTF-8)
+
+    + Attributes (object)
+        + icon_url (string) - Slash command icon
+        + response_type (string) - Mattermost response type
+        + text (string) - Message text
+        + username (string) - Mattermost username
+
+    + Body
+
+      {
+          "icon_url": "http://localhost:3993/icon",
+          "response_type": "in_channel",
+          "text": "![gif](http://localhost:3993/images/default/xkcd.png)",
+          "username": "xkcd"
+      }
 
 ## xkcd Webhook [/xkcd/new_post]
 ### Post xkcd outgoing-webhook query [POST]
 
-+ ```token```: Token (string, required) - Integration token
-+ ```trigger_word```: Query (string, required) - Search
++ Attributes
+  + channel_id: hawos4dqtby53pd64o4a4cmeoo  (string)
+  + channel_name: town-square  (string)
+  + team_domain: someteam  (string)
+  + team_id: kwoknj9nwpypzgzy78wkw516qe  (string)
+  + post_id: axdygg1957njfe5pu38saikdho  (string)
+  + text: some+text+here  (string)
+  + timestamp: 1445532266  (string)
+  + token: zmigewsanbbsdf59xnmduzypjc  (string)
+  + trigger_word: some  (string)
+  + user_id: rnina9994bde8mua79zqcg5hmo  (string)
+  + user_name: somename  (string)
+
++ Request (application/json)
+
++ Response 201
 
 ## giphy Random [/giphy]
 ### Retrieve Random Giphy Gif [GET]
@@ -96,5 +129,5 @@ Allows users to delete possibly offensive images
 + Response 200 (text/plain)
 
     + Body
-    
+
       image successfully removed
