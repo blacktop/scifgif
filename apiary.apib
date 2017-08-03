@@ -17,17 +17,23 @@ image endpoints
 ## xkcd Random [/xkcd]
 ### Retrieve Random xkcd Comic [GET]
 
++ Response 200 (image/png)
+
 ## xkcd Number [/xkcd/number/{number}]
 ### Retrieve xkcd by Number [GET]
 
 + Parameters
     + number: `1319` (number, required) - The xkcd comic ID
 
++ Response 200 (image/png)
+
 ## xkcd Search [/xkcd/search{?query}]
 ### Perform xkcd Search [GET]
 
 + Parameters
   + query: `thumbs up` (string, required) - Search terms
+
++ Response 200 (image/png)
 
 ## xkcd Slash [/xkcd/slash{?text}]
 ### Post xkcd slash query [POST]
@@ -102,11 +108,15 @@ image endpoints
 ## giphy Random [/giphy]
 ### Retrieve Random Giphy Gif [GET]
 
++ Response 200 (image/gif)
+
 ## giphy Search [/giphy/search{?query}]
 ### Retrieve Giphy Search [GET]
 
 + Parameters
   + query: `thumbs up` (string, required) - Search terms
+
++ Response 200 (image/gif)
 
 ## giphy Slash [/giphy/slash{?text}]
 ### Post giphy slash query [POST]
