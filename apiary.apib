@@ -8,12 +8,12 @@ Humorous image microservice for isolated networks - xkcd and giphy full text sea
 # Group xkcd
 xkcd comic endpoints
 
-## xkcd Random [/xkcd]
+## Random [/xkcd]
 ### Retrieve random xkcd comic [GET]
 
 + Response 200 (image/png)
 
-## xkcd Number [/xkcd/number/{number}]
+## Number [/xkcd/number/{number}]
 ### Retrieve xkcd by number [GET]
 
 + Parameters
@@ -21,7 +21,7 @@ xkcd comic endpoints
 
 + Response 200 (image/png)
 
-## xkcd Search [/xkcd/search{?query}]
+## Search [/xkcd/search{?query}]
 ### Perform xkcd search [GET]
 
 + Parameters
@@ -29,7 +29,7 @@ xkcd comic endpoints
 
 + Response 200 (image/png)
 
-## xkcd Slash [/xkcd/slash{?text}]
+## Slash [/xkcd/slash{?text}]
 ### Post xkcd slash query [POST]
 
 + Parameters
@@ -54,7 +54,7 @@ xkcd comic endpoints
           "username": "xkcd"
       }
 
-## xkcd Webhook [/xkcd/new_post]
+## Webhook [/xkcd/new_post]
 ### Post xkcd outgoing-webhook query [POST]
 
 + Attributes
@@ -102,12 +102,12 @@ xkcd comic endpoints
 # Group giphy
 Giphy GIF endpoints
 
-## giphy Random [/giphy]
+## Random [/giphy]
 ### Retrieve random giphy gif [GET]
 
 + Response 200 (image/gif)
 
-## giphy Search [/giphy/search{?query}]
+## Search [/giphy/search{?query}]
 ### Retrieve giphy search [GET]
 
 + Parameters
@@ -115,7 +115,7 @@ Giphy GIF endpoints
 
 + Response 200 (image/gif)
 
-## giphy Slash [/giphy/slash{?text}]
+## Slash [/giphy/slash{?text}]
 ### Post giphy slash query [POST]
 
 + Parameters
@@ -138,7 +138,7 @@ Giphy GIF endpoints
           "username": "scifgif"
       }
 
-## giphy Webhook [/giphy/new_post]
+## Webhook [/giphy/new_post]
 ### Post giphy outgoing-webhook query [POST]
 
 + Attributes
@@ -186,7 +186,7 @@ Giphy GIF endpoints
 # Group image
 image endpoints
 
-## image [/image/{source}/{file}]
+## Image [/image/{source}/{file}]
 ### Retrieve image [GET]
 
 + Parameters
