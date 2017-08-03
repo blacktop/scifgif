@@ -39,7 +39,9 @@ RUN echo "===> Updating images..." \
   && sleep 10; kill $(cat /tmp/epid) \
   && wait $(cat /tmp/epid); exit 0;
 
-COPY images/icon.png /scifgif/images/icon.png
+COPY images/default/nope.gif /scifgif/images/default/nope.gif
+COPY images/icons/giphy-icon.png /scifgif/images/icons/giphy-icon.png
+COPY images/icons/xkcd-icon.jpg /scifgif/images/icons/xkcd-icon.jpg
 
 EXPOSE 3993
 

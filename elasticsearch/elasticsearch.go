@@ -137,7 +137,7 @@ func WaitForConnection(ctx context.Context, timeout int) error {
 }
 
 // WriteImageToDatabase upserts image metadata into Database
-func WriteImageToDatabase(image ImageMetaData) error {
+func WriteImageToDatabase(image ImageMetaData, itype string) error {
 	var err error
 	ctx := context.Background()
 
@@ -168,7 +168,7 @@ func WriteImageToDatabase(image ImageMetaData) error {
 
 	put, err := client.Index().
 		Index("scifgif").
-		Type("image").
+		Type(itype).
 		OpType("index").
 		BodyJson(image).
 		Do(ctx)

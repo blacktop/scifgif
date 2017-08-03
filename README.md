@@ -5,7 +5,7 @@ scifgif
 
 [![Circle CI](https://circleci.com/gh/blacktop/scifgif.png?style=shield)](https://circleci.com/gh/blacktop/scifgif) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif) [![Docker Pulls](https://img.shields.io/docker/pulls/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif) [![Docker Image](https://img.shields.io/badge/docker%20image-1.2GB-blue.svg)](https://store.docker.com/community/images/blacktop/scifgif)
 
-> Humorous Image microservice for isolated networks.
+> Humorous image microservice for isolated networks - xkcd and giphy full text search API
 
 ---
 
@@ -57,6 +57,8 @@ POST /giphy/new_post [token,trigger_word]  (webhook post to search Giphy)
 -	[x] Add meta-data DB for keyword text search (elasticsearch)
 -	[ ] Add Giphy (use tag to control types of images available)
 -	[x] Add docs for creating [Mattermost](https://github.com/mattermost/platform) slash command or integration
+- [ ] Add ability to use expansion packs  
+- [ ] Add ascii art emojis (table flippers etc)
 
 ### Issues
 

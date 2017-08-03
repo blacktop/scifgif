@@ -69,7 +69,7 @@ func GetAllGiphy(folder string, search []string, count int) error {
 				Title:  gif.Source,
 				Text:   strings.Join(getTags(gif.URL, srchStrs), " "),
 				Path:   filepath,
-			})
+			}, "giphy")
 		}
 	}
 	return nil

@@ -83,7 +83,7 @@ func getXkcdByNumber(w http.ResponseWriter, r *http.Request) {
 // getSearchXKCD serves a comic by searching for text
 func getSearchXKCD(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	path, err := elasticsearch.SearchXKCD(r.Form["query"])
+	path, err := elasticsearch.SearchImage(r.Form["query"], "xkcd")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
@@ -104,7 +104,7 @@ func postXkcdMattermost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	path, err := elasticsearch.SearchXKCD(r.Form["trigger_word"])
+	path, err := elasticsearch.SearchImage(r.Form["trigger_word"], "xkcd")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
@@ -151,7 +151,7 @@ func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
 		path, err = elasticsearch.GetImageByID(textArg)
 	} else {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting xkcd by title")
-		path, err = elasticsearch.SearchXKCD(r.Form["text"])
+		path, err = elasticsearch.SearchImage(r.Form["text"], "xkcd")
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -191,7 +191,7 @@ func getRandomGiphy(w http.ResponseWriter, r *http.Request) {
 // getSearchGiphy serves a comic by searching for text
 func getSearchGiphy(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	path, err := elasticsearch.SearchImages(r.Form["query"])
+	path, err := elasticsearch.SearchImage(r.Form["query"], "giphy")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
@@ -212,7 +212,7 @@ func postGiphyMattermost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	path, err := elasticsearch.SearchImages(r.Form["trigger_word"])
+	path, err := elasticsearch.SearchImage(r.Form["trigger_word"], "giphy")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
@@ -256,7 +256,7 @@ func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
 		path, err = elasticsearch.GetRandomImage("giphy")
 	} else {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting gif by keyword")
-		path, err = elasticsearch.SearchImages(r.Form["text"])
+		path, err = elasticsearch.SearchImage(r.Form["text"], "giphy")
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -283,6 +283,21 @@ func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
 // getIcon serves scifgif icon
 func getIcon(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "images/icon.png")
+}
+
+// getGiphyIcon serves giphy icon
+func getGiphyIcon(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "images/icons/giphy-icon.png")
+}
+
+// getXkcdIcon serves xkcd icon
+func getXkcdIcon(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "images/icons/xkcd-icon.png")
+}
+
+// getDefaultGiphy serves default giphy gif when nothing else is found
+func getDefaultGiphy(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "images/default/nope.gif")
 }
 
 // getImage serves scifgif icon
@@ -432,7 +447,8 @@ func main() {
 
 		// start web service
 		router := mux.NewRouter().StrictSlash(true)
-		router.HandleFunc("/icon", getIcon).Methods("GET")
+		router.HandleFunc("/icon/xkcd", getGiphyIcon).Methods("GET")
+		router.HandleFunc("/icon/giphy", getXkcdIcon).Methods("GET")
 		router.HandleFunc("/images/{source}/{file}", getImage).Methods("GET")
 		// xkcd routes
 		router.HandleFunc("/xkcd", getRandomXKCD).Methods("GET")

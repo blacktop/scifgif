@@ -63,7 +63,7 @@ func GetAllXkcd(folder string, count int) error {
 			Title:  comic.Title,
 			Text:   description,
 			Path:   filepath,
-		})
+		}, "xkcd")
 	}
 	return nil
 }
