@@ -86,6 +86,22 @@ FORMAT: 1A
 
 + ```token```: Token (string, required) - Integration token
 + ```trigger_word```: Query (string, required) - Search
+
+## image [/image/{folder}/{file}]
+### Get Image [GET]
+
++ Parameters
+
+    + source: `(xkcd|giphy)` (string, required) - The image source
+    + file: `some.png` (string, required) - The image filename
+
+### Delete Image [DELETE]
+Allows users to delete possibly offensive images
+
++ Parameters
+
+    + source: `(xkcd|giphy)` (string, required) - The image source
+    + file: `some.png` (string, required) - The image filename
 ```
 
 ### TODO

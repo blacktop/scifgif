@@ -295,9 +295,48 @@ func getXkcdIcon(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "images/icons/xkcd-icon.jpg")
 }
 
-// getDefaultGiphy serves default giphy gif when nothing else is found
-func getDefaultGiphy(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "images/default/nope.gif")
+// getDefaultImage gets default image path
+func getDefaultImage(source string) string {
+	switch source {
+	case "xkcd":
+		return "images/default/xkcd.png"
+	case "giphy":
+		return "images/default/giphy.gif"
+	}
+	return "images/default/giphy.gif"
+}
+
+func deleteImage(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	folder := vars["source"]
+	file := vars["file"]
+
+	// protect against directory traversal
+	file = filepath.Clean(filepath.Base(file))
+	log.Infof("GET images/%s/%s", folder, file)
+	path := filepath.Join("images", folder, file)
+
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, "image not found")
+		log.Error(err)
+		return
+	}
+
+	err := os.Remove(path)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, "image successfully removed")
+		log.Error(err)
+		return
+	}
 }
 
 // getImage serves scifgif icon
@@ -311,10 +350,7 @@ func getImage(w http.ResponseWriter, r *http.Request) {
 	log.Infof("GET images/%s/%s", folder, file)
 
 	if _, err := os.Stat(filepath.Join("images", folder, file)); os.IsNotExist(err) {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintln(w, "image not found")
-		log.Error(err)
-		return
+		http.ServeFile(w, r, getDefaultImage(folder))
 	}
 
 	http.ServeFile(w, r, filepath.Join("images", folder, file))
@@ -460,6 +496,7 @@ func main() {
 		router.HandleFunc("/icon/xkcd", getXkcdIcon).Methods("GET")
 		router.HandleFunc("/icon/giphy", getGiphyIcon).Methods("GET")
 		router.HandleFunc("/images/{source}/{file}", getImage).Methods("GET")
+		router.HandleFunc("/images/{source}/{file}", deleteImage).Methods("DELETE")
 		// xkcd routes
 		router.HandleFunc("/xkcd", getRandomXKCD).Methods("GET")
 		router.HandleFunc("/xkcd/number/{number}", getXkcdByNumber).Methods("GET")
