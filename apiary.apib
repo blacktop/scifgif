@@ -27,9 +27,9 @@ image endpoints
 ### Perform xkcd Search [GET]
 
 + Parameters
-  + query: `thumbs+up` (string, required) - Search terms
+  + query: `thumbs up` (string, required) - Search terms
 
-## xkcd Slash [/xkcd/slash]
+## xkcd Slash [/xkcd/slash{?text}]
 ### Post xkcd slash query [POST]
 
 + ```text```: Query (string, required) - Search terms
@@ -48,10 +48,27 @@ image endpoints
 
 + ```query```: Query (string, required) - Search terms
 
-## giphy Slash [/giphy/slash]
+## giphy Slash [/giphy/slash{?text}]
 ### Post giphy slash query [POST]
 
 + ```text```: Query (string, required) - Search terms
+
++ Response 200 (application/json)
+
+    + Attributes (object)
+        + icon_url (string) - Slash command icon
+        + response_type (string) - Mattermost response type
+        + text (string) - Message text
+        + username (string) - Mattermost username
+
+    + Body
+
+      {
+          "icon_url": "http://localhost:3993/icon",
+          "response_type": "in_channel",
+          "text": "![gif](http://localhost:3993/images/default/xkcd.png)",
+          "username": "scifgif"
+      }
 
 ## giphy Webhook [/giphy/new_post]
 ### Post Giphy outgoing-webhook query [POST]
