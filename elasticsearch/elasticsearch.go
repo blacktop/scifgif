@@ -38,7 +38,7 @@ const mapping = `
       },
       "title":{
         "type":"text",
-				"analyzer": "my_english_analyzer",				
+				"analyzer": "my_english_analyzer",
         "store": true,
         "fielddata": true
       },
@@ -90,7 +90,7 @@ func TestConnection() (bool, error) {
 	}
 
 	// Ping the Elasticsearch server to get e.g. the version number
-	log.Debug("attempting to PING elasticsearch")
+	log.Debug("* attempting to PING elasticsearch")
 	info, code, err := client.Ping("http://127.0.0.1:9200").Do(context.Background())
 	if err != nil {
 		return false, err
@@ -100,7 +100,7 @@ func TestConnection() (bool, error) {
 		"code":    code,
 		"cluster": info.ClusterName,
 		"version": info.Version.Number,
-	}).Debug("elasticSearch connection successful.")
+	}).Debug("* elasticSearch connection successful.")
 
 	if code == 200 {
 		return true, err
@@ -127,7 +127,7 @@ func WaitForConnection(ctx context.Context, timeout int) error {
 		default:
 			ready, connErr = TestConnection()
 			if ready {
-				log.Infof("elasticsearch came online after %d seconds", secondsWaited)
+				log.Debugf("* elasticsearch came online after %d seconds", secondsWaited)
 				return connErr
 			}
 			secondsWaited++

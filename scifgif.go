@@ -473,13 +473,8 @@ func main() {
 			log.SetLevel(log.DebugLevel)
 		}
 
-		log.Info("host: ", Host)
-		log.Info("port: ", Port)
-
 		if len(c.String("token")) == 0 {
 			log.Warn("no webhook token set: --token")
-		} else {
-			log.Info("token: ", Token)
 		}
 
 		// start elasticsearch database
@@ -509,7 +504,11 @@ func main() {
 		router.HandleFunc("/giphy/new_post", postGiphyMattermost).Methods("POST")
 		router.HandleFunc("/giphy/slash", postGiphyMattermostSlash).Methods("POST")
 		// start microservice
-		log.Info("web service listening on port :", Port)
+		log.WithFields(log.Fields{
+			"host":  Host,
+			"port":  Port,
+			"token": Token,
+		}).Info("web service listening")
 		loggedRouter := handlers.LoggingHandler(os.Stdout, router)
 		log.Fatal(http.ListenAndServe(":"+Port, loggedRouter))
 
