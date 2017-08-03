@@ -11,6 +11,8 @@ import (
 	elastic "gopkg.in/olivere/elastic.v5"
 )
 
+const Size = 20
+
 func init() {
 	log.SetLevel(log.DebugLevel)
 }
@@ -33,22 +35,21 @@ func SearchImage(search []string, itype string) (string, error) {
 		Index("scifgif"). // search in index "scifgif"
 		Type(itype).      // only search supplied type images
 		Query(q).         // specify the query
-		Do(ctx)           // execute
+		Size(Size).
+		Do(ctx) // execute
 	if err != nil {
 		return "", err
 	}
 
 	if searchResult.TotalHits() > 0 {
 		var ityp ImageMetaData
-		randomResult := rand.Int63n(searchResult.TotalHits())
+		randomResult := rand.Intn(int(searchResult.TotalHits())) % Size
 		for iter, item := range searchResult.Each(reflect.TypeOf(ityp)) {
 			if i, ok := item.(ImageMetaData); ok {
-				log.Info(iter)
-				log.Info(randomResult)
 				// return random image
-				if iter == int(randomResult) {
-					log.Info(i.Path)
+				if iter == randomResult {
 					log.WithFields(log.Fields{
+						"total_hits":  searchResult.TotalHits(),
 						"search_term": searchStr,
 						"text":        i.Text,
 					}).Debug("search found image")
@@ -58,6 +59,11 @@ func SearchImage(search []string, itype string) (string, error) {
 			}
 		}
 	}
+
+	log.WithFields(log.Fields{
+		"type":        itype,
+		"search_term": searchStr,
+	}).Error("no found image")
 	// return default 404 images
 	if strings.EqualFold(itype, "xkcd") {
 		return "images/default/xkcd.png", nil

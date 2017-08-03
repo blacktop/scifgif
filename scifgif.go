@@ -402,17 +402,17 @@ func main() {
 				if err != nil {
 					log.Fatal(err)
 				}
-				log.Info(" * download Giphy gifs and ingest metadata into elasticsearch")
+				log.Info("* download Giphy gifs and ingest metadata into elasticsearch")
 				err = giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, c.GlobalInt("number"))
 				if err != nil {
 					return err
 				}
-				log.Info(" * download xkcd comics and ingest metadata into elasticsearch")
+				log.Info("* download xkcd comics and ingest metadata into elasticsearch")
 				err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("number"))
 				if err != nil {
 					return err
 				}
-				log.Info(" * finalize elasticsearch db")
+				log.Info("* finalize elasticsearch db")
 				err = elasticsearch.Finalize()
 				if err != nil {
 					return err
