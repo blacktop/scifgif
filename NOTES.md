@@ -18,6 +18,13 @@ ascii-emoji
 -	https://github.com/dysfunc/ascii-emoji
 -	http://emojicons.com/popular
 
+expansion-packs
+---------------
+
+- https://github.com/medcl/elasticsearch-migration
+- https://github.com/hoffoo/elasticsearch-dump
+- https://github.com/olivere/elastic/blob/release-branch.v5/recipes/bulk_insert/bulk_insert.go
+
 Web Service
 -----------
 
