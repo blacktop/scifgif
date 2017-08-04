@@ -12,6 +12,12 @@ Giphy API
 -	https://github.com/peterhellberg/giphy
 -	https://github.com/sanzaru/go-giphy
 
+ascii-emoji
+-----------
+
+-	https://github.com/dysfunc/ascii-emoji
+-	http://emojicons.com/popular
+
 Web Service
 -----------
 
