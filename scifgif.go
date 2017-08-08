@@ -406,7 +406,7 @@ func main() {
 		},
 		cli.IntFlag{
 			Name:   "number, N",
-			Value:  1000,
+			Value:  500,
 			Usage:  "number of gifs to download",
 			EnvVar: "IMAGE_NUMBER",
 		},
@@ -455,7 +455,7 @@ func main() {
 				}
 				log.WithFields(log.Fields{
 					"search_for": "star wars",
-					"number":     min(c.GlobalInt("number"), 500),
+					"number":     min(c.GlobalInt("number"), 250),
 				}).Info("* download star wars Giphy gifs and ingest metadata into elasticsearch")
 				err = giphy.GetAllGiphy(giphyFolder, []string{"star", "wars"}, min(c.GlobalInt("number"), 500))
 				if err != nil {
@@ -463,7 +463,7 @@ func main() {
 				}
 				log.WithFields(log.Fields{
 					"search_for": "futurama",
-					"number":     min(c.GlobalInt("number"), 500),
+					"number":     min(c.GlobalInt("number"), 250),
 				}).Info("* download futurama Giphy gifs and ingest metadata into elasticsearch")
 				err = giphy.GetAllGiphy(giphyFolder, []string{"futurama"}, min(c.GlobalInt("number"), 500))
 				if err != nil {
@@ -504,7 +504,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		// start web service
+		// create http routes
 		router := mux.NewRouter().StrictSlash(true)
 		router.HandleFunc("/icon/xkcd", getXkcdIcon).Methods("GET")
 		router.HandleFunc("/icon/giphy", getGiphyIcon).Methods("GET")
