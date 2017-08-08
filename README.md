@@ -17,6 +17,7 @@ scifgif
 ```bash
 REPOSITORY           TAG                 SIZE
 blacktop/scifgif     latest              2GB
+blacktop/scifgif     0.2.0               2GB
 blacktop/scifgif     0.1.0               2GB
 ```
 

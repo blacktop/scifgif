@@ -9,6 +9,8 @@ $ cd mattermost-docker
 $ docker-compose up -d
 ```
 
+Open [http://localhost](http://localhost)
+
 Add an Integration
 ------------------
 
