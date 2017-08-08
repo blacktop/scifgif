@@ -21,7 +21,7 @@ blacktop/scifgif     0.2.0               2GB
 blacktop/scifgif     0.1.0               2GB
 ```
 
-> **NOTE:** the reason the docker image is so large is that it contains ~2000 animated gifs (1500 reactions, 250 futurama and 250 star wars)
+> **NOTE:** the reason the docker image is so large is that it contains ~2000 animated gifs *(1500 reactions, 250 futurama and 250 star wars)*
 
 Getting Started
 ---------------
