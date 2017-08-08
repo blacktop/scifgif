@@ -1,6 +1,8 @@
 Use with Mattermost
 ===================
 
+To run a dev mattermost setup in docker
+
 ```sh
 $ git clone https://github.com/mattermost/mattermost-docker.git
 $ cd mattermost-docker
@@ -15,19 +17,21 @@ Add an Integration
 Add Slash Commands
 ------------------
 
-`xkcd` slash  
+`xkcd` slash
 
 ![xkcd-slash](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/xkcd-slash.png)
 
-`scifgif` slash  
+`scifgif` slash
 
 ![scifgif-slash](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/scifgif-slash.png)
-
 
 Start **scifgif** microservice with new **token**
 
 ```sh
-$ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif --host HOST --port PORT --token sdqg4tm6jiy1zceyt6p7i8i6jr
+$ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif --host HOST --port 3993 --token MATTERMOST_INTEGRATION_TOKEN 
 ```
 
----
+> **NOTE:** token auth is currently disabled because `scifgif` hosts two microservices `xkcd` and `giphy`
+
+Now in **mattermost** you can type `/xkcd physics` or `/scifgif thumbs up` to activate the slash commands
+---------------------------------------------------------------------------------------------------------
