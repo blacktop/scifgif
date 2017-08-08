@@ -28,10 +28,14 @@ Add Slash Commands
 Start **scifgif** microservice with new **token**
 
 ```sh
-$ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif --host HOST --port 3993 --token MATTERMOST_INTEGRATION_TOKEN 
+$ docker run --init -d \
+             -p 3993:3993 \
+             --name scifgif \
+             blacktop/scifgif --host HOST --port 3993 --token MATTERMOST_INTEGRATION_TOKEN
 ```
 
 > **NOTE:** token auth is currently disabled because `scifgif` hosts two microservices `xkcd` and `giphy`
 
 Now in **mattermost** you can type `/xkcd physics` or `/scifgif thumbs up` to activate the slash commands
----------------------------------------------------------------------------------------------------------
+
+---
