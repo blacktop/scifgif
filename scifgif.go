@@ -70,7 +70,7 @@ func getRandomXKCD(w http.ResponseWriter, r *http.Request) {
 		log.Error(err)
 		return
 	}
-	log.Debug(path)
+	log.Debugf("GET %s", path)
 	http.ServeFile(w, r, path)
 }
 
@@ -84,6 +84,7 @@ func getXkcdByNumber(w http.ResponseWriter, r *http.Request) {
 		log.Error(err)
 		return
 	}
+	log.Debugf("GET %s", path)
 	http.ServeFile(w, r, path)
 }
 
@@ -97,6 +98,7 @@ func getSearchXKCD(w http.ResponseWriter, r *http.Request) {
 		log.Error(err)
 		return
 	}
+	log.Debugf("GET %s", path)
 	http.ServeFile(w, r, path)
 }
 
@@ -191,7 +193,7 @@ func getRandomGiphy(w http.ResponseWriter, r *http.Request) {
 		log.Error(err)
 		return
 	}
-	log.Debug(path)
+	log.Debugf("GET %s", path)
 	http.ServeFile(w, r, path)
 }
 
@@ -205,6 +207,7 @@ func getSearchGiphy(w http.ResponseWriter, r *http.Request) {
 		log.Error(err)
 		return
 	}
+	log.Debugf("GET %s", path)
 	http.ServeFile(w, r, path)
 }
 
@@ -287,11 +290,6 @@ func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// getIcon serves scifgif icon
-func getIcon(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "images/icon.png")
-}
-
 // getGiphyIcon serves giphy icon
 func getGiphyIcon(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "images/icons/giphy-icon.png")
@@ -309,8 +307,9 @@ func getDefaultImage(source string) string {
 		return "images/default/xkcd.png"
 	case "giphy":
 		return "images/default/giphy.gif"
+	default:
+		return "images/default/giphy.gif"
 	}
-	return "images/default/giphy.gif"
 }
 
 func deleteImage(w http.ResponseWriter, r *http.Request) {
@@ -320,7 +319,6 @@ func deleteImage(w http.ResponseWriter, r *http.Request) {
 
 	// protect against directory traversal
 	file = filepath.Clean(filepath.Base(file))
-	log.Infof("GET images/%s/%s", folder, file)
 	path := filepath.Join("images", folder, file)
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
@@ -330,11 +328,13 @@ func deleteImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Infof("deleting images/%s/%s", folder, file)
 	err := os.Remove(path)
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.Error(err, "unable to remove image")
 		return
 	}
 
@@ -354,12 +354,13 @@ func getImage(w http.ResponseWriter, r *http.Request) {
 
 	// protect against directory traversal
 	file = filepath.Clean(filepath.Base(file))
-	log.Infof("GET images/%s/%s", folder, file)
 
 	if _, err := os.Stat(filepath.Join("images", folder, file)); os.IsNotExist(err) {
+		log.Debugf("GET default %s image", folder)
 		http.ServeFile(w, r, getDefaultImage(folder))
+		return
 	}
-
+	log.Debugf("GET images/%s/%s", folder, file)
 	http.ServeFile(w, r, filepath.Join("images", folder, file))
 }
 
@@ -508,8 +509,8 @@ func main() {
 		router := mux.NewRouter().StrictSlash(true)
 		router.HandleFunc("/icon/xkcd", getXkcdIcon).Methods("GET")
 		router.HandleFunc("/icon/giphy", getGiphyIcon).Methods("GET")
-		router.HandleFunc("/images/{source}/{file}", getImage).Methods("GET")
-		router.HandleFunc("/images/{source}/{file}", deleteImage).Methods("DELETE")
+		router.HandleFunc("/images/{source:(?:giphy|xkcd)}/{file}", getImage).Methods("GET")
+		router.HandleFunc("/images/{source:(?:giphy|xkcd)}/{file}", deleteImage).Methods("DELETE")
 		// xkcd routes
 		router.HandleFunc("/xkcd", getRandomXKCD).Methods("GET")
 		router.HandleFunc("/xkcd/number/{number}", getXkcdByNumber).Methods("GET")
