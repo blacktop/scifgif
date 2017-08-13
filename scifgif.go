@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -41,327 +42,12 @@ var (
 	APIkey string
 )
 
-func isNumeric(s string) bool {
-	_, err := strconv.ParseFloat(s, 64)
-	return err == nil
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 // WebHookResponse mattermost webhook response struct
 type WebHookResponse struct {
 	Text         string `json:"text,omitempty"`
 	Username     string `json:"username,omitempty"`
 	IconURL      string `json:"icon_url,omitempty"`
 	ResponseType string `json:"response_type,omitempty"`
-}
-
-// getRandomXKCD serves a random xkcd comic
-func getRandomXKCD(w http.ResponseWriter, r *http.Request) {
-	path, err := elasticsearch.GetRandomImage("xkcd")
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintln(w, "no images found for the xkcd source")
-		log.Error(err)
-		return
-	}
-	log.Debugf("GET %s", path)
-	http.ServeFile(w, r, path)
-}
-
-// getXkcdByNumber serves a comic by it's number
-func getXkcdByNumber(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	path, err := elasticsearch.GetImageByID(vars["number"])
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintln(w, err.Error())
-		log.Error(err)
-		return
-	}
-	log.Debugf("GET %s", path)
-	http.ServeFile(w, r, path)
-}
-
-// getSearchXKCD serves a comic by searching for text
-func getSearchXKCD(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	path, err := elasticsearch.SearchImage(r.Form["query"], "xkcd")
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintln(w, err.Error())
-		log.Error(err)
-		return
-	}
-	log.Debugf("GET %s", path)
-	http.ServeFile(w, r, path)
-}
-
-// postXkcdMattermost handles xkcd webhook POST
-func postXkcdMattermost(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-
-	if !strings.EqualFold(Token, r.Form["token"][0]) {
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-		log.Error(errors.New("unauthorized - bad token"))
-		return
-	}
-
-	path, err := elasticsearch.SearchImage(r.Form["trigger_word"], "xkcd")
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintln(w, err.Error())
-		log.Error(err)
-		return
-	}
-
-	webhook := WebHookResponse{
-		Text:     fmt.Sprintf("![gif](http://%s:%s/%s)", Host, Port, path),
-		Username: "scifgif",
-		IconURL:  fmt.Sprintf("http://%s:%s/icon", Host, Port),
-	}
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-
-	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
-	}
-}
-
-// postXkcdMattermostSlash handles xkcd webhook POST for use with a slash command
-func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
-	var path string
-	var err error
-
-	r.ParseForm()
-
-	// TODO: add token auth back in
-
-	// if !strings.EqualFold(Token, r.Form["token"][0]) {
-	// 	w.WriteHeader(http.StatusUnauthorized)
-	// 	fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-	// 	log.Error(errors.New("unauthorized - bad token"))
-	// 	return
-	// }
-
-	textArg := strings.Join(r.Form["text"], " ")
-	if len(textArg) == 0 {
-		log.WithFields(log.Fields{"text": textArg}).Debug("getting random xkcd")
-		path, err = elasticsearch.GetRandomImage("xkcd")
-	} else if isNumeric(textArg) {
-		log.WithFields(log.Fields{"text": textArg}).Debug("getting xkcd by number")
-		path, err = elasticsearch.GetImageByID(textArg)
-	} else {
-		log.WithFields(log.Fields{"text": textArg}).Debug("getting xkcd by title")
-		path, err = elasticsearch.SearchImage(r.Form["text"], "xkcd")
-	}
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintln(w, err.Error())
-		log.Error(err)
-		return
-	}
-
-	webhook := WebHookResponse{
-		ResponseType: "in_channel",
-		Text:         fmt.Sprintf("![gif](http://%s:%s/%s)", Host, Port, path),
-		Username:     "scifgif",
-		IconURL:      fmt.Sprintf("http://%s:%s/icon/xkcd", Host, Port),
-	}
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-
-	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
-	}
-}
-
-// getRandomGiphy serves a random giphy gif
-func getRandomGiphy(w http.ResponseWriter, r *http.Request) {
-	path, err := elasticsearch.GetRandomImage("giphy")
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintln(w, "no images found for the giphy source")
-		log.Error(err)
-		return
-	}
-	log.Debugf("GET %s", path)
-	http.ServeFile(w, r, path)
-}
-
-// getSearchGiphy serves a comic by searching for text
-func getSearchGiphy(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	path, err := elasticsearch.SearchImage(r.Form["query"], "giphy")
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintln(w, err.Error())
-		log.Error(err)
-		return
-	}
-	log.Debugf("GET %s", path)
-	http.ServeFile(w, r, path)
-}
-
-// postGiphyMattermost handles Giphy webhook POST
-func postGiphyMattermost(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-
-	if !strings.EqualFold(Token, r.Form["token"][0]) {
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-		log.Error(errors.New("unauthorized - bad token"))
-		return
-	}
-
-	path, err := elasticsearch.SearchImage(r.Form["trigger_word"], "giphy")
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintln(w, err.Error())
-		log.Error(err)
-		return
-	}
-
-	webhook := WebHookResponse{
-		Text:     fmt.Sprintf("![gif](http://%s:%s/%s)", Host, Port, path),
-		Username: "scifgif",
-		IconURL:  fmt.Sprintf("http://%s:%s/icon", Host, Port),
-	}
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-
-	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
-	}
-}
-
-// postGiphyMattermostSlash handles giphy webhook POST for use with a slash command
-func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
-	var path string
-	var err error
-
-	r.ParseForm()
-
-	// TODO: add token auth back in
-
-	// if !strings.EqualFold(Token, r.Form["token"][0]) {
-	// 	w.WriteHeader(http.StatusUnauthorized)
-	// 	fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-	// 	log.Error(errors.New("unauthorized - bad token"))
-	// 	return
-	// }
-
-	textArg := strings.Join(r.Form["text"], " ")
-	if len(textArg) == 0 {
-		log.WithFields(log.Fields{"text": textArg}).Debug("getting random gif")
-		path, err = elasticsearch.GetRandomImage("giphy")
-	} else {
-		log.WithFields(log.Fields{"text": textArg}).Debug("getting gif by keyword")
-		path, err = elasticsearch.SearchImage(r.Form["text"], "giphy")
-	}
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintln(w, err.Error())
-		log.Error(err)
-		return
-	}
-
-	webhook := WebHookResponse{
-		ResponseType: "in_channel",
-		Text:         fmt.Sprintf("![gif](http://%s:%s/%s)", Host, Port, path),
-		Username:     "scifgif",
-		IconURL:      fmt.Sprintf("http://%s:%s/icon/giphy", Host, Port),
-	}
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-
-	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
-	}
-}
-
-// getGiphyIcon serves giphy icon
-func getGiphyIcon(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "images/icons/giphy-icon.png")
-}
-
-// getXkcdIcon serves xkcd icon
-func getXkcdIcon(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "images/icons/xkcd-icon.jpg")
-}
-
-// getDefaultImage gets default image path
-func getDefaultImage(source string) string {
-	switch source {
-	case "xkcd":
-		return "images/default/xkcd.png"
-	case "giphy":
-		return "images/default/giphy.gif"
-	default:
-		return "images/default/giphy.gif"
-	}
-}
-
-func deleteImage(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	folder := vars["source"]
-	file := vars["file"]
-
-	// protect against directory traversal
-	file = filepath.Clean(filepath.Base(file))
-	path := filepath.Join("images", folder, file)
-
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintln(w, "image not found")
-		log.Error(err)
-		return
-	}
-
-	log.Infof("deleting images/%s/%s", folder, file)
-	err := os.Remove(path)
-
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, err.Error())
-		log.Error(err, "unable to remove image")
-		return
-	}
-
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "image successfully removed")
-		log.Error(err)
-		return
-	}
-}
-
-// getImage serves scifgif icon
-func getImage(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	folder := vars["source"]
-	file := vars["file"]
-
-	// protect against directory traversal
-	file = filepath.Clean(filepath.Base(file))
-
-	if _, err := os.Stat(filepath.Join("images", folder, file)); os.IsNotExist(err) {
-		log.Debugf("GET default %s image", folder)
-		http.ServeFile(w, r, getDefaultImage(folder))
-		return
-	}
-	log.Debugf("GET images/%s/%s", folder, file)
-	http.ServeFile(w, r, filepath.Join("images", folder, file))
 }
 
 var appHelpTemplate = `Usage: {{.Name}} {{if .Flags}}[OPTIONS] {{end}}COMMAND [arg...]
@@ -538,4 +224,346 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+// getRandomXKCD serves a random xkcd comic
+func getRandomXKCD(w http.ResponseWriter, r *http.Request) {
+	path, err := elasticsearch.GetRandomImage("xkcd")
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, "no images found for the xkcd source")
+		log.Error(err)
+		return
+	}
+	log.Debugf("GET %s", path)
+	http.ServeFile(w, r, path)
+}
+
+// getXkcdByNumber serves a comic by it's number
+func getXkcdByNumber(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	path, err := elasticsearch.GetImageByID(vars["number"])
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+	log.Debugf("GET %s", path)
+	http.ServeFile(w, r, path)
+}
+
+// getSearchXKCD serves a comic by searching for text
+func getSearchXKCD(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	path, err := elasticsearch.SearchImage(r.Form["query"], "xkcd")
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+	log.Debugf("GET %s", path)
+	http.ServeFile(w, r, path)
+}
+
+// postXkcdMattermost handles xkcd webhook POST
+func postXkcdMattermost(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	if !strings.EqualFold(Token, r.Form["token"][0]) {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintln(w, errors.New("unauthorized - bad token"))
+		log.Error(errors.New("unauthorized - bad token"))
+		return
+	}
+
+	path, err := elasticsearch.SearchImage(r.Form["trigger_word"], "xkcd")
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+
+	webhook := WebHookResponse{
+		Text:     makeURL("http", Host, Port, path),
+		Username: "scifgif",
+		IconURL:  makeURL("http", Host, Port, "icon/xkcd"),
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(webhook); err != nil {
+		log.Error(err)
+	}
+}
+
+// postXkcdMattermostSlash handles xkcd webhook POST for use with a slash command
+func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
+	var path string
+	var err error
+
+	r.ParseForm()
+
+	// TODO: add token auth back in
+
+	// if !strings.EqualFold(Token, r.Form["token"][0]) {
+	// 	w.WriteHeader(http.StatusUnauthorized)
+	// 	fmt.Fprintln(w, errors.New("unauthorized - bad token"))
+	// 	log.Error(errors.New("unauthorized - bad token"))
+	// 	return
+	// }
+
+	textArg := strings.Join(r.Form["text"], " ")
+	if len(textArg) == 0 {
+		log.WithFields(log.Fields{"text": textArg}).Debug("getting random xkcd")
+		path, err = elasticsearch.GetRandomImage("xkcd")
+	} else if isNumeric(textArg) {
+		log.WithFields(log.Fields{"text": textArg}).Debug("getting xkcd by number")
+		path, err = elasticsearch.GetImageByID(textArg)
+	} else {
+		log.WithFields(log.Fields{"text": textArg}).Debug("getting xkcd by title")
+		path, err = elasticsearch.SearchImage(r.Form["text"], "xkcd")
+	}
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+
+	webhook := WebHookResponse{
+		ResponseType: "in_channel",
+		Text:         makeURL("http", Host, Port, path),
+		Username:     "scifgif",
+		IconURL:      makeURL("http", Host, Port, "icon/xkcd"),
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(webhook); err != nil {
+		log.Error(err)
+	}
+}
+
+// getRandomGiphy serves a random giphy gif
+func getRandomGiphy(w http.ResponseWriter, r *http.Request) {
+	path, err := elasticsearch.GetRandomImage("giphy")
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, "no images found for the giphy source")
+		log.Error(err)
+		return
+	}
+	log.Debugf("GET %s", path)
+	http.ServeFile(w, r, path)
+}
+
+// getSearchGiphy serves a comic by searching for text
+func getSearchGiphy(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	path, err := elasticsearch.SearchImage(r.Form["query"], "giphy")
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+	log.Debugf("GET %s", path)
+	http.ServeFile(w, r, path)
+}
+
+// postGiphyMattermost handles Giphy webhook POST
+func postGiphyMattermost(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	if !strings.EqualFold(Token, r.Form["token"][0]) {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintln(w, errors.New("unauthorized - bad token"))
+		log.Error(errors.New("unauthorized - bad token"))
+		return
+	}
+
+	path, err := elasticsearch.SearchImage(r.Form["trigger_word"], "giphy")
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+
+	webhook := WebHookResponse{
+		Text:     makeURL("http", Host, Port, path),
+		Username: "scifgif",
+		IconURL:  makeURL("http", Host, Port, "icon/giphy"),
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(webhook); err != nil {
+		log.Error(err)
+	}
+}
+
+// postGiphyMattermostSlash handles giphy webhook POST for use with a slash command
+func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
+	var path string
+	var err error
+
+	r.ParseForm()
+
+	// TODO: add token auth back in
+
+	// if !strings.EqualFold(Token, r.Form["token"][0]) {
+	// 	w.WriteHeader(http.StatusUnauthorized)
+	// 	fmt.Fprintln(w, errors.New("unauthorized - bad token"))
+	// 	log.Error(errors.New("unauthorized - bad token"))
+	// 	return
+	// }
+
+	textArg := strings.Join(r.Form["text"], " ")
+	if len(textArg) == 0 {
+		log.WithFields(log.Fields{"text": textArg}).Debug("getting random gif")
+		path, err = elasticsearch.GetRandomImage("giphy")
+	} else {
+		log.WithFields(log.Fields{"text": textArg}).Debug("getting gif by keyword")
+		path, err = elasticsearch.SearchImage(r.Form["text"], "giphy")
+	}
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+
+	webhook := WebHookResponse{
+		ResponseType: "in_channel",
+		Text:         makeURL("http", Host, Port, path),
+		Username:     "scifgif",
+		IconURL:      makeURL("http", Host, Port, "icon/giphy"),
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(webhook); err != nil {
+		log.Error(err)
+	}
+}
+
+// getGiphyIcon serves giphy icon
+func getGiphyIcon(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "images/icons/giphy-icon.png")
+}
+
+// getXkcdIcon serves xkcd icon
+func getXkcdIcon(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "images/icons/xkcd-icon.jpg")
+}
+
+// getDefaultImage gets default image path
+func getDefaultImage(source string) string {
+	switch source {
+	case "xkcd":
+		return "images/default/xkcd.png"
+	case "giphy":
+		return "images/default/giphy.gif"
+	default:
+		return "images/default/giphy.gif"
+	}
+}
+
+func deleteImage(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	folder := vars["source"]
+	file := vars["file"]
+
+	// protect against directory traversal
+	file = filepath.Clean(filepath.Base(file))
+	path := filepath.Join("images", folder, file)
+
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, "image not found")
+		log.Error(err)
+		return
+	}
+
+	log.Infof("deleting images/%s/%s", folder, file)
+	err := os.Remove(path)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err, "unable to remove image")
+		return
+	}
+
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, "image successfully removed")
+		log.Error(err)
+		return
+	}
+}
+
+// getImage serves scifgif icon
+func getImage(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	folder := vars["source"]
+	file := vars["file"]
+
+	// protect against directory traversal
+	file = filepath.Clean(filepath.Base(file))
+
+	if _, err := os.Stat(filepath.Join("images", folder, file)); os.IsNotExist(err) {
+		log.Debugf("GET default %s image", folder)
+		http.ServeFile(w, r, getDefaultImage(folder))
+		return
+	}
+	log.Debugf("GET images/%s/%s", folder, file)
+	http.ServeFile(w, r, filepath.Join("images", folder, file))
+}
+
+func isNumeric(s string) bool {
+	_, err := strconv.ParseFloat(s, 64)
+	return err == nil
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+// this is overkill to protext against malicious URL from being created
+func makeURL(scheme, host, port, path string) string {
+	var u string
+
+	p, err := url.Parse(path)
+	if err != nil {
+		log.Error(err)
+	}
+	// don't show port if it is the HTTP/HTTPS port
+	if strings.EqualFold(port, "80") || strings.EqualFold(port, "443") {
+		u = fmt.Sprintf("%s://%s", scheme, host)
+		base, err := url.Parse(u)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return base.ResolveReference(p).String()
+	}
+
+	u = fmt.Sprintf("%s://%s:%s", scheme, host, port)
+	base, err := url.Parse(u)
+	if err != nil {
+		log.Error(err)
+	}
+
+	return base.ResolveReference(p).String()
 }
