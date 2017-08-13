@@ -195,8 +195,8 @@ func main() {
 		router := mux.NewRouter().StrictSlash(true)
 		router.HandleFunc("/icon/xkcd", getXkcdIcon).Methods("GET")
 		router.HandleFunc("/icon/giphy", getGiphyIcon).Methods("GET")
-		router.HandleFunc("/images/{source:(?:giphy|xkcd)}/{file}", getImage).Methods("GET")
-		router.HandleFunc("/images/{source:(?:giphy|xkcd)}/{file}", deleteImage).Methods("DELETE")
+		router.HandleFunc("/images/{source:(?:giphy|xkcd|default)}/{file}", getImage).Methods("GET")
+		router.HandleFunc("/images/{source:(?:giphy|xkcd|default)}/{file}", deleteImage).Methods("DELETE")
 		// xkcd routes
 		router.HandleFunc("/xkcd", getRandomXKCD).Methods("GET")
 		router.HandleFunc("/xkcd/number/{number}", getXkcdByNumber).Methods("GET")
