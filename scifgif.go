@@ -288,7 +288,7 @@ func postXkcdMattermost(w http.ResponseWriter, r *http.Request) {
 
 	webhook := WebHookResponse{
 		Text:     makeURL("http", Host, Port, path),
-		Username: "scifgif",
+		Username: "xkcd",
 		IconURL:  makeURL("http", Host, Port, "icon/xkcd"),
 	}
 
@@ -317,7 +317,7 @@ func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	textArg := strings.Join(r.Form["text"], " ")
-	if len(textArg) == 0 {
+	if strings.EqualFold(strings.TrimSpace(textArg), "?") {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting random xkcd")
 		path, err = elasticsearch.GetRandomImage("xkcd")
 	} else if isNumeric(textArg) {
@@ -337,7 +337,7 @@ func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	webhook := WebHookResponse{
 		ResponseType: "in_channel",
 		Text:         makeURL("http", Host, Port, path),
-		Username:     "scifgif",
+		Username:     "xkcd",
 		IconURL:      makeURL("http", Host, Port, "icon/xkcd"),
 	}
 
@@ -426,7 +426,7 @@ func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	textArg := strings.Join(r.Form["text"], " ")
-	if len(textArg) == 0 {
+	if strings.EqualFold(strings.TrimSpace(textArg), "?") {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting random gif")
 		path, err = elasticsearch.GetRandomImage("giphy")
 	} else {
