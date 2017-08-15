@@ -8,15 +8,6 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 17.06.0-ce
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --no-cache \
-              py2-pip curl jq
-            pip install \
-              docker-compose==1.14.0 \
-              awscli==1.11.112 \
-              httpie
       - restore_cache:
           keys:
             - v1-{{ .Branch }}
