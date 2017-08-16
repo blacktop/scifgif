@@ -15,12 +15,12 @@ import (
 const Size = 20
 
 // SearchImage searches imagess by text/title and returns a random image
-func SearchImage(search []string, itype string) (string, error) {
+func SearchImage(search []string, itype string) (ImageMetaData, error) {
 	ctx := context.Background()
 
 	client, err := elastic.NewSimpleClient()
 	if err != nil {
-		return "", err
+		return ImageMetaData{}, err
 	}
 
 	searchStr := strings.Join(search, " ")
@@ -35,7 +35,7 @@ func SearchImage(search []string, itype string) (string, error) {
 		Size(Size).
 		Do(ctx) // execute
 	if err != nil {
-		return "", err
+		return ImageMetaData{}, err
 	}
 
 	if searchResult.TotalHits() > 0 {
@@ -51,7 +51,7 @@ func SearchImage(search []string, itype string) (string, error) {
 						"text":        i.Text,
 					}).Debug("search found image")
 
-					return i.Path, nil
+					return i, nil
 				}
 			}
 		}
@@ -63,10 +63,10 @@ func SearchImage(search []string, itype string) (string, error) {
 	}).Error("no found image")
 	// return default 404 images
 	if strings.EqualFold(itype, "xkcd") {
-		return "images/default/xkcd.png", nil
+		return ImageMetaData{Path: "images/default/xkcd.png"}, nil
 	}
 	if strings.EqualFold(itype, "giphy") {
-		return "images/default/giphy.gif", nil
+		return ImageMetaData{Path: "images/default/giphy.gif"}, nil
 	}
-	return "", errors.New("no images found")
+	return ImageMetaData{}, errors.New("no images found")
 }

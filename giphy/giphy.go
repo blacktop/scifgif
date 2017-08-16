@@ -1,6 +1,7 @@
 package giphy
 
 import (
+	"fmt"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -51,9 +52,10 @@ func GetAllGiphy(folder string, search []string, count int) error {
 		if err != nil {
 			return err
 		}
-		for _, gif := range gifSearch.Data {
+		for iter, gif := range gifSearch.Data {
 			// download gif
-			filepath := filepath.Join(folder, path.Base(gif.Slug+".gif"))
+			gifName := fmt.Sprintf("%s%d.gif", strings.Join(search, "-"), iter+i)
+			filepath := filepath.Join(folder, path.Base(gifName))
 			go elasticsearch.DownloadImage(gif.Images.Downsized.URL, filepath)
 			srchStrs := strings.Join(search, " ")
 			// index into elasticsearch

@@ -135,7 +135,7 @@ func main() {
 				log.WithFields(log.Fields{
 					"search_for": "reactions",
 					"number":     c.GlobalInt("number"),
-				}).Info("* download Giphy gifs and ingest metadata into elasticsearch")
+				}).Info("download Giphy gifs and ingest metadata into elasticsearch")
 				err = giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, c.GlobalInt("number"))
 				if err != nil {
 					return err
@@ -143,7 +143,7 @@ func main() {
 				log.WithFields(log.Fields{
 					"search_for": "star wars",
 					"number":     min(c.GlobalInt("number"), 250),
-				}).Info("* download star wars Giphy gifs and ingest metadata into elasticsearch")
+				}).Info("download star wars Giphy gifs and ingest metadata into elasticsearch")
 				err = giphy.GetAllGiphy(giphyFolder, []string{"star", "wars"}, min(c.GlobalInt("number"), 500))
 				if err != nil {
 					return err
@@ -151,14 +151,14 @@ func main() {
 				log.WithFields(log.Fields{
 					"search_for": "futurama",
 					"number":     min(c.GlobalInt("number"), 250),
-				}).Info("* download futurama Giphy gifs and ingest metadata into elasticsearch")
+				}).Info("download futurama Giphy gifs and ingest metadata into elasticsearch")
 				err = giphy.GetAllGiphy(giphyFolder, []string{"futurama"}, min(c.GlobalInt("number"), 500))
 				if err != nil {
 					return err
 				}
 				log.WithFields(log.Fields{
 					"number": c.GlobalInt("number"),
-				}).Info("* download xkcd comics and ingest metadata into elasticsearch")
+				}).Info("download xkcd comics and ingest metadata into elasticsearch")
 				err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("number"))
 				if err != nil {
 					return err
@@ -228,43 +228,43 @@ func main() {
 
 // getRandomXKCD serves a random xkcd comic
 func getRandomXKCD(w http.ResponseWriter, r *http.Request) {
-	path, err := elasticsearch.GetRandomImage("xkcd")
+	image, err := elasticsearch.GetRandomImage("xkcd")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, "no images found for the xkcd source")
 		log.Error(err)
 		return
 	}
-	log.Debugf("GET %s", path)
-	http.ServeFile(w, r, path)
+	log.Debugf("GET %s", image.Path)
+	http.ServeFile(w, r, image.Path)
 }
 
 // getXkcdByNumber serves a comic by it's number
 func getXkcdByNumber(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	path, err := elasticsearch.GetImageByID(vars["number"])
+	image, err := elasticsearch.GetImageByID(vars["number"])
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
 		log.Error(err)
 		return
 	}
-	log.Debugf("GET %s", path)
-	http.ServeFile(w, r, path)
+	log.Debugf("GET %s", image.Path)
+	http.ServeFile(w, r, image.Path)
 }
 
 // getSearchXKCD serves a comic by searching for text
 func getSearchXKCD(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	path, err := elasticsearch.SearchImage(r.Form["query"], "xkcd")
+	image, err := elasticsearch.SearchImage(r.Form["query"], "xkcd")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
 		log.Error(err)
 		return
 	}
-	log.Debugf("GET %s", path)
-	http.ServeFile(w, r, path)
+	log.Debugf("GET %s", image.Path)
+	http.ServeFile(w, r, image.Path)
 }
 
 // postXkcdMattermost handles xkcd webhook POST
@@ -278,7 +278,7 @@ func postXkcdMattermost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	path, err := elasticsearch.SearchImage(r.Form["trigger_word"], "xkcd")
+	image, err := elasticsearch.SearchImage(r.Form["trigger_word"], "xkcd")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
@@ -287,7 +287,11 @@ func postXkcdMattermost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	webhook := WebHookResponse{
-		Text:     makeURL("http", Host, Port, path),
+		Text: fmt.Sprintf("### %s\n>%s\n\n%s",
+			image.Title,
+			image.Text,
+			makeURL("http", Host, Port, image.Path),
+		),
 		Username: "xkcd",
 		IconURL:  makeURL("http", Host, Port, "icon/xkcd"),
 	}
@@ -302,7 +306,7 @@ func postXkcdMattermost(w http.ResponseWriter, r *http.Request) {
 
 // postXkcdMattermostSlash handles xkcd webhook POST for use with a slash command
 func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
-	var path string
+	var image elasticsearch.ImageMetaData
 	var err error
 
 	r.ParseForm()
@@ -316,16 +320,20 @@ func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	// 	return
 	// }
 
+	userName := r.Form["user_name"][0]
+	// teamDomain := r.Form["team_domain"]
+	// channelName := r.Form["channel_name"]
 	textArg := strings.Join(r.Form["text"], " ")
+
 	if strings.EqualFold(strings.TrimSpace(textArg), "?") {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting random xkcd")
-		path, err = elasticsearch.GetRandomImage("xkcd")
+		image, err = elasticsearch.GetRandomImage("xkcd")
 	} else if isNumeric(textArg) {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting xkcd by number")
-		path, err = elasticsearch.GetImageByID(textArg)
+		image, err = elasticsearch.GetImageByID(textArg)
 	} else {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting xkcd by title")
-		path, err = elasticsearch.SearchImage(r.Form["text"], "xkcd")
+		image, err = elasticsearch.SearchImage(r.Form["text"], "xkcd")
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -336,9 +344,14 @@ func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
 
 	webhook := WebHookResponse{
 		ResponseType: "in_channel",
-		Text:         makeURL("http", Host, Port, path),
-		Username:     "xkcd",
-		IconURL:      makeURL("http", Host, Port, "icon/xkcd"),
+		Text: fmt.Sprintf("### %s\n>%s\n\non behalf of @%s %s",
+			image.Title,
+			image.Text,
+			userName,
+			makeURL("http", Host, Port, image.Path),
+		),
+		Username: "xkcd",
+		IconURL:  makeURL("http", Host, Port, "icon/xkcd"),
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -351,29 +364,29 @@ func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
 
 // getRandomGiphy serves a random giphy gif
 func getRandomGiphy(w http.ResponseWriter, r *http.Request) {
-	path, err := elasticsearch.GetRandomImage("giphy")
+	image, err := elasticsearch.GetRandomImage("giphy")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, "no images found for the giphy source")
 		log.Error(err)
 		return
 	}
-	log.Debugf("GET %s", path)
-	http.ServeFile(w, r, path)
+	log.Debugf("GET %s", image.Path)
+	http.ServeFile(w, r, image.Path)
 }
 
 // getSearchGiphy serves a comic by searching for text
 func getSearchGiphy(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	path, err := elasticsearch.SearchImage(r.Form["query"], "giphy")
+	image, err := elasticsearch.SearchImage(r.Form["query"], "giphy")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
 		log.Error(err)
 		return
 	}
-	log.Debugf("GET %s", path)
-	http.ServeFile(w, r, path)
+	log.Debugf("GET %s", image.Path)
+	http.ServeFile(w, r, image.Path)
 }
 
 // postGiphyMattermost handles Giphy webhook POST
@@ -387,7 +400,7 @@ func postGiphyMattermost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	path, err := elasticsearch.SearchImage(r.Form["trigger_word"], "giphy")
+	image, err := elasticsearch.SearchImage(r.Form["trigger_word"], "giphy")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
@@ -396,7 +409,7 @@ func postGiphyMattermost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	webhook := WebHookResponse{
-		Text:     makeURL("http", Host, Port, path),
+		Text:     makeURL("http", Host, Port, image.Path),
 		Username: "scifgif",
 		IconURL:  makeURL("http", Host, Port, "icon/giphy"),
 	}
@@ -411,7 +424,7 @@ func postGiphyMattermost(w http.ResponseWriter, r *http.Request) {
 
 // postGiphyMattermostSlash handles giphy webhook POST for use with a slash command
 func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
-	var path string
+	var image elasticsearch.ImageMetaData
 	var err error
 
 	r.ParseForm()
@@ -425,13 +438,17 @@ func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	// 	return
 	// }
 
+	userName := r.Form["user_name"][0]
+	// teamDomain := r.Form["team_domain"]
+	// channelName := r.Form["channel_name"]
 	textArg := strings.Join(r.Form["text"], " ")
+
 	if strings.EqualFold(strings.TrimSpace(textArg), "?") {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting random gif")
-		path, err = elasticsearch.GetRandomImage("giphy")
+		image, err = elasticsearch.GetRandomImage("giphy")
 	} else {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting gif by keyword")
-		path, err = elasticsearch.SearchImage(r.Form["text"], "giphy")
+		image, err = elasticsearch.SearchImage(r.Form["text"], "giphy")
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -442,7 +459,7 @@ func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
 
 	webhook := WebHookResponse{
 		ResponseType: "in_channel",
-		Text:         makeURL("http", Host, Port, path),
+		Text:         fmt.Sprintf("on behalf of @%s %s", userName, makeURL("http", Host, Port, image.Path)),
 		Username:     "scifgif",
 		IconURL:      makeURL("http", Host, Port, "icon/giphy"),
 	}
@@ -544,6 +561,7 @@ func min(a, b int) int {
 // this is overkill to protext against malicious URL from being created
 func makeURL(scheme, host, port, path string) string {
 	var u string
+	var base *url.URL
 
 	p, err := url.Parse(path)
 	if err != nil {
@@ -552,7 +570,7 @@ func makeURL(scheme, host, port, path string) string {
 	// don't show port if it is the HTTP/HTTPS port
 	if strings.EqualFold(port, "80") || strings.EqualFold(port, "443") {
 		u = fmt.Sprintf("%s://%s", scheme, host)
-		base, err := url.Parse(u)
+		base, err = url.Parse(u)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -560,7 +578,7 @@ func makeURL(scheme, host, port, path string) string {
 	}
 
 	u = fmt.Sprintf("%s://%s:%s", scheme, host, port)
-	base, err := url.Parse(u)
+	base, err = url.Parse(u)
 	if err != nil {
 		log.Error(err)
 	}

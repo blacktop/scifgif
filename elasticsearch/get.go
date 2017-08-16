@@ -9,12 +9,12 @@ import (
 )
 
 // GetImageByID returns the path to an image by id
-func GetImageByID(id string) (string, error) {
+func GetImageByID(id string) (ImageMetaData, error) {
 	ctx := context.Background()
 
 	client, err := elastic.NewSimpleClient()
 	if err != nil {
-		return "", err
+		return ImageMetaData{}, err
 	}
 
 	termQuery := elastic.NewTermQuery("id", id)
@@ -24,16 +24,16 @@ func GetImageByID(id string) (string, error) {
 		Size(1).          // take documents 0-9
 		Do(ctx)           // execute
 	if err != nil {
-		return "", err
+		return ImageMetaData{}, err
 	}
 
 	if searchResult.TotalHits() > 0 {
 		var ityp ImageMetaData
 		for _, item := range searchResult.Each(reflect.TypeOf(ityp)) {
 			if i, ok := item.(ImageMetaData); ok {
-				return i.Path, nil
+				return i, nil
 			}
 		}
 	}
-	return "", fmt.Errorf("image id %s not found", id)
+	return ImageMetaData{}, fmt.Errorf("image id %s not found", id)
 }

@@ -9,12 +9,12 @@ import (
 )
 
 // GetRandomImage returns a random image path from source (xkcd/giphy)
-func GetRandomImage(source string) (string, error) {
+func GetRandomImage(source string) (ImageMetaData, error) {
 	ctx := context.Background()
 
 	client, err := elastic.NewSimpleClient()
 	if err != nil {
-		return "", err
+		return ImageMetaData{}, err
 	}
 
 	// build random query
@@ -30,16 +30,16 @@ func GetRandomImage(source string) (string, error) {
 		Size(1).          // take single document
 		Do(ctx)           // execute
 	if err != nil {
-		return "", err
+		return ImageMetaData{}, err
 	}
 
 	if searchResult.TotalHits() > 0 {
 		var ityp ImageMetaData
 		for _, item := range searchResult.Each(reflect.TypeOf(ityp)) {
 			if i, ok := item.(ImageMetaData); ok {
-				return i.Path, nil
+				return i, nil
 			}
 		}
 	}
-	return "", errors.New("no images found")
+	return ImageMetaData{}, errors.New("no images found")
 }
