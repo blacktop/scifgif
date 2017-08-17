@@ -26,7 +26,7 @@ func SearchImage(search []string, itype string) (ImageMetaData, error) {
 	searchStr := strings.Join(search, " ")
 
 	// build randomly sorted search query
-	q := elastic.NewMultiMatchQuery(searchStr, "text", "title").Operator("and").TieBreaker(0.3)
+	q := elastic.NewMultiMatchQuery(searchStr, "title", "text").Operator("and") //.TieBreaker(0.3)
 	// Search with a term query
 	searchResult, err := client.Search().
 		Index("scifgif"). // search in index "scifgif"
@@ -63,7 +63,10 @@ func SearchImage(search []string, itype string) (ImageMetaData, error) {
 	}).Error("no found image")
 	// return default 404 images
 	if strings.EqualFold(itype, "xkcd") {
-		return ImageMetaData{Path: "images/default/xkcd.png"}, nil
+		return ImageMetaData{
+			Title: "not found",
+			Text:  searchStr,
+			Path:  "images/default/xkcd.png"}, nil
 	}
 	if strings.EqualFold(itype, "giphy") {
 		return ImageMetaData{Path: "images/default/giphy.gif"}, nil

@@ -24,7 +24,7 @@ func GetAllXkcd(folder string, count int) error {
 	log.Infof("there are %d xkcd comics availble", latest.Number)
 
 	// only go back count number of comics from latest
-	if (latest.Number - count) < 0 {
+	if (latest.Number-count) < 0 || count < 0 {
 		start = 1
 	} else {
 		start = latest.Number - count

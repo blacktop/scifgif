@@ -97,6 +97,12 @@ func main() {
 			Usage:  "number of gifs to download",
 			EnvVar: "IMAGE_NUMBER",
 		},
+		cli.IntFlag{
+			Name:   "xkcd-count",
+			Value:  -1,
+			Usage:  "number of xkcd comics to download",
+			EnvVar: "IMAGE_XKCD_COUNT",
+		},
 		cli.StringFlag{
 			Name:        "host",
 			Value:       "",
@@ -159,7 +165,7 @@ func main() {
 				log.WithFields(log.Fields{
 					"number": c.GlobalInt("number"),
 				}).Info("download xkcd comics and ingest metadata into elasticsearch")
-				err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("number"))
+				err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("xkcd-count"))
 				if err != nil {
 					return err
 				}
@@ -459,9 +465,13 @@ func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
 
 	webhook := WebHookResponse{
 		ResponseType: "in_channel",
-		Text:         fmt.Sprintf("on behalf of @%s %s", userName, makeURL("http", Host, Port, image.Path)),
-		Username:     "scifgif",
-		IconURL:      makeURL("http", Host, Port, "icon/giphy"),
+		Text: fmt.Sprintf("**%s** on behalf of @%s %s",
+			textArg,
+			userName,
+			makeURL("http", Host, Port, image.Path),
+		),
+		Username: "scifgif",
+		IconURL:  makeURL("http", Host, Port, "icon/giphy"),
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
