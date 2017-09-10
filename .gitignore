@@ -16,6 +16,7 @@
 images/xkcd/*.png
 images/xkcd/*.jpg
 images/giphy/*.gif
+images/dilbert/*.jpg
 *.bu
 api.key
 .circleci/build_num
@@ -26,3 +27,4 @@ debug
 test.go
 mattermost-docker/
 .vagrant
+.DS_Store

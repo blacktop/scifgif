@@ -14,6 +14,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/blacktop/scifgif/dilbert"
 	"github.com/blacktop/scifgif/elasticsearch"
 	"github.com/blacktop/scifgif/giphy"
 	"github.com/blacktop/scifgif/xkcd"
@@ -23,8 +24,9 @@ import (
 )
 
 const (
-	xkcdFolder  = "images/xkcd"
-	giphyFolder = "images/giphy"
+	xkcdFolder    = "images/xkcd"
+	giphyFolder   = "images/giphy"
+	dilbertFolder = "images/dilbert"
 )
 
 var (
@@ -104,6 +106,12 @@ func main() {
 			EnvVar: "IMAGE_XKCD_COUNT",
 		},
 		cli.StringFlag{
+			Name:   "date",
+			Value:  "",
+			Usage:  "dilbert comic start-from date",
+			EnvVar: "IMAGE_DILBERT_DATE",
+		},
+		cli.StringFlag{
 			Name:        "host",
 			Value:       "",
 			Usage:       "microservice host",
@@ -169,6 +177,13 @@ func main() {
 				if err != nil {
 					return err
 				}
+				log.WithFields(log.Fields{
+					"date": c.GlobalString("date"),
+				}).Info("download dilbert comics and ingest metadata into elasticsearch")
+				err = dilbert.GetAllDilbert(dilbertFolder, c.GlobalString("date"))
+				if err != nil {
+					return err
+				}
 				log.Info("* finalize elasticsearch db")
 				err = elasticsearch.Finalize()
 				if err != nil {
@@ -201,8 +216,9 @@ func main() {
 		router := mux.NewRouter().StrictSlash(true)
 		router.HandleFunc("/icon/xkcd", getXkcdIcon).Methods("GET")
 		router.HandleFunc("/icon/giphy", getGiphyIcon).Methods("GET")
-		router.HandleFunc("/images/{source:(?:giphy|xkcd|default)}/{file}", getImage).Methods("GET")
-		router.HandleFunc("/images/{source:(?:giphy|xkcd|default)}/{file}", deleteImage).Methods("DELETE")
+		router.HandleFunc("/icon/dilbert", getDilbertIcon).Methods("GET")
+		router.HandleFunc("/images/{source:(?:giphy|xkcd|dilbert|default)}/{file}", getImage).Methods("GET")
+		router.HandleFunc("/images/{source:(?:giphy|xkcd|dilbert|default)}/{file}", deleteImage).Methods("DELETE")
 		// xkcd routes
 		router.HandleFunc("/xkcd", getRandomXKCD).Methods("GET")
 		router.HandleFunc("/xkcd/number/{number}", getXkcdByNumber).Methods("GET")
@@ -214,6 +230,12 @@ func main() {
 		router.HandleFunc("/giphy/search", getSearchGiphy).Methods("GET")
 		router.HandleFunc("/giphy/new_post", postGiphyMattermost).Methods("POST")
 		router.HandleFunc("/giphy/slash", postGiphyMattermostSlash).Methods("POST")
+		// Dilbert routes
+		router.HandleFunc("/dilbert", getRandomDilbert).Methods("GET")
+		router.HandleFunc("/dilbert/date/{date}", getDilbertByDate).Methods("GET")
+		router.HandleFunc("/dilbert/search", getSearchDilbert).Methods("GET")
+		router.HandleFunc("/dilbert/new_post", postDilbertMattermost).Methods("POST")
+		router.HandleFunc("/dilbert/slash", postDilbertMattermostSlash).Methods("POST")
 		// start microservice
 		log.WithFields(log.Fields{
 			"host":  Host,
@@ -368,6 +390,142 @@ func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// getRandomDilbert serves a random dilbert comic
+func getRandomDilbert(w http.ResponseWriter, r *http.Request) {
+	image, err := elasticsearch.GetRandomImage("dilbert")
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, "no images found for the xkcd source")
+		log.Error(err)
+		return
+	}
+	log.Debugf("GET %s", image.Path)
+	http.ServeFile(w, r, image.Path)
+}
+
+// getDilbertByDate serves a comic by it's date
+func getDilbertByDate(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	image, err := elasticsearch.GetImageByID(vars["date"])
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+	log.Debugf("GET %s", image.Path)
+	http.ServeFile(w, r, image.Path)
+}
+
+// getSearchDilbert serves a comic by searching for text
+func getSearchDilbert(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	image, err := elasticsearch.SearchImage(r.Form["query"], "dilbert")
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+	log.Debugf("GET %s", image.Path)
+	http.ServeFile(w, r, image.Path)
+}
+
+// postDilbertMattermost handles dilbert webhook POST
+func postDilbertMattermost(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	if !strings.EqualFold(Token, r.Form["token"][0]) {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintln(w, errors.New("unauthorized - bad token"))
+		log.Error(errors.New("unauthorized - bad token"))
+		return
+	}
+
+	image, err := elasticsearch.SearchImage(r.Form["trigger_word"], "dilbert")
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+
+	webhook := WebHookResponse{
+		Text: fmt.Sprintf("### %s\n>%s\n\n%s",
+			image.Title,
+			image.Text,
+			makeURL("http", Host, Port, image.Path),
+		),
+		Username: "dilbert",
+		IconURL:  makeURL("http", Host, Port, "icon/dilbert"),
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(webhook); err != nil {
+		log.Error(err)
+	}
+}
+
+// postDilbertMattermostSlash handles dilbert webhook POST for use with a slash command
+func postDilbertMattermostSlash(w http.ResponseWriter, r *http.Request) {
+	var image elasticsearch.ImageMetaData
+	var err error
+
+	r.ParseForm()
+
+	// TODO: add token auth back in
+
+	// if !strings.EqualFold(Token, r.Form["token"][0]) {
+	// 	w.WriteHeader(http.StatusUnauthorized)
+	// 	fmt.Fprintln(w, errors.New("unauthorized - bad token"))
+	// 	log.Error(errors.New("unauthorized - bad token"))
+	// 	return
+	// }
+
+	userName := r.Form["user_name"][0]
+	// teamDomain := r.Form["team_domain"]
+	// channelName := r.Form["channel_name"]
+	textArg := strings.Join(r.Form["text"], " ")
+
+	if strings.EqualFold(strings.TrimSpace(textArg), "?") {
+		log.WithFields(log.Fields{"text": textArg}).Debug("getting random dilbert")
+		image, err = elasticsearch.GetRandomImage("dilbert")
+	} else if isNumeric(textArg) {
+		log.WithFields(log.Fields{"text": textArg}).Debug("getting dilbert by number")
+		image, err = elasticsearch.GetImageByID(textArg)
+	} else {
+		log.WithFields(log.Fields{"text": textArg}).Debug("getting dilbert by title")
+		image, err = elasticsearch.SearchImage(r.Form["text"], "dilbert")
+	}
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+
+	webhook := WebHookResponse{
+		ResponseType: "in_channel",
+		Text: fmt.Sprintf("### %s\n>%s\n\non behalf of @%s %s",
+			image.Title,
+			image.Text,
+			userName,
+			makeURL("http", Host, Port, image.Path),
+		),
+		Username: "dilbert",
+		IconURL:  makeURL("http", Host, Port, "icon/dilbert"),
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(webhook); err != nil {
+		log.Error(err)
+	}
+}
+
 // getRandomGiphy serves a random giphy gif
 func getRandomGiphy(w http.ResponseWriter, r *http.Request) {
 	image, err := elasticsearch.GetRandomImage("giphy")
@@ -492,11 +650,18 @@ func getXkcdIcon(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "images/icons/xkcd-icon.jpg")
 }
 
+// getDilbertIcon serves xkcd icon
+func getDilbertIcon(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "images/icons/dilbert-icon.png")
+}
+
 // getDefaultImage gets default image path
 func getDefaultImage(source string) string {
 	switch source {
 	case "xkcd":
 		return "images/default/xkcd.png"
+	case "dilbert":
+		return "images/default/dilbert.png"
 	case "giphy":
 		return "images/default/giphy.gif"
 	default:

@@ -35,7 +35,7 @@ update: stop dbstop ## Update scifgif images
 	@docker run -d --name elasticsearch -p 9200:9200 blacktop/elasticsearch:5.5
 	@echo " - Starting kibana"
 	@sleep 10;docker run -d --name kibana --link elasticsearch -p 5601:5601 blacktop/kibana:5.5
-	@go run scifgif.go -N 50 -V update
+	@go run scifgif.go -N 20 --xkcd-count 20 --date 2017-08-08 -V update
 
 web: stop ## Start scifgif web-service
 	@echo "===> Starting scifgif web service..."
@@ -72,7 +72,8 @@ clean: ## Clean docker image and stop all running containers
 	docker-clean stop
 	docker rmi $(ORG)/$(NAME):$(VERSION) || true
 	rm images/giphy/*.gif || true
-	rm images/xkcd/*.png || true
+	rm images/xkcd/*.jpg || true
+	rm images/dilbert/*.jpg || true
 	rm -rf mattermost-docker
 
 stop: ## Kill running scifgif-plugin docker containers

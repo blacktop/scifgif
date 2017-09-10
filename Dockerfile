@@ -24,6 +24,7 @@ RUN apk --update add --no-cache -t .build-deps \
 COPY config/elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 
 ARG IMAGE_XKCD_COUNT=-1
+ARG IMAGE_DILBERT_DATE=2016-04-28
 ARG IMAGE_NUMBER
 
 WORKDIR /scifgif
@@ -42,8 +43,10 @@ RUN echo "===> Updating images..." \
 
 COPY images/default/giphy.gif /scifgif/images/default/giphy.gif
 COPY images/default/xkcd.png /scifgif/images/default/xkcd.png
+COPY images/default/dilbert.png /scifgif/images/default/dilbert.png
 COPY images/icons/giphy-icon.png /scifgif/images/icons/giphy-icon.png
 COPY images/icons/xkcd-icon.jpg /scifgif/images/icons/xkcd-icon.jpg
+COPY images/icons/dilbert-icon.jpg /scifgif/images/icons/dilbert-icon.jpg
 
 EXPOSE 3993
 
