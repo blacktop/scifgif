@@ -53,6 +53,7 @@ func GetComicMetaData(url, date string) Comic {
 
 // GetAllDilbert havest all teh comics strips
 func GetAllDilbert(folder string, date string) error {
+	delay := 1
 	count := 0
 	if len(date) < 1 {
 		// date = "1989-04-17"
@@ -73,6 +74,7 @@ func GetAllDilbert(folder string, date string) error {
 			"title": comic.Title,
 		}).Debug("downloading file")
 
+		time.Sleep(time.Duration(delay) * time.Second)
 		filepath := filepath.Join(folder, date+".jpg")
 		go elasticsearch.DownloadImage(comic.ImageURL, filepath)
 
