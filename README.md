@@ -23,8 +23,8 @@ blacktop/scifgif     0.1.0               2GB
 
 > **NOTE:** the reason the docker image is so large is that it contains:  
 > - ~2000 `giphy` gifs *(1500 reactions, 250 futurama and 250 star wars)*
-> - all of `xkcd`
 > - ~500 `dilbert` comics
+> - all of `xkcd`
 
 Getting Started
 ---------------
