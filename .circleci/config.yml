@@ -20,6 +20,7 @@ jobs:
             docker load -i /caches/app.tar | true
       - run:
           name: Build application Docker image
+          no_output_timeout: 20m          
           command: |
             docker version
             docker build --build-arg IMAGE_NUMBER=25 \
