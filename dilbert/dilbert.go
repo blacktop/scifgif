@@ -89,6 +89,6 @@ func GetAllDilbert(folder string, date string) error {
 		}, "dilbert")
 		count++
 	}
-	fmt.Println("count: ", count)
+	log.WithFields(log.Fields{"count": count}).Info("dilbert comic complete")
 	return nil
 }
