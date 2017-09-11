@@ -9,7 +9,13 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	log "github.com/Sirupsen/logrus"
 	"github.com/blacktop/scifgif/elasticsearch"
+	"github.com/jpillora/backoff"
 )
+
+var attempt int
+
+// MaxAttempts max number of download attempts
+const MaxAttempts = 20
 
 // Comic is the dilbert comic strip meta data
 type Comic struct {
@@ -20,12 +26,23 @@ type Comic struct {
 }
 
 // GetComicMetaData gets all the comic strips meta data
-func GetComicMetaData(url, date string) Comic {
+func GetComicMetaData(url, date string, b *backoff.Backoff) Comic {
 	comic := Comic{}
+
+	if attempt > MaxAttempts {
+		return comic
+	}
 
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
 		log.Error(err)
+		// backoff and try again
+		backoff := b.Duration()
+		log.WithFields(log.Fields{"backoff": backoff}).Info("waiting to try to again")
+		time.Sleep(backoff)
+		// retry url meta data parse
+		attempt++
+		GetComicMetaData(url, date, b)
 	}
 	// GET TITLE
 	comic.Title = doc.Find(".comic-title-name").Text()
@@ -53,8 +70,16 @@ func GetComicMetaData(url, date string) Comic {
 
 // GetAllDilbert havest all teh comics strips
 func GetAllDilbert(folder string, date string) error {
-	delay := 1
 	count := 0
+	attempt = 0
+	b := &backoff.Backoff{
+		//These are the defaults
+		Min:    100 * time.Millisecond,
+		Max:    600 * time.Second,
+		Factor: 2,
+		Jitter: true,
+	}
+
 	if len(date) < 1 {
 		// date = "1989-04-17"
 		date = "2017-09-08"
@@ -64,17 +89,13 @@ func GetAllDilbert(folder string, date string) error {
 	for d := start; time.Now().After(d); d = d.AddDate(0, 0, 1) {
 		date := fmt.Sprintf("%04d-%02d-%02d", d.Year(), d.Month(), d.Day())
 		url := "http://dilbert.com/strip/" + date
-		comic := GetComicMetaData(url, date)
-		// fmt.Println(getImageURL(url))
-		// fmt.Println(getImageTags(url))
-		// fmt.Println(getImageTranscript(url, date))
+		comic := GetComicMetaData(url, date, b)
 		// download image
 		log.WithFields(log.Fields{
 			"id":    date,
 			"title": comic.Title,
 		}).Debug("downloading file")
 
-		time.Sleep(time.Duration(delay) * time.Second)
 		filepath := filepath.Join(folder, date+".jpg")
 		go elasticsearch.DownloadImage(comic.ImageURL, filepath)
 
@@ -87,8 +108,47 @@ func GetAllDilbert(folder string, date string) error {
 			Text:   comic.Transcript,
 			Path:   filepath,
 		}, "dilbert")
+		// incr count, reset attempts and reset backoff
 		count++
+		attempt = 0
+		b.Reset()
 	}
 	log.WithFields(log.Fields{"count": count}).Info("dilbert comic complete")
 	return nil
 }
+
+// // DownloadImage downloads image to filepath
+// func downloadImageWithBackOff(url, filepath string, b *backoff.Backoff) error {
+// 	// Create the file
+// 	out, err := os.Create(filepath)
+// 	if err != nil {
+// 		log.Error(err)
+// 	}
+// 	defer out.Close()
+
+// 	resp, err := http.Get(url)
+// 	if err != nil {
+// 		log.Error(err)
+// 		log.Info("waiting to try to download again")
+// 		time.Sleep(b.Duration())
+// 		// retry image download
+// 		downloadImageWithBackOff(url, filepath, b)
+// 	}
+// 	defer resp.Body.Close()
+
+// 	// resert backoff
+// 	b.Reset()
+
+// 	log.WithFields(log.Fields{
+// 		"status":   resp.Status,
+// 		"size":     resp.ContentLength,
+// 		"filepath": filepath,
+// 	}).Debug("downloading file")
+
+// 	// Writer the body to file
+// 	_, err = io.Copy(out, resp.Body)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
