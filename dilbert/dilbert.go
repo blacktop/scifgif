@@ -1,6 +1,7 @@
 package dilbert
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -93,6 +94,9 @@ func GetAllDilbert(folder string, date string) error {
 		date := fmt.Sprintf("%04d-%02d-%02d", d.Year(), d.Month(), d.Day())
 		url := "http://dilbert.com/strip/" + date
 		comic := GetComicMetaData(url, date, b)
+		if len(comic.Title) > 0 {
+			return errors.New("max number of attempts reached")
+		}
 		// download image
 		log.WithFields(log.Fields{
 			"id":    date,
@@ -119,39 +123,3 @@ func GetAllDilbert(folder string, date string) error {
 	log.WithFields(log.Fields{"count": count}).Info("dilbert comic complete")
 	return nil
 }
-
-// // DownloadImage downloads image to filepath
-// func downloadImageWithBackOff(url, filepath string, b *backoff.Backoff) error {
-// 	// Create the file
-// 	out, err := os.Create(filepath)
-// 	if err != nil {
-// 		log.Error(err)
-// 	}
-// 	defer out.Close()
-
-// 	resp, err := http.Get(url)
-// 	if err != nil {
-// 		log.Error(err)
-// 		log.Info("waiting to try to download again")
-// 		time.Sleep(b.Duration())
-// 		// retry image download
-// 		downloadImageWithBackOff(url, filepath, b)
-// 	}
-// 	defer resp.Body.Close()
-
-// 	// resert backoff
-// 	b.Reset()
-
-// 	log.WithFields(log.Fields{
-// 		"status":   resp.Status,
-// 		"size":     resp.ContentLength,
-// 		"filepath": filepath,
-// 	}).Debug("downloading file")
-
-// 	// Writer the body to file
-// 	_, err = io.Copy(out, resp.Body)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
