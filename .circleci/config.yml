@@ -24,7 +24,7 @@ jobs:
             docker version
             docker build --build-arg IMAGE_NUMBER=25 \
                          --build-arg IMAGE_XKCD_COUNT=25 \
-                         --build-arg IMAGE_DILBERT_DATE=2017-08-20 \
+                         --build-arg IMAGE_DILBERT_DATE=2017-05-20 \
                          --cache-from=app -t app .
       - run:
           name: Get Docker image size
