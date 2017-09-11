@@ -47,7 +47,7 @@ COPY images/default/xkcd.png /scifgif/images/default/xkcd.png
 COPY images/default/dilbert.png /scifgif/images/default/dilbert.png
 COPY images/icons/giphy-icon.png /scifgif/images/icons/giphy-icon.png
 COPY images/icons/xkcd-icon.jpg /scifgif/images/icons/xkcd-icon.jpg
-COPY images/icons/dilbert-icon.jpg /scifgif/images/icons/dilbert-icon.jpg
+COPY images/icons/dilbert-icon.png /scifgif/images/icons/dilbert-icon.png
 
 EXPOSE 3993
 
