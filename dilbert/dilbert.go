@@ -95,7 +95,7 @@ func GetAllDilbert(folder string, date string) error {
 		url := "http://dilbert.com/strip/" + date
 		comic := GetComicMetaData(url, date, b)
 
-		if comic.Title == "" {
+		if attempt > MaxAttempts {
 			return errors.New("max number of attempts reached")
 		}
 
