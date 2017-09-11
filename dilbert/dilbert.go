@@ -49,7 +49,9 @@ func GetComicMetaData(url, date string, b *backoff.Backoff) Comic {
 		GetComicMetaData(url, date, b)
 	}
 	// GET TITLE
-	comic.Title = doc.Find(".comic-title-name").Text()
+	doc.Find(".omic-title-name").Each(func(i int, s *goquery.Selection) {
+		comic.Title = s.Text()
+	})
 	// GET IMAGE URL
 	doc.Find(".img-comic-container").Each(func(i int, s *goquery.Selection) {
 		comic.ImageURL, _ = s.Find("img").Attr("src")
@@ -62,12 +64,11 @@ func GetComicMetaData(url, date string, b *backoff.Backoff) Comic {
 	})
 	// GET TRANSCRIPT
 	id := "js-toggle-transcript-" + date
-	transcripts := doc.Find("div#" + id).Text()
-	// clean up string
-	transcripts = strings.TrimSpace(transcripts)
-	transcripts = strings.TrimPrefix(transcripts, "Transcript")
-	transcripts = strings.TrimSpace(transcripts)
-	comic.Transcript = transcripts
+	doc.Find("div#" + id).Each(func(i int, s *goquery.Selection) {
+		comic.Transcript = strings.TrimSpace(s.Text())
+		comic.Transcript = strings.TrimPrefix(comic.Transcript, "Transcript")
+		comic.Transcript = strings.TrimSpace(comic.Transcript)
+	})
 
 	return comic
 }
