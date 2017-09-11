@@ -94,9 +94,11 @@ func GetAllDilbert(folder string, date string) error {
 		date := fmt.Sprintf("%04d-%02d-%02d", d.Year(), d.Month(), d.Day())
 		url := "http://dilbert.com/strip/" + date
 		comic := GetComicMetaData(url, date, b)
-		if len(comic.Title) > 0 {
+
+		if comic.Title == "" {
 			return errors.New("max number of attempts reached")
 		}
+
 		// download image
 		log.WithFields(log.Fields{
 			"id":    date,
