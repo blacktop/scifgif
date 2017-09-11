@@ -38,7 +38,10 @@ func GetComicMetaData(url, date string, b *backoff.Backoff) Comic {
 		log.Error(err)
 		// backoff and try again
 		backoff := b.Duration()
-		log.WithFields(log.Fields{"backoff": backoff}).Info("waiting to try to again")
+		log.WithFields(log.Fields{
+			"backoff": backoff,
+			"attempt": attempt,
+		}).Info("waiting to try to again")
 		time.Sleep(backoff)
 		// retry url meta data parse
 		attempt++
@@ -75,8 +78,8 @@ func GetAllDilbert(folder string, date string) error {
 	b := &backoff.Backoff{
 		//These are the defaults
 		Min:    100 * time.Millisecond,
-		Max:    600 * time.Second,
-		Factor: 2,
+		Max:    1200 * time.Second,
+		Factor: 3,
 		Jitter: true,
 	}
 
