@@ -48,6 +48,10 @@ Documentation
 -	[ ] Add ability to use expansion packs (use tag to control types of images available)
 -	[ ] Add ascii art emojis (table flippers etc)
 -	[ ] Add ephemeral slash command help
+- [ ] remove non-alphanumerics so you can search for emojis :older_man:
+- [ ] remove `xkcd` details *(can they be a mouse over?)*
+- [ ] add ability to add GIFs and/or keywords to GIFs
+- [ ] add `dilbert`
 
 ### Issues
 
