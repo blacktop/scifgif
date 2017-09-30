@@ -23,7 +23,7 @@ func SearchImage(search []string, itype string) (ImageMetaData, error) {
 		return ImageMetaData{}, err
 	}
 
-	searchStr := strings.Join(search, " ")
+	searchStr := strings.Join(removeNonAlphaNumericChars(search), " ")
 
 	// build randomly sorted search query
 	q := elastic.NewMultiMatchQuery(searchStr, "title", "text").Operator("and") //.TieBreaker(0.3)

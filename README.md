@@ -10,20 +10,20 @@ scifgif
 ### Dependencies
 
 -	[alpine:3.6](https://hub.docker.com/_/alpine/)
--	[blacktop/elasticsearch:5.5](https://hub.docker.com/r/blacktop/elasticsearch/)
+-	[blacktop/elasticsearch:5.6](https://hub.docker.com/r/blacktop/elasticsearch/)
 
 ### Image Tags
 
 ```bash
 REPOSITORY           TAG                 SIZE
 blacktop/scifgif     latest              2GB
+blacktop/scifgif     0.3.0               2GB
 blacktop/scifgif     0.2.0               2GB
 blacktop/scifgif     0.1.0               2GB
 ```
 
 > **NOTE:** the reason the docker image is so large is that it contains:  
 > - ~2000 `giphy` gifs *(1500 reactions, 250 futurama and 250 star wars)*
-> - ~500 `dilbert` comics
 > - all of `xkcd`
 
 Getting Started
@@ -48,10 +48,10 @@ Documentation
 -	[ ] Add ability to use expansion packs (use tag to control types of images available)
 -	[ ] Add ascii art emojis (table flippers etc)
 -	[ ] Add ephemeral slash command help
-- [ ] remove non-alphanumerics so you can search for emojis :older_man:
-- [ ] remove `xkcd` details *(can they be a mouse over?)*
-- [ ] add ability to add GIFs and/or keywords to GIFs
-- [ ] add `dilbert`
+- [x] remove non-alphanumerics so you can search for emojis :older_man:
+- [x] remove `xkcd` details *(can they be a mouse over?)*
+- [x] add ability to add GIFs and/or keywords to GIFs
+- [ ] add `dilbert` :construction:
 
 ### Issues
 

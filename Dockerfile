@@ -1,4 +1,4 @@
-FROM blacktop/elasticsearch:5.5
+FROM blacktop/elasticsearch:5.6
 
 LABEL maintainer "https://github.com/blacktop"
 

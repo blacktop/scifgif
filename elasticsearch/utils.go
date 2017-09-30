@@ -4,6 +4,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"regexp"
+	"strings"
 
 	log "github.com/Sirupsen/logrus"
 )
@@ -34,4 +36,18 @@ func DownloadImage(url, filepath string) {
 	if err != nil {
 		log.Error(err)
 	}
+}
+
+func removeNonAlphaNumericChars(searchTerms []string) []string {
+	var cleaned []string
+	reg, err := regexp.Compile("[^a-zA-Z0-9]+")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, term := range searchTerms {
+		processedString := reg.ReplaceAllString(term, " ")
+		processedString = strings.TrimSpace(processedString)
+		cleaned = append(cleaned, processedString)
+	}
+	return cleaned
 }
