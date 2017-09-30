@@ -60,7 +60,7 @@ func SearchImage(search []string, itype string) (ImageMetaData, error) {
 	log.WithFields(log.Fields{
 		"type":        itype,
 		"search_term": searchStr,
-	}).Error("no found image")
+	}).Error("search found no images")
 	// return default 404 images
 	if strings.EqualFold(itype, "xkcd") {
 		return ImageMetaData{
@@ -71,5 +71,5 @@ func SearchImage(search []string, itype string) (ImageMetaData, error) {
 	if strings.EqualFold(itype, "giphy") {
 		return ImageMetaData{Path: "images/default/giphy.gif"}, nil
 	}
-	return ImageMetaData{}, errors.New("no images found")
+	return ImageMetaData{}, errors.New("search found no images")
 }

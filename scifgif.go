@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"crypto/md5"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -14,7 +16,6 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/blacktop/scifgif/dilbert"
 	"github.com/blacktop/scifgif/elasticsearch"
 	"github.com/blacktop/scifgif/giphy"
 	"github.com/blacktop/scifgif/xkcd"
@@ -27,6 +28,7 @@ const (
 	xkcdFolder    = "images/xkcd"
 	giphyFolder   = "images/giphy"
 	dilbertFolder = "images/dilbert"
+	contribFolder = "images/contrib"
 )
 
 var (
@@ -177,13 +179,13 @@ func main() {
 				if err != nil {
 					return err
 				}
-				log.WithFields(log.Fields{
-					"date": c.GlobalString("date"),
-				}).Info("download dilbert comics and ingest metadata into elasticsearch")
-				err = dilbert.GetAllDilbert(dilbertFolder, c.GlobalString("date"))
-				if err != nil {
-					return err
-				}
+				// log.WithFields(log.Fields{
+				// 	"date": c.GlobalString("date"),
+				// }).Info("download dilbert comics and ingest metadata into elasticsearch")
+				// err = dilbert.GetAllDilbert(dilbertFolder, c.GlobalString("date"))
+				// if err != nil {
+				// 	return err
+				// }
 				log.Info("* finalize elasticsearch db")
 				err = elasticsearch.Finalize()
 				if err != nil {
@@ -217,8 +219,10 @@ func main() {
 		router.HandleFunc("/icon/xkcd", getXkcdIcon).Methods("GET")
 		router.HandleFunc("/icon/giphy", getGiphyIcon).Methods("GET")
 		router.HandleFunc("/icon/dilbert", getDilbertIcon).Methods("GET")
-		router.HandleFunc("/images/{source:(?:giphy|xkcd|dilbert|default)}/{file}", getImage).Methods("GET")
-		router.HandleFunc("/images/{source:(?:giphy|xkcd|dilbert|default)}/{file}", deleteImage).Methods("DELETE")
+		router.HandleFunc("/images", addImage).Methods("PUT")
+		router.HandleFunc("/images/{source:(?:giphy|xkcd|dilbert|default|contrib)}/{file}", updateImageKeywords).Methods("PATCH")
+		router.HandleFunc("/images/{source:(?:giphy|xkcd|dilbert|default|contrib)}/{file}", getImage).Methods("GET")
+		router.HandleFunc("/images/{source:(?:giphy|xkcd|dilbert|default|contrib)}/{file}", deleteImage).Methods("DELETE")
 		// xkcd routes
 		router.HandleFunc("/xkcd", getRandomXKCD).Methods("GET")
 		router.HandleFunc("/xkcd/number/{number}", getXkcdByNumber).Methods("GET")
@@ -372,9 +376,9 @@ func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
 
 	webhook := WebHookResponse{
 		ResponseType: "in_channel",
-		Text: fmt.Sprintf("### %s\n>%s\n\non behalf of @%s %s",
+		Text: fmt.Sprintf("### %s\n\non behalf of @%s %s",
 			image.Title,
-			image.Text,
+			// image.Text,
 			userName,
 			makeURL("http", Host, Port, image.Path),
 		),
@@ -669,6 +673,116 @@ func getDefaultImage(source string) string {
 	}
 }
 
+// addImage add scifgif GIF
+func addImage(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "PUT" {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		fmt.Fprintln(w, "method not allowed")
+		return
+	}
+
+	r.ParseForm()
+	keywords := r.Form["keywords"]
+	keywords = strings.Split(keywords[0], ",")
+	log.Debugf("keywords: %#v", keywords)
+
+	if len(keywords) == 0 {
+		http.Error(w, "you forgot to include the keywords parameter", http.StatusBadRequest)
+		log.Errorf("no keywords: %v", keywords)
+		return
+	}
+	r.ParseMultipartForm(32 << 20)
+
+	file, handler, err := r.FormFile("upload")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Error(err)
+		return
+	}
+	defer file.Close()
+
+	log.Debugf("PUT %s/%s", contribFolder, handler.Filename)
+	// fmt.Fprintf(w, "%v", handler.Header)
+
+	// protect against file inclusion
+	fMD5, err := getMD5(file)
+	if err != nil {
+		return
+	}
+	fName := fMD5 + filepath.Ext(handler.Filename)
+	fPath := filepath.Join(contribFolder, fName)
+	if _, err = os.Stat(fPath); !os.IsNotExist(err) {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "file already exists")
+		log.Errorf("file already exists: %s", handler.Filename)
+		return
+	}
+
+	f, err := os.OpenFile(fPath, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Error(err)
+		return
+	}
+	defer f.Close()
+
+	file.Seek(0, io.SeekStart)
+	_, err = io.Copy(f, file)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Error(err)
+		return
+	}
+
+	elasticsearch.WriteImageToDatabase(elasticsearch.ImageMetaData{
+		ID:     fMD5,
+		Source: "giphy",
+		Name:   filepath.Base(handler.Filename),
+		// Title:   ,
+		Text: strings.Join(keywords, " "),
+		Path: fPath,
+	}, "giphy")
+	fmt.Fprintln(w, "image successfully added")
+}
+
+// updateImageKeywords add keywords to GIF
+func updateImageKeywords(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "PATCH" {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		fmt.Fprintln(w, "method not allowed")
+		return
+	}
+
+	vars := mux.Vars(r)
+	folder := vars["source"]
+	file := vars["file"]
+
+	r.ParseForm()
+	keywords := strings.Split(r.FormValue("keywords"), ",")
+	log.Debugf("keywords: %#v", keywords)
+
+	// get image by path
+	file = filepath.Clean(filepath.Base(file))
+	path := filepath.Join("images", folder, file)
+	image, err := elasticsearch.GetImageByPath(path)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		log.Error(err)
+		return
+	}
+	// update image's keywords
+	image.Text += " " + strings.Join(keywords, " ")
+	err = elasticsearch.UpdateKeywords(image)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Error(err)
+		return
+	}
+	fmt.Fprintln(w, "image successfully updated")
+}
+
 func deleteImage(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	folder := vars["source"]
@@ -731,6 +845,14 @@ func min(a, b int) int {
 		return a
 	}
 	return b
+}
+
+func getMD5(f io.Reader) (string, error) {
+	h := md5.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%x", h.Sum(nil)), nil
 }
 
 // this is overkill to protext against malicious URL from being created
