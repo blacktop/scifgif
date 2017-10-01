@@ -36,6 +36,7 @@ RUN echo "===> Create elasticsearch data directory..." \
 RUN echo "===> Updating images..." \
   && mkdir -p /scifgif/images/xkcd \
   && mkdir -p /scifgif/images/giphy \
+  && mkdir -p /scifgif/images/contrib \
   && mkdir -p /scifgif/images/dilbert \
   && scifgif update \
   && echo "===> Stopping elasticsearch PID: $(cat /tmp/epid)" \
