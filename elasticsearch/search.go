@@ -73,3 +73,57 @@ func SearchImage(search []string, itype string) (ImageMetaData, error) {
 	}
 	return ImageMetaData{}, errors.New("search found no images")
 }
+
+// SearchASCII searches ascii by keywords and returns a random matching ascii
+func SearchASCII(keywords []string) (ASCIIData, error) {
+	ctx := context.Background()
+
+	client, err := elastic.NewSimpleClient()
+	if err != nil {
+		return ASCIIData{}, err
+	}
+
+	keywordsStr := strings.Join(removeNonAlphaNumericChars(keywords), " ")
+
+	termQuery := elastic.NewTermQuery("keywords", keywordsStr)
+	// Search with a term query
+	searchResult, err := client.Search().
+		Index("scifgif"). // search in index "scifgif"
+		Type("ascii").    // only search supplied type images
+		Query(termQuery). // specify the query
+		Size(Size).
+		Do(ctx) // execute
+	if err != nil {
+		return ASCIIData{}, err
+	}
+
+	if searchResult.TotalHits() > 0 {
+		var ityp ASCIIData
+		randomResult := rand.Intn(int(searchResult.TotalHits())) % Size
+		for iter, item := range searchResult.Each(reflect.TypeOf(ityp)) {
+			if i, ok := item.(ASCIIData); ok {
+				// return random image
+				if iter == randomResult {
+					log.WithFields(log.Fields{
+						"total_hits":  searchResult.TotalHits(),
+						"search_term": keywordsStr,
+						"keywords":    i.Keywords,
+					}).Debug("search found ascii")
+
+					return i, nil
+				}
+			}
+		}
+	}
+
+	log.WithFields(log.Fields{
+		"type":        "ascii",
+		"search_term": keywordsStr,
+	}).Error("search found no matching ascii")
+
+	// return default 404 images
+	return ASCIIData{
+		ID:       "not found",
+		Keywords: "10",
+		Emoji:    "¯\\_(ツ)_/¯"}, nil
+}

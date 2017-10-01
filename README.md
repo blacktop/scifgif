@@ -46,7 +46,7 @@ Documentation
 -	[x] Add meta-data DB for keyword text search (elasticsearch)
 -	[x] Add docs for creating [Mattermost](https://github.com/mattermost/platform) slash command or integration
 -	[ ] Add ability to use expansion packs (use tag to control types of images available)
--	[ ] Add ascii art emojis (table flippers etc)
+-	[x] Add ascii art emojis (table flippers etc)
 -	[ ] Add ephemeral slash command help
 - [x] remove non-alphanumerics so you can search for emojis :older_man:
 - [x] remove `xkcd` details *(can they be a mouse over?)*

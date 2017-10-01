@@ -70,6 +70,14 @@ type ImageMetaData struct {
 	Suggest *elastic.SuggestField `json:"suggest_field,omitempty"`
 }
 
+// ASCIIData ascii-emoji object
+type ASCIIData struct {
+	ID       string `json:"id,omitempty"`
+	Source   string `json:"source,omitempty"`
+	Keywords string `json:"keywords,omitempty"`
+	Emoji    string `json:"emoji,omitempty"`
+}
+
 // StartElasticsearch starts the elasticsearch database
 func StartElasticsearch() {
 	cmd := exec.Command("/elastic-entrypoint.sh", "elasticsearch", "-p", "/tmp/epid")
@@ -181,6 +189,55 @@ func WriteImageToDatabase(image ImageMetaData, itype string) error {
 		"index": put.Index,
 		"type":  put.Type,
 	}).Debug("indexed image")
+
+	return nil
+}
+
+// WriteASCIIToDatabase upserts ascii metadata into Database
+func WriteASCIIToDatabase(ascii ASCIIData) error {
+	var err error
+	ctx := context.Background()
+
+	client, err := elastic.NewSimpleClient()
+	if err != nil {
+		return err
+	}
+
+	// Use the IndexExists service to check if a specified index exists.
+	exists, err := client.IndexExists("scifgif").Do(ctx)
+	if err != nil {
+		return err
+	}
+
+	if !exists {
+		// Create a new index.
+		createIndex, cerr := client.CreateIndex("scifgif").BodyString(mapping).Do(ctx)
+		if cerr != nil {
+			return cerr
+		}
+		if !createIndex.Acknowledged {
+			// Not acknowledged
+			log.Error(errors.New("index scifgif creation was not acknowledged"))
+		} else {
+			log.WithFields(log.Fields{"index": "scifgif"}).Info("index created")
+		}
+	}
+
+	put, err := client.Index().
+		Index("scifgif").
+		Type("ascii").
+		OpType("index").
+		BodyJson(ascii).
+		Do(ctx)
+	if err != nil {
+		return err
+	}
+
+	log.WithFields(log.Fields{
+		"id":    put.Id,
+		"index": put.Index,
+		"type":  put.Type,
+	}).Debug("indexed ascii")
 
 	return nil
 }

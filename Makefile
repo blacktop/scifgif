@@ -35,11 +35,11 @@ update: stop dbstop ## Update scifgif images
 	@docker run -d --name elasticsearch -p 9200:9200 blacktop/elasticsearch:5.6
 	@echo " - Starting kibana"
 	@sleep 10;docker run -d --name kibana --link elasticsearch -p 5601:5601 blacktop/kibana:5.6
-	@go run scifgif.go -N 20 --xkcd-count 20 --date 2017-05-08 -V update
+	@go run *.go -N 20 --xkcd-count 20 --date 2017-05-08 -V update
 
 web: stop ## Start scifgif web-service
 	@echo "===> Starting scifgif web service..."
-	@go run scifgif.go -V --host 127.0.0.1
+	@go run *.go -V --host 127.0.0.1
 
 run: stop ## Run scifgif
 	docker run -d --name scifgif -p 3993:3993 -p 9200:9200 $(ORG)/$(NAME):$(VERSION)

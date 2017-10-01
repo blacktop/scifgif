@@ -1,0 +1,387 @@
+[
+ {
+  "keywords": "innocent face", 
+  "id": "1", 
+  "emoji": "ʘ‿ʘ"
+ }, 
+ {
+  "keywords": "reddit disapproval face", 
+  "id": "2", 
+  "emoji": "ಠ_ಠ"
+ }, 
+ {
+  "keywords": "table flip flipping table", 
+  "id": "3", 
+  "emoji": "(╯°□°）╯︵ ┻━┻"
+ }, 
+ {
+  "keywords": "put the table back", 
+  "id": "4", 
+  "emoji": "┬─┬﻿ ノ( ゜-゜ノ)"
+ }, 
+ {
+  "keywords": "tidy up dust the table", 
+  "id": "5", 
+  "emoji": "┬─┬⃰͡ (ᵔᵕᵔ͜ )"
+ }, 
+ {
+  "keywords": "double flip double angry", 
+  "id": "6", 
+  "emoji": "┻━┻ ︵ヽ(`Д´)ﾉ︵﻿ ┻━┻"
+ }, 
+ {
+  "keywords": "fisticuffs", 
+  "id": "7", 
+  "emoji": "ლ(｀ー´ლ)"
+ }, 
+ {
+  "keywords": "cute bear", 
+  "id": "8", 
+  "emoji": "ʕ•ᴥ•ʔ"
+ }, 
+ {
+  "keywords": "cute face with big eyes", 
+  "id": "9", 
+  "emoji": "(｡◕‿◕｡)"
+ }, 
+ {
+  "keywords": "surprised loudmouthed", 
+  "id": "10", 
+  "emoji": "（　ﾟДﾟ）"
+ }, 
+ {
+  "keywords": "shrug face", 
+  "id": "11", 
+  "emoji": "¯\\_(ツ)_/¯"
+ }, 
+ {
+  "keywords": "meh", 
+  "id": "12", 
+  "emoji": "¯\\(°_o)/¯"
+ }, 
+ {
+  "keywords": "feel perky", 
+  "id": "13", 
+  "emoji": "(`･ω･´)"
+ }, 
+ {
+  "keywords": "angry face", 
+  "id": "14", 
+  "emoji": "(╬ ಠ益ಠ)"
+ }, 
+ {
+  "keywords": "excited", 
+  "id": "15", 
+  "emoji": "☜(⌒▽⌒)☞"
+ }, 
+ {
+  "keywords": "running", 
+  "id": "16", 
+  "emoji": "ε=ε=ε=┌(;*´Д`)ﾉ"
+ }, 
+ {
+  "keywords": "happy face", 
+  "id": "17", 
+  "emoji": "ヽ(´▽`)/"
+ }, 
+ {
+  "keywords": "basking in glory", 
+  "id": "18", 
+  "emoji": "ヽ(´ー｀)ノ"
+ }, 
+ {
+  "keywords": "kitty emote", 
+  "id": "19", 
+  "emoji": "ᵒᴥᵒ#"
+ }, 
+ {
+  "keywords": "fido", 
+  "id": "20", 
+  "emoji": "v●ᴥ●v"
+ }, 
+ {
+  "keywords": "meow", 
+  "id": "21", 
+  "emoji": "ฅ^•ﻌ•^ฅ"
+ }, 
+ {
+  "keywords": "cheers", 
+  "id": "22", 
+  "emoji": "（ ^_^）o自自o（^_^ ）"
+ }, 
+ {
+  "keywords": "devious smile", 
+  "id": "23", 
+  "emoji": "ಠ‿ಠ"
+ }, 
+ {
+  "keywords": "4chan emoticon", 
+  "id": "24", 
+  "emoji": "( ͡° ͜ʖ ͡°)"
+ }, 
+ {
+  "keywords": "crying face", 
+  "id": "25", 
+  "emoji": "ಥ_ಥ"
+ }, 
+ {
+  "keywords": "breakdown", 
+  "id": "26", 
+  "emoji": "ಥ﹏ಥ"
+ }, 
+ {
+  "keywords": "disagree", 
+  "id": "27", 
+  "emoji": "٩◔̯◔۶"
+ }, 
+ {
+  "keywords": "flexing", 
+  "id": "28", 
+  "emoji": "ᕙ(⇀‸↼‶)ᕗ"
+ }, 
+ {
+  "keywords": "do you even lift bro?", 
+  "id": "29", 
+  "emoji": "ᕦ(ò_óˇ)ᕤ"
+ }, 
+ {
+  "keywords": "kirby", 
+  "id": "30", 
+  "emoji": "⊂(◉‿◉)つ"
+ }, 
+ {
+  "keywords": "tripping out", 
+  "id": "31", 
+  "emoji": "q(❂‿❂)p"
+ }, 
+ {
+  "keywords": "discombobulated", 
+  "id": "32", 
+  "emoji": "⊙﹏⊙"
+ }, 
+ {
+  "keywords": "sad and confused", 
+  "id": "33", 
+  "emoji": "¯\\_(⊙︿⊙)_/¯"
+ }, 
+ {
+  "keywords": "japanese lion face", 
+  "id": "34", 
+  "emoji": "°‿‿°"
+ }, 
+ {
+  "keywords": "confused", 
+  "id": "35", 
+  "emoji": "¿ⓧ_ⓧﮌ"
+ }, 
+ {
+  "keywords": "confused scratch", 
+  "id": "36", 
+  "emoji": "(⊙.☉)7"
+ }, 
+ {
+  "keywords": "worried", 
+  "id": "37", 
+  "emoji": "(´･_･`)"
+ }, 
+ {
+  "keywords": "dear god why", 
+  "id": "38", 
+  "emoji": "щ（ﾟДﾟщ）"
+ }, 
+ {
+  "keywords": "staring", 
+  "id": "39", 
+  "emoji": "٩(͡๏_๏)۶"
+ }, 
+ {
+  "keywords": "pretty eyes", 
+  "id": "40", 
+  "emoji": "ఠ_ఠ"
+ }, 
+ {
+  "keywords": "strut", 
+  "id": "41", 
+  "emoji": "ᕕ( ᐛ )ᕗ"
+ }, 
+ {
+  "keywords": "zoned", 
+  "id": "42", 
+  "emoji": "(⊙_◎)"
+ }, 
+ {
+  "keywords": "crazy", 
+  "id": "43", 
+  "emoji": "ミ●﹏☉ミ"
+ }, 
+ {
+  "keywords": "trolling", 
+  "id": "44", 
+  "emoji": "༼∵༽ ༼⍨༽ ༼⍢༽ ༼⍤༽"
+ }, 
+ {
+  "keywords": "angry troll", 
+  "id": "45", 
+  "emoji": "ヽ༼ ಠ益ಠ ༽ﾉ"
+ }, 
+ {
+  "keywords": "fuck it", 
+  "id": "46", 
+  "emoji": "t(-_-t)"
+ }, 
+ {
+  "keywords": "sad face", 
+  "id": "47", 
+  "emoji": "(ಥ⌣ಥ)"
+ }, 
+ {
+  "keywords": "hugger", 
+  "id": "48", 
+  "emoji": "(づ￣ ³￣)づ"
+ }, 
+ {
+  "keywords": "stranger danger", 
+  "id": "49", 
+  "emoji": "(づ｡◕‿‿◕｡)づ"
+ }, 
+ {
+  "keywords": "flip friend", 
+  "id": "50", 
+  "emoji": "(ノಠ ∩ಠ)ノ彡( \\o°o)\\"
+ }, 
+ {
+  "keywords": "cry face", 
+  "id": "51", 
+  "emoji": "｡ﾟ( ﾟஇ‸இﾟ)ﾟ｡"
+ }, 
+ {
+  "keywords": "cry troll", 
+  "id": "52", 
+  "emoji": "༼ ༎ຶ ෴ ༎ຶ༽"
+ }, 
+ {
+  "keywords": "tgif", 
+  "id": "53", 
+  "emoji": "“ヽ(´▽｀)ノ”"
+ }, 
+ {
+  "keywords": "dancing", 
+  "id": "54", 
+  "emoji": "┌(ㆆ㉨ㆆ)ʃ"
+ }, 
+ {
+  "keywords": "sleepy", 
+  "id": "55", 
+  "emoji": "눈_눈"
+ }, 
+ {
+  "keywords": "angry birds", 
+  "id": "56", 
+  "emoji": "( ఠൠఠ )ﾉ"
+ }, 
+ {
+  "keywords": "no support", 
+  "id": "57", 
+  "emoji": "乁( ◔ ౪◔)「      ┑(￣Д ￣)┍"
+ }, 
+ {
+  "keywords": "shy", 
+  "id": "58", 
+  "emoji": "(๑•́ ₃ •̀๑)"
+ }, 
+ {
+  "keywords": "fly away", 
+  "id": "59", 
+  "emoji": "⁽⁽ଘ( ˊᵕˋ )ଓ⁾⁾"
+ }, 
+ {
+  "keywords": "careless", 
+  "id": "60", 
+  "emoji": "◔_◔"
+ }, 
+ {
+  "keywords": "love", 
+  "id": "61", 
+  "emoji": "♥‿♥"
+ }, 
+ {
+  "keywords": "touchy feely", 
+  "id": "62", 
+  "emoji": "ԅ(≖‿≖ԅ)"
+ }, 
+ {
+  "keywords": "kissing", 
+  "id": "63", 
+  "emoji": "( ˘ ³˘)♥"
+ }, 
+ {
+  "keywords": "shark face jagged mustache", 
+  "id": "64", 
+  "emoji": "( ˇ෴ˇ )"
+ }, 
+ {
+  "keywords": "dance", 
+  "id": "65", 
+  "emoji": "ヾ(-_- )ゞ"
+ }, 
+ {
+  "keywords": "winnie the pooh", 
+  "id": "66", 
+  "emoji": "ʕ •́؈•̀ ₎"
+ }, 
+ {
+  "keywords": "boxing fight", 
+  "id": "67", 
+  "emoji": "ლ(•́•́ლ)"
+ }, 
+ {
+  "keywords": "robot", 
+  "id": "68", 
+  "emoji": "{•̃_•̃}"
+ }, 
+ {
+  "keywords": "seal", 
+  "id": "69", 
+  "emoji": "(ᵔᴥᵔ)"
+ }, 
+ {
+  "keywords": "questionable dislike", 
+  "id": "70", 
+  "emoji": "(Ծ‸ Ծ)"
+ }, 
+ {
+  "keywords": "winning!", 
+  "id": "71", 
+  "emoji": "(•̀ᴗ•́)و ̑̑"
+ }, 
+ {
+  "keywords": "zombie", 
+  "id": "72", 
+  "emoji": "[¬º-°]¬"
+ }, 
+ {
+  "keywords": "pointing", 
+  "id": "73", 
+  "emoji": "(☞ﾟヮﾟ)☞"
+ }, 
+ {
+  "keywords": "chasing running away", 
+  "id": "74", 
+  "emoji": "''⌐(ಠ۾ಠ)¬'''"
+ }, 
+ {
+  "keywords": "whistling music", 
+  "id": "75", 
+  "emoji": "(っ•́｡•́)♪♬"
+ }, 
+ {
+  "keywords": "injured", 
+  "id": "76", 
+  "emoji": "(҂◡_◡)"
+ }, 
+ {
+  "keywords": "creeper", 
+  "id": "77", 
+  "emoji": "ƪ(ړײ)‎ƪ​​"
+ }
+]
