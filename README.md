@@ -52,6 +52,7 @@ Documentation
 - [x] remove `xkcd` details *(can they be a mouse over?)*
 - [x] add ability to add GIFs and/or keywords to GIFs
 - [ ] add `dilbert` :construction:
+- [ ] make search more "fuzzy" 
 
 ### Issues
 
