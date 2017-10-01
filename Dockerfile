@@ -33,6 +33,7 @@ RUN echo "===> Create elasticsearch data directory..." \
   && mkdir -p /scifgif/elasticsearch/data \
   && chown -R elasticsearch:elasticsearch /scifgif/elasticsearch/data
 
+COPY ascii/emoji.json /scifgif/ascii/emoji.json
 RUN echo "===> Updating images..." \
   && mkdir -p /scifgif/images/xkcd \
   && mkdir -p /scifgif/images/giphy \

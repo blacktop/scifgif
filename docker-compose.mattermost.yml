@@ -54,7 +54,7 @@ services:
       - gif:gif
 
   gif:
-    image: blacktop/scifgif:0.2.0
+    image: blacktop/scifgif:0.3.0
     ports:
       - "3993:3993"
     restart: unless-stopped

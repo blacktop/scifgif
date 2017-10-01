@@ -84,7 +84,9 @@ func SearchASCII(keywords []string) (ASCIIData, error) {
 	}
 
 	keywordsStr := strings.Join(removeNonAlphaNumericChars(keywords), " ")
-	q := elastic.NewMultiMatchQuery(keywordsStr, "keywords").Operator("and") //.TieBreaker(0.3)
+	// q := elastic.NewFuzzyQuery("keywords", keywordsStr).Boost(1).Fuzziness(2)
+	q := elastic.NewMatchQuery("keywords", keywordsStr).Operator("and")
+	// q := elastic.NewMultiMatchQuery(keywordsStr, "keywords").Operator("and") //.TieBreaker(0.3)
 	// Search with a term query
 	searchResult, err := client.Search().
 		Index("scifgif"). // search in index "scifgif"

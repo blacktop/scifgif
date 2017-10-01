@@ -52,3 +52,10 @@ curl -XGET "http://elasticsearch:9200/_search" -H 'Content-Type: application/jso
   }
 }'
 ```
+
+Kibana Query
+------------
+
+```
+http://localhost:5601/app/kibana#/discover?_g=()&_a=(columns:!(emoji),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:AV7VwO5jCz-NMQd5a_vF,key:_type,negate:!f,type:phrase,value:ascii),query:(match:(_type:(query:ascii,type:phrase))))),index:AV7VyG7A8u-ErzWhyq_K,interval:auto,query:(query_string:(analyze_wildcard:!t,query:'double+flipping')),sort:!(_score,desc))
+```

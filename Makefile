@@ -46,6 +46,7 @@ run: stop ## Run scifgif
 
 mattermost: ## Start mattermost
 	git clone https://github.com/mattermost/mattermost-docker.git || true
+	cd mattermost-docker;git checkout 4.1.0
 	cp docker-compose.mattermost.yml mattermost-docker/docker-compose.yml
 	cd mattermost-docker;docker-compose up -d --build
 

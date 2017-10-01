@@ -497,7 +497,7 @@ func postASCIIMattermostSlash(w http.ResponseWriter, r *http.Request) {
 
 	webhook := WebHookResponse{
 		ResponseType: "in_channel",
-		Text:         ascii.Emoji,
+		Text:         "# " + ascii.Emoji,
 		Username:     userName,
 	}
 
