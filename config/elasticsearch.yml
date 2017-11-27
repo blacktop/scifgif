@@ -12,3 +12,5 @@ path.data: /scifgif/elasticsearch/data
 # node.master: true
 # node.ingest: true
 # node.data: true
+http.cors.enabled: true
+http.cors.allow-origin: "/https?:\/\/localhost(:[0-9]+)?/"
