@@ -49,7 +49,7 @@ func GetComicMetaData(url, date string, b *backoff.Backoff) Comic {
 		GetComicMetaData(url, date, b)
 	}
 	// GET TITLE
-	doc.Find(".omic-title-name").Each(func(i int, s *goquery.Selection) {
+	doc.Find(".comic-title-name").Each(func(i int, s *goquery.Selection) {
 		comic.Title = s.Text()
 	})
 	// GET IMAGE URL
