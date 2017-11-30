@@ -1,16 +1,20 @@
-scifgif
-=======
+# scif[ *gif* ]
 
-[![Circle CI](https://circleci.com/gh/blacktop/scifgif.png?style=shield)](https://circleci.com/gh/blacktop/scifgif) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif) [![Docker Pulls](https://img.shields.io/docker/pulls/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif) [![Docker Image](https://img.shields.io/badge/docker%20image-2GB-blue.svg)](https://store.docker.com/community/images/blacktop/scifgif)
+[![Circle CI](https://circleci.com/gh/blacktop/scifgif.png?style=shield)](https://circleci.com/gh/blacktop/scifgif)
+[![License](https://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
+[![Docker Stars](https://img.shields.io/docker/stars/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif)
+[![Docker Pulls](https://img.shields.io/docker/pulls/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif)
+[![Docker Image](https://img.shields.io/badge/docker%20image-2GB-blue.svg)](https://store.docker.com/community/images/blacktop/scifgif)
 
-> Humorous image microservice for isolated networks - `xkcd|dilbert|giphy` + **keyword/phrase** search API
+> Humorous image microservice for isolated networks - `xkcd|dilbert|giphy` +
+> **keyword/phrase** search API
 
 ---
 
 ### Dependencies
 
--	[alpine:3.6](https://hub.docker.com/_/alpine/)
--	[blacktop/elasticsearch:5.6](https://hub.docker.com/r/blacktop/elasticsearch/)
+* [alpine:3.6](https://hub.docker.com/_/alpine/)
+* [blacktop/elasticsearch:5.6](https://hub.docker.com/r/blacktop/elasticsearch/)
 
 ### Image Tags
 
@@ -22,43 +26,46 @@ blacktop/scifgif     0.2.0               2GB
 blacktop/scifgif     0.1.0               2GB
 ```
 
-> **NOTE:** the reason the docker image is so large is that it contains:  
-> - ~2000 `giphy` gifs *(1500 reactions, 250 futurama and 250 star wars)*
-> - all of `xkcd`
+> **NOTE:** the reason the docker image is so large is that it contains:
+>
+> * ~2000 `giphy` gifs _(1500 reactions, 250 futurama and 250 star wars)_
+> * all of `xkcd`
 
-Getting Started
----------------
+## Getting Started
 
 ```bash
 $ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif --host localhost
 ```
 
-Documentation
--------------
+## Documentation
 
--	[API Docs](http://docs.scifgif.apiary.io)
--	[Use with Mattermost](https://github.com/blacktop/scifgif/blob/master/docs/mattermost.md)
+* [API Docs](http://docs.scifgif.apiary.io)
+* [Use with Mattermost](https://github.com/blacktop/scifgif/blob/master/docs/mattermost.md)
 
 ![mattermost](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/mattermost.png)
 
-### TODO
+## TODO
 
--	[x] Add meta-data DB for keyword text search (elasticsearch)
--	[x] Add docs for creating [Mattermost](https://github.com/mattermost/platform) slash command or integration
--	[ ] Add ability to use expansion packs (use tag to control types of images available)
--	[x] Add ascii art emojis (table flippers etc)
--	[ ] Add ephemeral slash command help
-- [x] remove non-alphanumerics so you can search for emojis :older_man:
-- [x] remove `xkcd` details *(can they be a mouse over?)*
-- [x] add ability to add GIFs and/or keywords to GIFs
-- [ ] add `dilbert` :construction:
-- [ ] make search more "fuzzy" 
+* [x] Add meta-data DB for keyword text search (elasticsearch)
+* [x] Add docs for creating [Mattermost](https://github.com/mattermost/platform)
+      slash command or integration
+* [ ] Add ability to use expansion packs (use tag to control types of images
+      available)
+* [x] Add ascii art emojis (table flippers etc)
+* [ ] Add ephemeral slash command help
+* [x] remove non-alphanumerics so you can search for emojis :older_man:
+* [x] remove `xkcd` details _(can they be a mouse over?)_
+* [x] add ability to add GIFs and/or keywords to GIFs
+* [ ] add `dilbert` :construction:
+* [ ] make search more "fuzzy"
 
-### Issues
+## Issues
 
-Find a bug? Want more features? Find something missing in the documentation? Let me know! Please don't hesitate to [file an issue](https://github.com/blacktop/scifgif/issues/new)
+Find a bug? Want more features? Find something missing in the documentation? Let
+me know! Please don't hesitate to
+[file an issue](https://github.com/blacktop/scifgif/issues/new)
 
-### License
+## License
 
 MIT Copyright (c) 2017 **blacktop**
 

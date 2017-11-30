@@ -1,0 +1,187 @@
+.search-bar {
+  margin: 20px;
+  text-align: center;
+}
+
+.search-bar input {
+  width: 100%;
+}
+
+.result-item img {
+  max-width: 64px;
+}
+
+.result-detail .details {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.list-group-item {
+  cursor: pointer;
+}
+
+.list-group-item:hover {
+  background-color: #eee;
+}
+
+@import url("https://fonts.googleapis.com/css?family=Lato:400,700,900");
+body {
+  background: #09a;
+  font-family: Lato, sans-serif;
+}
+
+@supports not ((display: -ms-grid) or (display: grid)) {
+  body:before {
+    content: "Your browser does not support the CSS grid spec - so that won't be super interesting! Also, I have only played with it in Firefox Nightly.. Results may vary in other browsers! :)";
+    color: #fff;
+    background: #ff6347;
+    padding: 2rem;
+    text-align: center;
+    display: block;
+  }
+}
+
+.header {
+  background: #fff;
+  text-align: center;
+  padding: 1rem 1rem 2rem;
+}
+
+.header__title {
+  margin: 1rem 0;
+  font-weight: 900;
+  color: #333;
+}
+
+.header__intro {
+  line-height: 1.5;
+  color: #8c8c8c;
+  max-width: 45rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+code {
+  background: #ddd;
+  padding: 0.1rem 0.3rem;
+  margin: 0 0.2rem;
+  border-radius: 3px;
+}
+
+.header__button {
+  padding: 0.6rem 1rem;
+  margin: 0.25rem;
+  background: #1161bd;
+  border: none;
+  color: #fff;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.header__button:hover {
+  background: rgb(25, 47, 168);
+}
+
+.grid {
+  display: -ms-grid;
+  display: grid;
+  padding: 0;
+  margin: 0;
+  -ms-grid-columns: (50vw)[2];
+  grid-template-columns: repeat(2, 50vw);
+  grid-auto-rows: 50vw;
+  grid-auto-flow: dense;
+}
+
+@media (min-width: 26rem) {
+  .grid {
+    -ms-grid-columns: (33.333333333333336vw)[3];
+    grid-template-columns: repeat(3, 33.333333333333336vw);
+    grid-auto-rows: 33.333333333333336vw;
+  }
+}
+
+@media (min-width: 50rem) {
+  .grid {
+    -ms-grid-columns: (25vw)[4];
+    grid-template-columns: repeat(4, 25vw);
+    grid-auto-rows: 25vw;
+  }
+}
+
+@media (min-width: 60rem) {
+  .grid {
+    -ms-grid-columns: (20vw)[5];
+    grid-template-columns: repeat(5, 20vw);
+    grid-auto-rows: 20vw;
+  }
+}
+
+@media (min-width: 80rem) {
+  .grid {
+    -ms-grid-columns: (16.666666666666668vw)[6];
+    grid-template-columns: repeat(6, 16.666666666666668vw);
+    grid-auto-rows: 16.666666666666668vw;
+  }
+}
+
+.grid__item {
+  list-style: none;
+  height: 100%;
+  position: relative;
+}
+
+.grid__item--wide {
+  -ms-grid-column-span: 2;
+  -ms-grid-column: auto;
+  grid-column: auto/span 2;
+}
+
+.grid__item--tall {
+  -ms-grid-row-span: 2;
+  -ms-grid-row: auto;
+  grid-row: auto/span 2;
+}
+
+.grid__item--big {
+  -ms-grid-column-span: 2;
+  -ms-grid-column: auto;
+  grid-column: auto/span 2;
+  -ms-grid-row-span: 2;
+  -ms-grid-row: auto;
+  grid-row: auto/span 2;
+}
+
+.grid__image {
+  position: absolute;
+  -o-object-fit: cover;
+  object-fit: cover;
+  display: block;
+  width: 100%;
+  height: 100%;
+  -webkit-transition: 0.1s;
+  transition: 0.1s;
+}
+
+.grid__image:hover {
+  -webkit-filter: sepia(100%);
+  filter: sepia(100%);
+}
+
+.grid__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  background: #000;
+  color: #fff;
+  opacity: 0.3;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1.5rem;
+}
+
+.grid__close:hover {
+  opacity: 0.5;
+}

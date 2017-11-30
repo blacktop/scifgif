@@ -5,15 +5,15 @@ LABEL maintainer "https://github.com/blacktop"
 COPY . /go/src/github.com/blacktop/scifgif
 RUN apk --no-cache add ca-certificates
 RUN apk --update add --no-cache -t .build-deps \
-                                    build-base \
-                                    mercurial \
-                                    musl-dev \
-                                    openssl \
-                                    bash \
-                                    wget \
-                                    git \
-                                    gcc \
-                                    go \
+  build-base \
+  mercurial \
+  musl-dev \
+  openssl \
+  bash \
+  wget \
+  git \
+  gcc \
+  go \
   && echo "===> Building scifgif binary..." \
   && cd /go/src/github.com/blacktop/scifgif \
   && export GOPATH=/go \
@@ -50,6 +50,12 @@ COPY images/default/dilbert.png /scifgif/images/default/dilbert.png
 COPY images/icons/giphy-icon.png /scifgif/images/icons/giphy-icon.png
 COPY images/icons/xkcd-icon.jpg /scifgif/images/icons/xkcd-icon.jpg
 COPY images/icons/dilbert-icon.png /scifgif/images/icons/dilbert-icon.png
+
+# Add web app resources
+COPY web/index.html /scifgif/web/index.html
+COPY web/bundle.js /scifgif/web/bundle.js
+COPY web/style/bootstrap.min.css /scifgif/web/style/bootstrap.min.css
+COPY web/style/style.css /scifgif/web/style/style.css
 
 EXPOSE 3993
 

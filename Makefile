@@ -6,9 +6,11 @@ REPO=$(ORG)/$(NAME)
 VERSION?=$(shell cat VERSION)
 
 build: ## Build docker image
+	cd web; npm run build
 	docker build --build-arg IMAGE_XKCD_COUNT=100 --build-arg IMAGE_NUMBER=100 -t $(ORG)/$(NAME):$(VERSION) .
 
 dev: base ## Build docker dev image
+	cd web; npm run build
 	docker build -f Dockerfile.dev -t $(ORG)/$(NAME):$(VERSION) .
 
 size: tags ## Update docker image size in README.md
@@ -32,13 +34,16 @@ push: build ## Push docker image to docker registry
 update: stop dbstop ## Update scifgif images
 	@echo "===> Starting scifgif update..."
 	@echo " - Starting elasticsearch"
-	@docker run -d --name elasticsearch -p 9200:9200 blacktop/elasticsearch:5.6
+	@docker run -d --name elasticsearch -p 9200:9200 -e http.cors.enabled=true -e http.cors.allow-origin="/https?:\/\/localhost(:[0-9]+)?/" blacktop/elasticsearch:5.6
 	@echo " - Starting kibana"
 	@sleep 10;docker run -d --name kibana --link elasticsearch -p 5601:5601 blacktop/kibana:5.6
 	@go run *.go -N 20 --xkcd-count 20 --date 2017-05-08 -V update
 
 web: stop ## Start scifgif web-service
+	@echo "===> Rebuilding web assets..."
+	@cd web; npm run build
 	@echo "===> Starting scifgif web service..."
+	@open http://localhost:3993/web
 	@go run *.go -V --host 127.0.0.1
 
 run: stop ## Run scifgif

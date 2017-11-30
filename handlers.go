@@ -15,6 +15,27 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// const staticDir = web
+
+// func staticHandler(handler http.Handler) http.Handler {
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		w.Header().Set("Cache-Control", "max-age=31556926, public")
+// 		if strings.HasSuffix(r.URL.Path, "/") {
+// 			http.NotFound(w, r)
+// 			return
+// 		}
+// 		handler.ServeHTTP(w, r)
+// 	})
+// }
+
+// func root(c *api.Context, w http.ResponseWriter, r *http.Request) {
+
+// 	w.Header().Set("Cache-Control", "no-cache, max-age=31556926, public")
+
+// 	staticDir, _ := utils.FindDir(model.CLIENT_DIR)
+// 	http.ServeFile(w, r, staticDir+"root.html")
+// }
+
 // getRandomXKCD serves a random xkcd comic
 func getRandomXKCD(w http.ResponseWriter, r *http.Request) {
 	image, err := elasticsearch.GetRandomImage("xkcd")
