@@ -22,8 +22,8 @@ api.key
 .circleci/build_num
 .vscode/
 debug
-*.html
-*.js
+gif.html
+gif.js
 test.go
 mattermost-docker/
 .vagrant
