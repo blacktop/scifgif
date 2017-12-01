@@ -52,10 +52,10 @@ COPY images/icons/xkcd-icon.jpg /scifgif/images/icons/xkcd-icon.jpg
 COPY images/icons/dilbert-icon.png /scifgif/images/icons/dilbert-icon.png
 
 # Add web app resources
-COPY web/index.html /scifgif/web/index.html
-COPY web/bundle.js /scifgif/web/bundle.js
-COPY web/style/bootstrap.min.css /scifgif/web/style/bootstrap.min.css
-COPY web/style/style.css /scifgif/web/style/style.css
+COPY public/index.html /scifgif/public/index.html
+COPY public/bundle.js /scifgif/public/bundle.js
+COPY public/style/bootstrap.min.css /scifgif/public/style/bootstrap.min.css
+COPY public/style/style.css /scifgif/public/style/style.css
 
 EXPOSE 3993
 
