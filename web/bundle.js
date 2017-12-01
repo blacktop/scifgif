@@ -134,11 +134,14 @@
 	      client.search({
 	        index: "scifgif",
 	        type: "giphy",
-	        q: term,
+	        q: term.replace(/\W/g, ""),
 	        size: searchSize
 	      }).then(function (body) {
 	        var esResults = body.hits.hits;
-	        _this2.setState({ results: esResults, selectedResult: esResults[0] });
+	        _this2.setState({
+	          results: esResults,
+	          selectedResult: esResults[0]
+	        });
 	      }, function (error) {
 	        console.trace(error.message);
 	      });

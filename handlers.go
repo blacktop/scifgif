@@ -36,6 +36,34 @@ import (
 // 	http.ServeFile(w, r, staticDir+"root.html")
 // }
 
+// getWebSearch search for all images matching query
+func getWebSearch(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	if len(r.Form["query"]) == 0 || len(r.Form["type"]) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		err := errors.New("bad request - please supply `query` and `type` params")
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+
+	images, err := elasticsearch.SearchGetAll(r.Form["query"], r.Form["type"][0])
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err.Error())
+		log.Error(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(images); err != nil {
+		log.Error(err)
+	}
+}
+
 // getRandomXKCD serves a random xkcd comic
 func getRandomXKCD(w http.ResponseWriter, r *http.Request) {
 	image, err := elasticsearch.GetRandomImage("xkcd")

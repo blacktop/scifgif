@@ -6,8 +6,7 @@
   "repository": "https://github.com/blacktop/scifgif.git",
   "scripts": {
     "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js",
-    "test":
-      "mocha --compilers js:babel-core/register --require ./test/test_helper.js --recursive ./test",
+    "test": "mocha --compilers js:babel-core/register --require ./test/test_helper.js --recursive ./test",
     "test:watch": "npm run test -- --watch",
     "build": "./node_modules/.bin/webpack --config webpack.config.js"
   },

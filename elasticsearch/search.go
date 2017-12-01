@@ -74,6 +74,54 @@ func SearchImage(search []string, itype string) (ImageMetaData, error) {
 	return ImageMetaData{}, errors.New("search found no images")
 }
 
+// SearchGetAll searches imagess by text/title and returns all matching images
+func SearchGetAll(search []string, itype string) ([]ImageMetaData, error) {
+	ctx := context.Background()
+
+	client, err := elastic.NewSimpleClient()
+	if err != nil {
+		return []ImageMetaData{}, err
+	}
+
+	searchStr := strings.Join(removeNonAlphaNumericChars(search), " ")
+
+	// build randomly sorted search query
+	q := elastic.NewMultiMatchQuery(searchStr, "title", "text").Operator("and") //.TieBreaker(0.3)
+	// Search with a term query
+	searchResult, err := client.Search().
+		Index("scifgif"). // search in index "scifgif"
+		Type(itype).      // only search supplied type images
+		Query(q).         // specify the query
+		Size(250).
+		Do(ctx) // execute
+	if err != nil {
+		return []ImageMetaData{}, err
+	}
+
+	if searchResult.TotalHits() > 0 {
+		var ityp ImageMetaData
+		images := make([]ImageMetaData, 0, searchResult.TotalHits())
+		for _, item := range searchResult.Each(reflect.TypeOf(ityp)) {
+			if i, ok := item.(ImageMetaData); ok {
+				images = append(images, i)
+			}
+		}
+		log.WithFields(log.Fields{
+			"total_hits":  searchResult.TotalHits(),
+			"search_term": searchStr,
+			"query":       search,
+		}).Debug("search found images")
+		return images, nil
+	}
+
+	log.WithFields(log.Fields{
+		"type":        itype,
+		"search_term": searchStr,
+	}).Error("search found no images")
+
+	return []ImageMetaData{}, errors.New("search found no images")
+}
+
 // SearchASCII searches ascii by keywords and returns a random matching ascii
 func SearchASCII(keywords []string) (ASCIIData, error) {
 	ctx := context.Background()
