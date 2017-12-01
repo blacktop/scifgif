@@ -20,8 +20,8 @@ export default class Gallery extends Component {
       return (
         <Image
           key={key}
-          id={image._source.id}
-          url={image._source.path}
+          id={image.id}
+          path={image.path}
           deleteImage={this.deleteImage.bind(this)}
         />
       );
@@ -146,16 +146,16 @@ class Controls extends Component {
 
 class Image extends Component {
   render() {
-    const { id, url } = this.props;
+    const { id, path } = this.props;
 
     return (
       <li className={`grid__item grid__item--big`}>
         <CopyToClipboard
-          text={`http://${window.location.hostname}:3993/${url}`}
+          text={`http://${window.location.hostname}:3993/${path}`}
         >
           <img
             className="grid__image"
-            src={`http://${window.location.hostname}:3993/${url}`}
+            src={`http://${window.location.hostname}:3993/${path}`}
             alt=""
           />
         </CopyToClipboard>

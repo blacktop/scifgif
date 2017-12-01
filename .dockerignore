@@ -22,7 +22,7 @@ NOTES.md
 docker-compose.mattermost.yml
 Vagrantfile
 
-web/node_modules*
-web/scripts*
-web/src*
-web/test*
+public/node_modules*
+public/scripts*
+public/src*
+public/test*

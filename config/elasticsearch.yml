@@ -1,6 +1,6 @@
 node.name: ${HOSTNAME}
-# network.host: _local_
-network.host: 0.0.0.0
+network.host: _local_
+# network.host: 0.0.0.0
 
 path.data: /scifgif/elasticsearch/data
 
@@ -12,5 +12,5 @@ path.data: /scifgif/elasticsearch/data
 # node.master: true
 # node.ingest: true
 # node.data: true
-http.cors.enabled: true
-http.cors.allow-origin: /https?:\/\/localhost(:[0-9]+)?/
+# http.cors.enabled: true
+# http.cors.allow-origin: /https?:\/\/localhost(:[0-9]+)?/

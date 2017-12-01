@@ -249,8 +249,8 @@ func main() {
 		router.HandleFunc("/dilbert/new_post", postDilbertMattermost).Methods("POST")
 		router.HandleFunc("/dilbert/slash", postDilbertMattermostSlash).Methods("POST")
 		// reactJS Web App routes
-		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./web")))
 		router.HandleFunc("/web/search", getWebSearch).Methods("GET")
+		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./public")))
 
 		// start microservice
 		log.WithFields(log.Fields{

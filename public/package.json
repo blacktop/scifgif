@@ -29,6 +29,7 @@
     "webpack-dev-server": "^1.14.0"
   },
   "dependencies": {
+    "axios": "^0.17.1",
     "babel-preset-stage-1": "^6.1.18",
     "elasticsearch": "^14.0.0",
     "lodash": "^3.10.1",

@@ -6,11 +6,11 @@ REPO=$(ORG)/$(NAME)
 VERSION?=$(shell cat VERSION)
 
 build: ## Build docker image
-	cd web; npm run build
+	cd public; npm run build
 	docker build --build-arg IMAGE_XKCD_COUNT=100 --build-arg IMAGE_NUMBER=100 -t $(ORG)/$(NAME):$(VERSION) .
 
 dev: base ## Build docker dev image
-	cd web; npm run build
+	cd public; npm run build
 	docker build -f Dockerfile.dev -t $(ORG)/$(NAME):$(VERSION) .
 
 size: tags ## Update docker image size in README.md
@@ -41,9 +41,9 @@ update: stop dbstop ## Update scifgif images
 
 web: stop ## Start scifgif web-service
 	@echo "===> Rebuilding web assets..."
-	@cd web; npm run build
+	@cd public; npm run build
 	@echo "===> Starting scifgif web service..."
-	@open http://localhost:3993/web
+	@open http://localhost:3993
 	@go run *.go -V --host 127.0.0.1
 
 run: stop ## Run scifgif
