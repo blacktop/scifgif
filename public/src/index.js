@@ -32,8 +32,6 @@ class App extends Component {
       }
     })
     .then((response) => {
-      console.log('data',response.data);
-      console.log('data[0]',response.data[0]);
       this.setState({
                 results: response.data,
                 selectedResult: response.data[0]

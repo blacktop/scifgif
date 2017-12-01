@@ -52,7 +52,7 @@ func getWebSearch(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		// log.Error(err)
 		return
 	}
 
