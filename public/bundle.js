@@ -115,7 +115,7 @@
 	      selectedResult: null
 	    };
 
-	    _this.eSearch("smile");
+	    _this.eSearch("happy");
 	    return _this;
 	  }
 

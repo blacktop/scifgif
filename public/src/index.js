@@ -20,7 +20,7 @@ class App extends Component {
       selectedResult: null
     };
 
-    this.eSearch("smile");
+    this.eSearch("happy");
   }
 
   eSearch(term) {

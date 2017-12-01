@@ -94,13 +94,13 @@ code {
   grid-auto-flow: dense;
 }
 
-@media (min-width: 26rem) {
+/* @media (min-width: 26rem) {
   .grid {
-    -ms-grid-columns: (33.333333333333336vw)[3];
-    grid-template-columns: repeat(3, 33.333333333333336vw);
-    grid-auto-rows: 33.333333333333336vw;
+    -ms-grid-columns: (50vw)[2];
+    grid-template-columns: repeat(2, 50vw);
+    grid-auto-rows: 50vw;
   }
-}
+} */
 
 @media (min-width: 50rem) {
   .grid {
