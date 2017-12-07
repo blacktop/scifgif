@@ -38,6 +38,8 @@ update: stop dbstop ## Update scifgif images
 	@echo " - Starting kibana"
 	@sleep 10;docker run -d --name kibana --link elasticsearch -p 5601:5601 blacktop/kibana:5.6
 	@go run *.go -N 20 --xkcd-count 20 --date 2017-05-08 -V update
+	@echo "===> Updating web deps..."
+	@cd public; npm install	
 
 web: stop ## Start scifgif web-service
 	@echo "===> Rebuilding web assets..."

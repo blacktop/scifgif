@@ -131,8 +131,6 @@
 	          type: "giphy"
 	        }
 	      }).then(function (response) {
-	        console.log('data', response.data);
-	        console.log('data[0]', response.data[0]);
 	        _this2.setState({
 	          results: response.data,
 	          selectedResult: response.data[0]
