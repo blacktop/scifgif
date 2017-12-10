@@ -45,6 +45,7 @@ $ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif --host local
 ![mattermost](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/mattermost.png)
 
 * [Image Search](https://github.com/blacktop/scifgif/blob/master/docs/image-search.md)
+  :construction: _[WIP]_
 
 ![mattermost](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/image-search.png)
 
