@@ -7,7 +7,7 @@ VERSION?=$(shell cat VERSION)
 
 build: ## Build docker image
 	cd public; npm run build
-	docker build --build-arg IMAGE_XKCD_COUNT=100 --build-arg IMAGE_NUMBER=100 -t $(ORG)/$(NAME):$(VERSION) .
+	docker build --pull --build-arg IMAGE_XKCD_COUNT=100 --build-arg IMAGE_NUMBER=100 -t $(ORG)/$(NAME):$(VERSION) .
 
 dev: base ## Build docker dev image
 	cd public; npm run build
@@ -47,6 +47,11 @@ web: stop ## Start scifgif web-service
 	@echo "===> Starting scifgif web service..."
 	@open http://localhost:3993
 	@go run *.go -V --host 127.0.0.1
+
+.PHONY: export  
+export: stop ## Export scifgif DB
+	docker run -d --name scifgif $(ORG)/$(NAME):$(VERSION) -V export
+	docker cp scifgif:/mount/backups/snapshots/* ./elasticsearch/snapshots
 
 run: stop ## Run scifgif
 	docker run -d --name scifgif -p 3993:3993 -p 9200:9200 $(ORG)/$(NAME):$(VERSION)
