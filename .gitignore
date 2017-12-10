@@ -28,6 +28,7 @@ test.go
 mattermost-docker/
 .vagrant
 .DS_Store
+elasticsearch/snapshots/snapshot*
 
 # NodeJS #########################################################################
 # Logs

@@ -24,7 +24,8 @@ func CreateSnapshot() error {
 		BodyJson(map[string]interface{}{
 			"type": "fs",
 			"settings": map[string]interface{}{
-				"location": "/mount/backups/snapshots",
+				"location": "/mount/backups/snapshot",
+				"compress": true,
 			},
 		})
 

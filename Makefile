@@ -50,8 +50,8 @@ web: stop ## Start scifgif web-service
 
 .PHONY: export  
 export: stop ## Export scifgif DB
-	docker run -d --name scifgif $(ORG)/$(NAME):$(VERSION) -V export
-	docker cp scifgif:/mount/backups/snapshots/* ./elasticsearch/snapshots
+	docker run -d --name scifgif $(ORG)/$(NAME):$(VERSION) -V export; sleep 15
+	docker cp scifgif:/mount/backups/snapshot ./elasticsearch/snapshots/
 
 run: stop ## Run scifgif
 	docker run -d --name scifgif -p 3993:3993 -p 9200:9200 $(ORG)/$(NAME):$(VERSION)
