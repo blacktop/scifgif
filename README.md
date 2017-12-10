@@ -1,4 +1,4 @@
-# scif[ *gif* ]
+![logo](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/logo.png)
 
 [![Circle CI](https://circleci.com/gh/blacktop/scifgif.png?style=shield)](https://circleci.com/gh/blacktop/scifgif)
 [![License](https://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
