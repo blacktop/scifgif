@@ -1,3 +1,6 @@
+##############################################
+# BUILDER                                    # 
+##############################################
 FROM golang:alpine as builder
 
 COPY . /go/src/github.com/blacktop/scifgif
@@ -6,6 +9,9 @@ RUN echo "===> Building scifgif binary..."
 WORKDIR /go/src/github.com/blacktop/scifgif
 RUN go build -ldflags "-X main.Version=$(cat VERSION) -X main.BuildTime=$(date -u +%Y%m%d)" -o /bin/scifgif
 
+##############################################
+# SCIFGIF                                    # 
+##############################################
 FROM blacktop/elasticsearch:5.6
 
 LABEL maintainer "https://github.com/blacktop"

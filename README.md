@@ -13,7 +13,7 @@
 
 ### Dependencies
 
-* [alpine:3.6](https://hub.docker.com/_/alpine/)
+* [alpine:3.7](https://hub.docker.com/_/alpine/)
 * [blacktop/elasticsearch:5.6](https://hub.docker.com/r/blacktop/elasticsearch/)
 
 ### Image Tags
@@ -67,6 +67,6 @@ me know! Please don't hesitate to
 
 ## License
 
-MIT Copyright (c) 2017 **blacktop**
+MIT Copyright (c) 2017-2018 **blacktop**
 
 ![giphy](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/PoweredBy_200_Horizontal_Light-Backgrounds_With_Logo.gif)
