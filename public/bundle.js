@@ -125,7 +125,7 @@
 	      var _this2 = this;
 
 	      // GET request for remote image
-	      _axios2.default.get('/web/search', {
+	      _axios2.default.get("/web/search", {
 	        params: {
 	          query: term,
 	          type: "giphy"
@@ -138,39 +138,6 @@
 	      }).catch(function (error) {
 	        console.log(error);
 	      });
-	      // // pin client
-	      // client.ping(
-	      //   {
-	      //     requestTimeout: 10000
-	      //   },
-	      //   function(error) {
-	      //     if (error) {
-	      //       console.error("elasticsearch cluster is down!");
-	      //     } else {
-	      //       console.log("successfully connected to elasticsearch cluster");
-	      //     }
-	      //   }
-	      // );
-	      // // search for term
-	      // client
-	      //   .search({
-	      //     index: "scifgif",
-	      //     type: "giphy",
-	      //     q: term.replace(/\W/g, ""),
-	      //     size: searchSize
-	      //   })
-	      //   .then(
-	      //     body => {
-	      //       let esResults = body.hits.hits;
-	      //       this.setState({
-	      //         results: esResults,
-	      //         selectedResult: esResults[0]
-	      //       });
-	      //     },
-	      //     error => {
-	      //       console.trace(error.message);
-	      //     }
-	      //   );
 	    }
 	  }, {
 	    key: "render",
