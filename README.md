@@ -1,4 +1,4 @@
-# scif[ *gif* ]
+![logo](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/logo.png)
 
 [![Circle CI](https://circleci.com/gh/blacktop/scifgif.png?style=shield)](https://circleci.com/gh/blacktop/scifgif)
 [![License](https://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
@@ -13,7 +13,7 @@
 
 ### Dependencies
 
-* [alpine:3.6](https://hub.docker.com/_/alpine/)
+* [alpine:3.7](https://hub.docker.com/_/alpine/)
 * [blacktop/elasticsearch:5.6](https://hub.docker.com/r/blacktop/elasticsearch/)
 
 ### Image Tags
@@ -44,6 +44,11 @@ $ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif --host local
 
 ![mattermost](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/mattermost.png)
 
+* [Image Search](https://github.com/blacktop/scifgif/blob/master/docs/image-search.md)
+  :construction: _[WIP]_
+
+![mattermost](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/image-search.png)
+
 ## TODO
 
 * [x] Add meta-data DB for keyword text search (elasticsearch)
@@ -67,6 +72,6 @@ me know! Please don't hesitate to
 
 ## License
 
-MIT Copyright (c) 2017 **blacktop**
+MIT Copyright (c) 2017-2018 **blacktop**
 
 ![giphy](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/PoweredBy_200_Horizontal_Light-Backgrounds_With_Logo.gif)

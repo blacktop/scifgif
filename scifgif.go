@@ -197,6 +197,25 @@ func main() {
 				return nil
 			},
 		},
+		{
+			Name:    "export",
+			Aliases: []string{"u"},
+			Usage:   "Export Database",
+			Action: func(c *cli.Context) error {
+				// start elasticsearch database
+				elasticsearch.StartElasticsearch()
+				// wait for elasticsearch to load
+				err := elasticsearch.WaitForConnection(context.Background(), 60, c.GlobalBool("verbose"))
+				if err != nil {
+					log.Fatal(err)
+				}
+				err = elasticsearch.CreateSnapshot()
+				if err != nil {
+					log.Fatal(err)
+				}
+				return nil
+			},
+		},
 	}
 	app.Action = func(c *cli.Context) error {
 

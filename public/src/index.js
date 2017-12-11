@@ -25,54 +25,22 @@ class App extends Component {
 
   eSearch(term) {
     // GET request for remote image
-    axios.get('/web/search', {
-      params: {
-        query: term,
-        type: "giphy",
-      }
-    })
-    .then((response) => {
-      this.setState({
-                results: response.data,
-                selectedResult: response.data[0]
-              });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-    // // pin client
-    // client.ping(
-    //   {
-    //     requestTimeout: 10000
-    //   },
-    //   function(error) {
-    //     if (error) {
-    //       console.error("elasticsearch cluster is down!");
-    //     } else {
-    //       console.log("successfully connected to elasticsearch cluster");
-    //     }
-    //   }
-    // );
-    // // search for term
-    // client
-    //   .search({
-    //     index: "scifgif",
-    //     type: "giphy",
-    //     q: term.replace(/\W/g, ""),
-    //     size: searchSize
-    //   })
-    //   .then(
-    //     body => {
-    //       let esResults = body.hits.hits;
-    //       this.setState({
-    //         results: esResults,
-    //         selectedResult: esResults[0]
-    //       });
-    //     },
-    //     error => {
-    //       console.trace(error.message);
-    //     }
-    //   );
+    axios
+      .get("/web/search", {
+        params: {
+          query: term,
+          type: "giphy"
+        }
+      })
+      .then(response => {
+        this.setState({
+          results: response.data,
+          selectedResult: response.data[0]
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   render() {
@@ -83,11 +51,6 @@ class App extends Component {
     return (
       <div>
         <SearchBar onSearchTermChange={eSearch} />
-        {/*  <ResultDetail result={this.state.selectedResult} />
-        <ResultList
-          onResultSelect={selectedResult => this.setState({ selectedResult })}
-          results={this.state.results}
-        /> */}
         <Gallery results={this.state.results} />
       </div>
     );

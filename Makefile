@@ -7,7 +7,7 @@ VERSION?=$(shell cat VERSION)
 
 build: ## Build docker image
 	cd public; npm run build
-	docker build --build-arg IMAGE_XKCD_COUNT=100 --build-arg IMAGE_NUMBER=100 -t $(ORG)/$(NAME):$(VERSION) .
+	docker build --pull --build-arg IMAGE_XKCD_COUNT=100 --build-arg IMAGE_NUMBER=100 -t $(ORG)/$(NAME):$(VERSION) .
 
 dev: base ## Build docker dev image
 	cd public; npm run build
@@ -38,6 +38,8 @@ update: stop dbstop ## Update scifgif images
 	@echo " - Starting kibana"
 	@sleep 10;docker run -d --name kibana --link elasticsearch -p 5601:5601 blacktop/kibana:5.6
 	@go run *.go -N 20 --xkcd-count 20 --date 2017-05-08 -V update
+	@echo "===> Updating web deps..."
+	@cd public; npm install	
 
 web: stop ## Start scifgif web-service
 	@echo "===> Rebuilding web assets..."
@@ -45,6 +47,11 @@ web: stop ## Start scifgif web-service
 	@echo "===> Starting scifgif web service..."
 	@open http://localhost:3993
 	@go run *.go -V --host 127.0.0.1
+
+.PHONY: export  
+export: stop ## Export scifgif DB
+	docker run -d --name scifgif $(ORG)/$(NAME):$(VERSION) -V export; sleep 15
+	docker cp scifgif:/mount/backups/snapshot ./elasticsearch/snapshots/
 
 run: stop ## Run scifgif
 	docker run -d --name scifgif -p 3993:3993 -p 9200:9200 $(ORG)/$(NAME):$(VERSION)
