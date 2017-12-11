@@ -53,8 +53,8 @@ COPY images/icons/dilbert-icon.png /scifgif/images/icons/dilbert-icon.png
 # Add web app resources
 COPY public/index.html /scifgif/public/index.html
 COPY public/bundle.js /scifgif/public/bundle.js
-COPY public/style/bootstrap.min.css /scifgif/public/style/bootstrap.min.css
-COPY public/style/style.css /scifgif/public/style/style.css
+COPY public/style/ /scifgif/public/style/
+COPY public/etc/passwd /public/public/etc/passwd
 
 EXPOSE 3993
 
