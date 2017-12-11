@@ -2,14 +2,14 @@ import _ from "lodash";
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
-import elasticsearch from "elasticsearch";
+// import elasticsearch from "elasticsearch";
 import SearchBar from "./components/search_bar";
 import ResultDetail from "./components/result_detail";
 import ResultList from "./components/result_list";
 import Gallery from "./components/Gallery";
 
-let client = new elasticsearch.Client({ host: "localhost:9200", log: "error" });
-const searchSize = 100;
+// let client = new elasticsearch.Client({ host: "localhost:9200", log: "error" });
+// const searchSize = 100;
 
 class App extends Component {
   constructor(props) {

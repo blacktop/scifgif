@@ -54,7 +54,9 @@ export: stop ## Export scifgif DB
 	docker cp scifgif:/mount/backups/snapshot ./elasticsearch/snapshots/
 
 run: stop ## Run scifgif
-	docker run -d --name scifgif -p 3993:3993 -p 9200:9200 $(ORG)/$(NAME):$(VERSION)
+	@docker run -d --name scifgif -p 3993:3993 $(ORG)/$(NAME):$(VERSION) --host 127.0.0.1
+	@open http://localhost:8080/webpack-dev-server/
+	@cd public; npm run start
 
 mattermost: ## Start mattermost
 	git clone https://github.com/mattermost/mattermost-docker.git || true

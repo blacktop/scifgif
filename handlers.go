@@ -57,6 +57,8 @@ func getWebSearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	// TODO: only do this for debug mode
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(images); err != nil {

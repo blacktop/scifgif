@@ -31,7 +31,6 @@
   "dependencies": {
     "axios": "^0.17.1",
     "babel-preset-stage-1": "^6.1.18",
-    "elasticsearch": "^14.0.0",
     "lodash": "^3.10.1",
     "react": "^16.2.0",
     "react-copy-to-clipboard": "^5.0.1",
