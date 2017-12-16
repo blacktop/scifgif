@@ -81,8 +81,7 @@ class Image extends Component {
           className="grid__close"
           onClick={this.handleDelete.bind(this, id)}
         >
-          &times;
-        <span className="fas fa-trash-alt"></span>
+          <span className="fas fa-trash-alt" />
         </button>
       </li>
     );
