@@ -6,6 +6,7 @@ import axios from "axios";
 import SearchBar from "./components/search_bar";
 import ResultDetail from "./components/result_detail";
 import ResultList from "./components/result_list";
+import Header from "./components/Header";
 import Gallery from "./components/Gallery";
 
 // let client = new elasticsearch.Client({ host: "localhost:9200", log: "error" });
@@ -50,6 +51,7 @@ class App extends Component {
 
     return (
       <div>
+        <Header />
         <SearchBar onSearchTermChange={eSearch} />
         <Gallery results={this.state.results} />
       </div>

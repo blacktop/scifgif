@@ -123,7 +123,7 @@
 	      var _this2 = this;
 
 	      // GET request for remote image
-	      _axios2.default.get("http://localhost:3993/web/search", {
+	      _axios2.default.get("/web/search", {
 	        params: {
 	          query: term,
 	          type: "giphy"
@@ -32701,8 +32701,7 @@
 	    _this.state = {
 	      gallery: [],
 	      copied: false,
-	      value: "",
-	      selectedOption: "giphy"
+	      value: ""
 	    };
 	    return _this;
 	  }
@@ -32724,11 +32723,7 @@
 	      return _react2.default.createElement(
 	        "div",
 	        null,
-	        _react2.default.createElement(Header, {
-	          selectedOption: this.state.selectedOption,
-	          addImage: this.addImage.bind(this),
-	          handleOptionChange: this.handleOptionChange.bind(this)
-	        }),
+	        _react2.default.createElement(Header, { addImage: this.addImage.bind(this) }),
 	        _react2.default.createElement(
 	          "ul",
 	          { className: "grid" },
@@ -32763,13 +32758,6 @@
 	        gallery: newState
 	      });
 	    }
-	  }, {
-	    key: "handleOptionChange",
-	    value: function handleOptionChange(changeEvent) {
-	      this.setState({
-	        selectedOption: changeEvent.target.value
-	      });
-	    }
 	  }]);
 
 	  return Gallery;
@@ -32781,9 +32769,7 @@
 
 	exports.default = Gallery;
 	var Header = function Header(_ref) {
-	  var addImage = _ref.addImage,
-	      handleOptionChange = _ref.handleOptionChange,
-	      selectedOption = _ref.selectedOption;
+	  var addImage = _ref.addImage;
 	  return _react2.default.createElement(
 	    "header",
 	    { className: "header" },
@@ -32809,10 +32795,7 @@
 	      ),
 	      " to filter on and then click the image to copy it's URL to your clipboard."
 	    ),
-	    _react2.default.createElement(Controls, {
-	      handleOptionChange: handleOptionChange,
-	      selectedOption: selectedOption
-	    })
+	    _react2.default.createElement(Controls, { addImage: addImage })
 	  );
 	};
 
@@ -32820,75 +32803,94 @@
 	/* ##### UI Buttons ###### */
 	/* ####################### */
 
-	var Controls = function Controls(_ref2) {
-	  var handleOptionChange = _ref2.handleOptionChange,
-	      selectedOption = _ref2.selectedOption;
-	  return (
+	var Controls = function (_Component2) {
+	  _inherits(Controls, _Component2);
 
-	    // handleFormSubmit(formSubmitEvent) {
-	    //   formSubmitEvent.preventDefault();
-	    //   console.log("You have selected:", this.props.selectedOption);
-	    // }
+	  function Controls(props) {
+	    _classCallCheck(this, Controls);
 
-	    // render() {
-	    // return (
-	    _react2.default.createElement(
-	      "form",
-	      null,
-	      _react2.default.createElement(
-	        "div",
-	        { className: "btn-group", "data-toggle": "buttons" },
+	    var _this3 = _possibleConstructorReturn(this, (Controls.__proto__ || Object.getPrototypeOf(Controls)).call(this, props));
+
+	    _this3.state = { selectedOption: "giphy" };
+	    return _this3;
+	  }
+
+	  _createClass(Controls, [{
+	    key: "handleOptionChange",
+	    value: function handleOptionChange(changeEvent) {
+	      this.setState({
+	        selectedOption: changeEvent.target.value
+	      });
+	    }
+	  }, {
+	    key: "handleFormSubmit",
+	    value: function handleFormSubmit(formSubmitEvent) {
+	      formSubmitEvent.preventDefault();
+
+	      console.log("You have selected:", this.state.selectedOption);
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      return _react2.default.createElement(
+	        "form",
+	        null,
 	        _react2.default.createElement(
-	          "label",
-	          { className: "btn btn-primary active" },
-	          _react2.default.createElement("input", {
-	            type: "radio",
-	            value: "giphy",
-	            checked: selectedOption === "giphy",
-	            onChange: handleOptionChange
-	          }),
-	          "giphy"
-	        ),
-	        _react2.default.createElement(
-	          "label",
-	          { className: "btn btn-primary" },
-	          _react2.default.createElement("input", {
-	            type: "radio",
-	            value: "xkcd",
-	            checked: selectedOption === "xkcd",
-	            onChange: handleOptionChange
-	          }),
-	          "xkcd"
-	        ),
-	        _react2.default.createElement(
-	          "label",
-	          { className: "btn btn-primary", disabled: true },
-	          _react2.default.createElement("input", {
-	            type: "radio",
-	            value: "dilbert",
-	            checked: selectedOption === "dilbert",
-	            onChange: handleOptionChange,
-	            disabled: true
-	          }),
-	          "dilbert"
+	          "div",
+	          { className: "btn-group", "data-toggle": "buttons" },
+	          _react2.default.createElement(
+	            "label",
+	            { className: "btn btn-primary active" },
+	            _react2.default.createElement("input", {
+	              type: "radio",
+	              value: "giphy",
+	              checked: this.state.selectedOption === "giphy",
+	              onChange: this.handleOptionChange
+	            }),
+	            "giphy"
+	          ),
+	          _react2.default.createElement(
+	            "label",
+	            { className: "btn btn-primary" },
+	            _react2.default.createElement("input", {
+	              type: "radio",
+	              value: "xkcd",
+	              checked: this.state.selectedOption === "xkcd",
+	              onChange: this.handleOptionChange
+	            }),
+	            "xkcd"
+	          ),
+	          _react2.default.createElement(
+	            "label",
+	            { className: "btn btn-primary", disabled: true },
+	            _react2.default.createElement("input", {
+	              type: "radio",
+	              value: "dilbert",
+	              checked: this.state.selectedOption === "dilbert",
+	              onChange: this.handleOptionChange,
+	              disabled: true
+	            }),
+	            "dilbert"
+	          )
 	        )
-	      )
-	    )
-	  );
-	};
-	// }
+	      );
+	    }
+	  }, {
+	    key: "handleClick",
+	    value: function handleClick(size) {
+	      this.props.addImage(size);
+	    }
+	  }]);
 
-	// handleClick(size) {
-	//   this.props.addImage(size);
-	// }
-	// }
+	  return Controls;
+	}(_react.Component);
 
 	/* ####################### */
 	/* ##### Image Item ###### */
 	/* ####################### */
 
-	var Image = function (_Component2) {
-	  _inherits(Image, _Component2);
+	var Image = function (_Component3) {
+	  _inherits(Image, _Component3);
 
 	  function Image() {
 	    _classCallCheck(this, Image);
@@ -32924,7 +32926,7 @@
 	            className: "grid__close",
 	            onClick: this.handleDelete.bind(this, id)
 	          },
-	          _react2.default.createElement("span", { "class": "glyphicon glyphicon-trash" })
+	          "\xD7"
 	        )
 	      );
 	    }
