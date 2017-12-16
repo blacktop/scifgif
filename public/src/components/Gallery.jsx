@@ -28,7 +28,6 @@ export default class Gallery extends Component {
     });
     return (
       <div>
-        <Header addImage={this.addImage.bind(this)} />
         <ul className="grid">{images}</ul>
       </div>
     );
@@ -56,87 +55,6 @@ export default class Gallery extends Component {
     this.setState({
       gallery: newState
     });
-  }
-}
-
-/* ################### */
-/* ##### Header ###### */
-/* ################### */
-
-const Header = ({ addImage }) => (
-  <header className="header">
-    <h1 className="header__title">
-      scif[ <em className="text-primary">gif</em> ] - image search
-    </h1>
-    <p className="header__intro">
-      Type <code>keywords</code> to filter on and then click the image to copy
-      it's URL to your clipboard.
-    </p>
-    <Controls addImage={addImage} />
-  </header>
-);
-
-/* ####################### */
-/* ##### UI Buttons ###### */
-/* ####################### */
-
-class Controls extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { selectedOption: "giphy" };
-  }
-
-  handleOptionChange(changeEvent) {
-    this.setState({
-      selectedOption: changeEvent.target.value
-    });
-  }
-
-  handleFormSubmit(formSubmitEvent) {
-    formSubmitEvent.preventDefault();
-
-    console.log("You have selected:", this.state.selectedOption);
-  }
-
-  render() {
-    return (
-      <form>
-        <div className="btn-group" data-toggle="buttons">
-          <label className="btn btn-primary active">
-            <input
-              type="radio"
-              value="giphy"
-              checked={this.state.selectedOption === "giphy"}
-              onChange={this.handleOptionChange}
-            />
-            giphy
-          </label>
-          <label className="btn btn-primary">
-            <input
-              type="radio"
-              value="xkcd"
-              checked={this.state.selectedOption === "xkcd"}
-              onChange={this.handleOptionChange}
-            />
-            xkcd
-          </label>
-          <label className="btn btn-primary" disabled>
-            <input
-              type="radio"
-              value="dilbert"
-              checked={this.state.selectedOption === "dilbert"}
-              onChange={this.handleOptionChange}
-              disabled
-            />
-            dilbert
-          </label>
-        </div>
-      </form>
-    );
-  }
-
-  handleClick(size) {
-    this.props.addImage(size);
   }
 }
 
