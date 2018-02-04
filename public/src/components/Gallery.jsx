@@ -12,7 +12,7 @@ export default class Gallery extends Component {
       gallery: [],
       copied: false,
       value: "",
-      selectedOption : "giphy"
+      selectedOption: "giphy"
     };
   }
   render() {
@@ -30,9 +30,9 @@ export default class Gallery extends Component {
     return (
       <div>
         <Header
-        selectedOption={this.state.selectedOption}
-        addImage={this.addImage.bind(this)}
-        handleOptionChange={this.handleOptionChange.bind(this)}
+          selectedOption={this.state.selectedOption}
+          addImage={this.addImage.bind(this)}
+          handleOptionChange={this.handleOptionChange.bind(this)}
         />
         <ul className="grid">{images}</ul>
       </div>
@@ -75,7 +75,6 @@ export default class Gallery extends Component {
 /* ################### */
 
 const Header = ({ addImage, handleOptionChange, selectedOption }) => (
-
   <header className="header">
     <h1 className="header__title">
       scif[ <em className="text-primary">gif</em> ] - image search
@@ -85,8 +84,8 @@ const Header = ({ addImage, handleOptionChange, selectedOption }) => (
       it's URL to your clipboard.
     </p>
     <Controls
-    handleOptionChange={handleOptionChange}
-    selectedOption={selectedOption}
+      handleOptionChange={handleOptionChange}
+      selectedOption={selectedOption}
     />
   </header>
 );
@@ -96,52 +95,51 @@ const Header = ({ addImage, handleOptionChange, selectedOption }) => (
 /* ####################### */
 
 const Controls = ({ handleOptionChange, selectedOption }) => (
-
   // handleFormSubmit(formSubmitEvent) {
   //   formSubmitEvent.preventDefault();
   //   console.log("You have selected:", this.props.selectedOption);
   // }
 
   // render() {
-    // return (
-      <form>
-        <div className="btn-group" data-toggle="buttons">
-          <label className="btn btn-primary active">
-            <input
-              type="radio"
-              value="giphy"
-              checked={selectedOption === "giphy"}
-              onChange={handleOptionChange}
-            />
-            giphy
-          </label>
-          <label className="btn btn-primary">
-            <input
-              type="radio"
-              value="xkcd"
-              checked={selectedOption === "xkcd"}
-              onChange={handleOptionChange}
-            />
-            xkcd
-          </label>
-          <label className="btn btn-primary" disabled>
-            <input
-              type="radio"
-              value="dilbert"
-              checked={selectedOption === "dilbert"}
-              onChange={handleOptionChange}
-              disabled
-            />
-            dilbert
-          </label>
-        </div>
-      </form>
-    );
-  // }
+  // return (
+  <form>
+    <div className="btn-group" data-toggle="buttons">
+      <label className="btn btn-primary active">
+        <input
+          type="radio"
+          value="giphy"
+          checked={selectedOption === "giphy"}
+          onChange={handleOptionChange}
+        />
+        giphy
+      </label>
+      <label className="btn btn-primary">
+        <input
+          type="radio"
+          value="xkcd"
+          checked={selectedOption === "xkcd"}
+          onChange={handleOptionChange}
+        />
+        xkcd
+      </label>
+      <label className="btn btn-primary" disabled>
+        <input
+          type="radio"
+          value="dilbert"
+          checked={selectedOption === "dilbert"}
+          onChange={handleOptionChange}
+          disabled
+        />
+        dilbert
+      </label>
+    </div>
+  </form>
+);
+// }
 
-  // handleClick(size) {
-  //   this.props.addImage(size);
-  // }
+// handleClick(size) {
+//   this.props.addImage(size);
+// }
 // }
 
 /* ####################### */
@@ -167,7 +165,7 @@ class Image extends Component {
           className="grid__close"
           onClick={this.handleDelete.bind(this, id)}
         >
-        <span className="fas fa-trash-alt"></span>
+          <span className="fas fa-trash-alt" />
         </button>
       </li>
     );

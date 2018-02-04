@@ -45,7 +45,7 @@ body {
 .header {
   background: #fff;
   text-align: center;
-  padding: 1rem 1rem 2rem;
+  padding: 1rem 1rem 1rem;
 }
 
 .header__title {
