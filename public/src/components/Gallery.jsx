@@ -11,7 +11,8 @@ export default class Gallery extends Component {
     this.state = {
       gallery: [],
       copied: false,
-      value: ""
+      value: "",
+      selectedOption : "giphy"
     };
   }
   render() {
@@ -28,6 +29,11 @@ export default class Gallery extends Component {
     });
     return (
       <div>
+        <Header
+        selectedOption={this.state.selectedOption}
+        addImage={this.addImage.bind(this)}
+        handleOptionChange={this.handleOptionChange.bind(this)}
+        />
         <ul className="grid">{images}</ul>
       </div>
     );
@@ -56,7 +62,87 @@ export default class Gallery extends Component {
       gallery: newState
     });
   }
+
+  handleOptionChange(changeEvent) {
+    this.setState({
+      selectedOption: changeEvent.target.value
+    });
+  }
 }
+
+/* ################### */
+/* ##### Header ###### */
+/* ################### */
+
+const Header = ({ addImage, handleOptionChange, selectedOption }) => (
+
+  <header className="header">
+    <h1 className="header__title">
+      scif[ <em className="text-primary">gif</em> ] - image search
+    </h1>
+    <p className="header__intro">
+      Type <code>keywords</code> to filter on and then click the image to copy
+      it's URL to your clipboard.
+    </p>
+    <Controls
+    handleOptionChange={handleOptionChange}
+    selectedOption={selectedOption}
+    />
+  </header>
+);
+
+/* ####################### */
+/* ##### UI Buttons ###### */
+/* ####################### */
+
+const Controls = ({ handleOptionChange, selectedOption }) => (
+
+  // handleFormSubmit(formSubmitEvent) {
+  //   formSubmitEvent.preventDefault();
+  //   console.log("You have selected:", this.props.selectedOption);
+  // }
+
+  // render() {
+    // return (
+      <form>
+        <div className="btn-group" data-toggle="buttons">
+          <label className="btn btn-primary active">
+            <input
+              type="radio"
+              value="giphy"
+              checked={selectedOption === "giphy"}
+              onChange={handleOptionChange}
+            />
+            giphy
+          </label>
+          <label className="btn btn-primary">
+            <input
+              type="radio"
+              value="xkcd"
+              checked={selectedOption === "xkcd"}
+              onChange={handleOptionChange}
+            />
+            xkcd
+          </label>
+          <label className="btn btn-primary" disabled>
+            <input
+              type="radio"
+              value="dilbert"
+              checked={selectedOption === "dilbert"}
+              onChange={handleOptionChange}
+              disabled
+            />
+            dilbert
+          </label>
+        </div>
+      </form>
+    );
+  // }
+
+  // handleClick(size) {
+  //   this.props.addImage(size);
+  // }
+// }
 
 /* ####################### */
 /* ##### Image Item ###### */
@@ -81,7 +167,6 @@ class Image extends Component {
           className="grid__close"
           onClick={this.handleDelete.bind(this, id)}
         >
-          &times;
         <span className="fas fa-trash-alt"></span>
         </button>
       </li>
