@@ -13,7 +13,7 @@
   "author": "blacktop",
   "license": "MIT",
   "devDependencies": {
-    "babel-core": "^6.2.1",
+    "babel-core": "^6.26.3",
     "babel-loader": "^6.2.0",
     "babel-preset-es2015": "^6.1.18",
     "babel-preset-react": "^6.1.18",
@@ -31,7 +31,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "babel-preset-stage-1": "^6.1.18",
-    "lodash": "^3.10.1",
+    "lodash": ">=4.17.5",
     "react": "^16.2.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.2.0",
