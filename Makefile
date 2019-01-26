@@ -39,7 +39,7 @@ update: stop dbstop ## Update scifgif images
 	@sleep 10;docker run -d --name kibana --link elasticsearch -p 5601:5601 blacktop/kibana:5.6
 	@go run *.go -N 20 --xkcd-count 20 --date 2017-05-08 -V update
 	@echo "===> Updating web deps..."
-	@cd public; npm install	
+	@cd public; npm install
 
 web: stop ## Start scifgif web-service
 	@echo "===> Rebuilding web assets..."
@@ -48,7 +48,7 @@ web: stop ## Start scifgif web-service
 	@open http://localhost:3993
 	@go run *.go -V --host 127.0.0.1
 
-.PHONY: export  
+.PHONY: export
 export: stop ## Export scifgif DB
 	docker run -d --name scifgif $(ORG)/$(NAME):$(VERSION) -V export; sleep 15
 	docker cp scifgif:/mount/backups/snapshot ./elasticsearch/snapshots/
@@ -60,8 +60,9 @@ run: stop ## Run scifgif
 
 mattermost: ## Start mattermost
 	git clone https://github.com/mattermost/mattermost-docker.git || true
-	cd mattermost-docker;git checkout 4.1.0
+	cd mattermost-docker;git checkout 5.5.0
 	cp docker-compose.mattermost.yml mattermost-docker/docker-compose.yml
+	cp config/mattermost/config.json mattermost-docker/config.json
 	cd mattermost-docker;docker-compose up -d --build
 
 test: ## Test build plugin

@@ -1,13 +1,12 @@
 version: "2"
 
 services:
-
   db:
     build: db
     restart: unless-stopped
     volumes:
       - ./volumes/db/var/lib/postgresql/data:/var/lib/postgresql/data
-      - /etc/localtime:/etc/localtime:ro
+      # - /etc/localtime:/etc/localtime:ro
     environment:
       - POSTGRES_USER=mmuser
       - POSTGRES_PASSWORD=mmuser_password
@@ -28,14 +27,17 @@ services:
       - ./volumes/app/mattermost/config:/mattermost/config:rw
       - ./volumes/app/mattermost/data:/mattermost/data:rw
       - ./volumes/app/mattermost/logs:/mattermost/logs:rw
-      - /etc/localtime:/etc/localtime:ro
+      - ./volumes/app/mattermost/plugins:/mattermost/plugins:rw
+      - ./volumes/app/mattermost/client-plugins:/mattermost/client/plugins:rw
+      - ./config.json:/mattermost/config/config.json
+      # - /etc/localtime:/etc/localtime:ro
     environment:
       # set same as db credentials and dbname
       - MM_USERNAME=mmuser
       - MM_PASSWORD=mmuser_password
       - MM_DBNAME=mattermost
       # in case your config is not in default location
-      #- MM_CONFIG=/mattermost/config/config.json
+      - MM_CONFIG=/mattermost/config/config.json
     links:
       - db:db
 
@@ -48,7 +50,7 @@ services:
     volumes:
       # This directory must have cert files
       - ./volumes/web/cert:/cert:ro
-      - /etc/localtime:/etc/localtime:ro
+      # - /etc/localtime:/etc/localtime:ro
     links:
       - app:app
       - gif:gif
@@ -60,8 +62,8 @@ services:
     restart: unless-stopped
     environment:
       - SCIFGIF_HOST=localhost
-      - SCIFGIF_TOKEN=3xhw3juacb8xiyh9rthas4zx9y
-
+      - SCIFGIF_TOKEN=sbcdqwohbpg73r6hddi4ka1xgo
+    command: -V
   # xkcd:
   #   image: blacktop/scifgif:0.1.0
   #   ports:
