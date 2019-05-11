@@ -21,7 +21,7 @@
     "chai-jquery": "^2.0.0",
     "eslint": "^4.11.0",
     "eslint-config-google": "^0.9.1",
-    "jquery": "3.0.0",
+    "jquery": ">=3.4.0",
     "jsdom": "^8.1.0",
     "mocha": "^2.4.5",
     "react-addons-test-utils": "^0.14.7",
