@@ -1,4 +1,4 @@
-package elasticsearch
+package database
 
 import (
 	"io"
@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 // DownloadImage downloads image to filepath

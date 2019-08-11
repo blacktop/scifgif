@@ -13,14 +13,14 @@
 
 ### Dependencies
 
-* [alpine:3.7](https://hub.docker.com/_/alpine/)
-* [blacktop/elasticsearch:5.6](https://hub.docker.com/r/blacktop/elasticsearch/)
+* [alpine:3.10](https://hub.docker.com/_/alpine/)
 
 ### Image Tags
 
 ```bash
 REPOSITORY           TAG                 SIZE
 blacktop/scifgif     latest              2GB
+blacktop/scifgif     1.0                 2GB
 blacktop/scifgif     0.3.0               2GB
 blacktop/scifgif     0.2.0               2GB
 blacktop/scifgif     0.1.0               2GB
@@ -51,7 +51,7 @@ $ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif --host local
 
 ## TODO
 
-* [x] Add meta-data DB for keyword text search (elasticsearch)
+* [x] Add meta-data DB for keyword text search (database)
 * [x] Add docs for creating [Mattermost](https://github.com/mattermost/platform)
       slash command or integration
 * [ ] Add ability to use expansion packs (use tag to control types of images

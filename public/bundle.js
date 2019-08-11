@@ -94,10 +94,10 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	// import elasticsearch from "elasticsearch";
+	// import database from "database";
 
 
-	// let client = new elasticsearch.Client({ host: "localhost:9200", log: "error" });
+	// let client = new database.Client({ host: "localhost:9200", log: "error" });
 	// const searchSize = 100;
 
 	var App = function (_Component) {
@@ -12896,7 +12896,7 @@
 	 * This source code is licensed under the MIT license found in the
 	 * LICENSE file in the root directory of this source tree.
 	 *
-	 * 
+	 *
 	 */
 
 	function makeEmptyFunction(arg) {
@@ -14621,7 +14621,7 @@
 	 * This source code is licensed under the MIT license found in the
 	 * LICENSE file in the root directory of this source tree.
 	 *
-	 * 
+	 *
 	 */
 
 	function makeEmptyFunction(arg) {
@@ -15118,7 +15118,7 @@
 	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * @typechecks
-	 * 
+	 *
 	 */
 
 	/*eslint-disable no-self-compare */
@@ -15189,7 +15189,7 @@
 	 * This source code is licensed under the MIT license found in the
 	 * LICENSE file in the root directory of this source tree.
 	 *
-	 * 
+	 *
 	 */
 
 	var isTextNode = __webpack_require__(25);
@@ -20884,7 +20884,7 @@
 	  try {
 	    var nonExtensibleObject = Object.preventExtensions({});
 	    /* eslint-disable no-new */
-	    
+
 	    /* eslint-enable no-new */
 	  } catch (e) {
 	    // TODO: Consider warning about bad polyfills
@@ -27014,7 +27014,7 @@
 	  }
 
 	  {
-	    
+
 	  }
 	}
 
@@ -27029,7 +27029,7 @@
 	  }
 
 	  {
-	    
+
 	  }
 	}
 
@@ -33134,7 +33134,7 @@
 /* 67 */
 /***/ (function(module, exports) {
 
-	
+
 	module.exports = function () {
 	  var selection = document.getSelection();
 	  if (!selection.rangeCount) {

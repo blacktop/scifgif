@@ -1,7 +1,7 @@
 ##############################################
-# BUILDER                                    # 
+# BUILDER                                    #
 ##############################################
-FROM golang:alpine as builder
+FROM golang:1 as builder
 
 COPY . /go/src/github.com/blacktop/scifgif
 
@@ -10,9 +10,9 @@ WORKDIR /go/src/github.com/blacktop/scifgif
 RUN go build -ldflags "-X main.Version=$(cat VERSION) -X main.BuildTime=$(date -u +%Y%m%d)" -o /bin/scifgif
 
 ##############################################
-# SCIFGIF                                    # 
+# SCIFGIF                                    #
 ##############################################
-FROM blacktop/elasticsearch:5.6
+FROM alpine:3.10
 
 LABEL maintainer "https://github.com/blacktop"
 
@@ -20,17 +20,11 @@ RUN apk --no-cache add ca-certificates
 
 COPY --from=builder /bin/scifgif /bin/scifgif
 
-COPY config/elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
-
 ARG IMAGE_XKCD_COUNT=-1
 ARG IMAGE_DILBERT_DATE=2016-04-28
 ARG IMAGE_NUMBER
 
 WORKDIR /scifgif
-
-RUN echo "===> Create elasticsearch data/repo directories..." \
-  && mkdir -p /scifgif/elasticsearch/data /mount/backups \
-  && chown -R elasticsearch:elasticsearch /scifgif/elasticsearch/data /mount/backups
 
 COPY ascii/emoji.json /scifgif/ascii/emoji.json
 RUN echo "===> Updating images..." \
@@ -38,10 +32,7 @@ RUN echo "===> Updating images..." \
   && mkdir -p /scifgif/images/giphy \
   && mkdir -p /scifgif/images/contrib \
   && mkdir -p /scifgif/images/dilbert \
-  && scifgif update \
-  && echo "===> Stopping elasticsearch PID: $(cat /tmp/epid)" \
-  && sleep 10; kill $(cat /tmp/epid) \
-  && wait $(cat /tmp/epid); exit 0;
+  && scifgif update
 
 COPY images/default/giphy.gif /scifgif/images/default/giphy.gif
 COPY images/default/xkcd.png /scifgif/images/default/xkcd.png

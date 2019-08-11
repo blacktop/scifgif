@@ -26,3 +26,6 @@ public/node_modules*
 public/scripts*
 public/src*
 public/test*
+
+scifgif.bleve*
+scifgif.db

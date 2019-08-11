@@ -6,14 +6,21 @@ import (
 	"strconv"
 	"strings"
 
-	log "github.com/Sirupsen/logrus"
-	"github.com/blacktop/scifgif/elasticsearch"
+	log "github.com/sirupsen/logrus"
+	"github.com/blacktop/scifgif/database"
 	xkcd "github.com/nishanths/go-xkcd"
 )
 
 // GetAllXkcd havest all teh comics
 func GetAllXkcd(folder string, count int) error {
 	var start int
+
+	// open database
+	db, err := database.Open()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
 
 	client := xkcd.NewClient()
 	latest, err := client.Latest()
@@ -43,7 +50,7 @@ func GetAllXkcd(folder string, count int) error {
 			"title": comic.SafeTitle,
 		}).Debug("downloading file")
 		filepath := filepath.Join(folder, basename)
-		go elasticsearch.DownloadImage(comic.ImageURL, filepath)
+		go database.DownloadImage(comic.ImageURL, filepath)
 
 		var description string
 		if len(comic.Transcript) == 0 {
@@ -51,8 +58,8 @@ func GetAllXkcd(folder string, count int) error {
 		} else {
 			description = comic.Transcript
 		}
-		// index into elasticsearch
-		elasticsearch.WriteImageToDatabase(elasticsearch.ImageMetaData{
+		// index into database
+		db.WriteImageToDatabase(database.ImageMetaData{
 			Name:   strings.TrimSuffix(basename, path.Ext(basename)),
 			ID:     strconv.Itoa(comic.Number),
 			Source: "xkcd",

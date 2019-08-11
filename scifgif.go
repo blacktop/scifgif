@@ -1,7 +1,7 @@
 package main
 
 import (
-	"context"
+	// "context"
 	"crypto/md5"
 	"fmt"
 	"io"
@@ -12,9 +12,11 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/blacktop/scifgif/ascii"
-	"github.com/blacktop/scifgif/elasticsearch"
+	// "github.com/blevesearch/bleve"
+	// _ "github.com/blevesearch/bleve/config"
+	"github.com/blacktop/scifgif/database"
 	"github.com/blacktop/scifgif/giphy"
 	"github.com/blacktop/scifgif/xkcd"
 	"github.com/gorilla/handlers"
@@ -42,6 +44,8 @@ var (
 	Port string
 	// APIkey stores Giphy's API key
 	APIkey string
+
+	db *database.Database
 )
 
 // WebHookResponse mattermost webhook response struct
@@ -90,7 +94,7 @@ func main() {
 		cli.IntFlag{
 			Name:   "timeout",
 			Value:  60,
-			Usage:  "elasticsearch timeout (in seconds)",
+			Usage:  "database timeout (in seconds)",
 			EnvVar: "TIMEOUT",
 		},
 		cli.IntFlag{
@@ -139,58 +143,90 @@ func main() {
 			Aliases: []string{"u"},
 			Usage:   "Update images",
 			Action: func(c *cli.Context) error {
-				// start elasticsearch database
-				elasticsearch.StartElasticsearch()
-				// wait for elasticsearch to load
-				err := elasticsearch.WaitForConnection(context.Background(), 60, c.GlobalBool("verbose"))
-				if err != nil {
-					log.Fatal(err)
-				}
+				// if _, err := os.Stat("scifgif.bleve"); os.IsNotExist(err) {
+				// 	indexMapping := bleve.NewIndexMapping()
+				// 	imageMapping := bleve.NewDocumentMapping()
+				// 	indexMapping.AddDocumentMapping("giphy", imageMapping)
+				// 	index, err := bleve.New("scifgif.bleve", indexMapping)
+				// 	if err != nil {
+				// 		return err
+				// 	}
+				// 	index.Close()
+				// }
+
+				// index, err := bleve.Open("scifgif.bleve")
+				// if err != nil {
+				// 	return err
+				// }
+				// defer index.Close()
+
+				// query := bleve.NewFuzzyQuery("bitch")
+				// query.SetFuzziness(1)
+				// searchRequest := bleve.NewSearchRequest(query)
+				// // searchRequest.Fields
+				// // searchRequest.Highlight = bleve.NewHighlightWithStyle("ansi")
+				// searchResults, err := index.Search(searchRequest)
+				// if err != nil {
+				// 	return err
+				// }
+				// if len(searchResults.Hits) > 0 {
+				// 	for _, hit := range searchResults.Hits {
+				// 		fmt.Printf("%#v\n", hit)
+				// 		fmt.Println(hit.Fragments["text"][0])
+				// 	}
+				// }
+				// return nil
+
 				log.WithFields(log.Fields{
 					"search_for": "reactions",
 					"number":     c.GlobalInt("number"),
-				}).Info("download Giphy gifs and ingest metadata into elasticsearch")
-				err = giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, c.GlobalInt("number"))
+				}).Info("download Giphy gifs and ingest metadata into database")
+				err := giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, c.GlobalInt("number"))
 				if err != nil {
 					return err
 				}
+
 				log.WithFields(log.Fields{
 					"search_for": "star wars",
 					"number":     min(c.GlobalInt("number"), 250),
-				}).Info("download star wars Giphy gifs and ingest metadata into elasticsearch")
+				}).Info("download star wars Giphy gifs and ingest metadata into database")
 				err = giphy.GetAllGiphy(giphyFolder, []string{"star", "wars"}, min(c.GlobalInt("number"), 500))
 				if err != nil {
 					return err
 				}
+
 				log.WithFields(log.Fields{
 					"search_for": "futurama",
 					"number":     min(c.GlobalInt("number"), 250),
-				}).Info("download futurama Giphy gifs and ingest metadata into elasticsearch")
-				err = giphy.GetAllGiphy(giphyFolder, []string{"futurama"}, min(c.GlobalInt("number"), 500))
+				}).Info("download futurama Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"rick","and","morty"}, min(c.GlobalInt("number"), 500))
 				if err != nil {
 					return err
 				}
+
 				log.WithFields(log.Fields{
 					"number": c.GlobalInt("number"),
-				}).Info("download xkcd comics and ingest metadata into elasticsearch")
-				err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("xkcd-count"))
+				}).Info("download xkcd comics and ingest metadata into database")
+				err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("number"))
+				// err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("xkcd-count"))
 				if err != nil {
 					return err
 				}
-				log.Info("load all ascii-emojis into elasticsearch")
+
+				log.Info("load all ascii-emojis into database")
 				err = ascii.GetAllASCIIEmoji()
 				if err != nil {
 					return err
 				}
 				// log.WithFields(log.Fields{
 				// 	"date": c.GlobalString("date"),
-				// }).Info("download dilbert comics and ingest metadata into elasticsearch")
+				// }).Info("download dilbert comics and ingest metadata into database")
 				// err = dilbert.GetAllDilbert(dilbertFolder, c.GlobalString("date"))
 				// if err != nil {
 				// 	return err
 				// }
-				log.Info("* finalize elasticsearch db")
-				err = elasticsearch.Finalize()
+				log.Info("* finalize database db")
+				err = database.Finalize()
 				if err != nil {
 					return err
 				}
@@ -202,22 +238,23 @@ func main() {
 			Aliases: []string{"u"},
 			Usage:   "Export Database",
 			Action: func(c *cli.Context) error {
-				// start elasticsearch database
-				elasticsearch.StartElasticsearch()
-				// wait for elasticsearch to load
-				err := elasticsearch.WaitForConnection(context.Background(), 60, c.GlobalBool("verbose"))
-				if err != nil {
-					log.Fatal(err)
-				}
-				err = elasticsearch.CreateSnapshot()
-				if err != nil {
-					log.Fatal(err)
-				}
+				// // start database database
+				// database.StartElasticsearch()
+				// // wait for database to load
+				// err := database.WaitForConnection(context.Background(), 60, c.GlobalBool("verbose"))
+				// if err != nil {
+				// 	log.Fatal(err)
+				// }
+				// err = database.CreateSnapshot()
+				// if err != nil {
+				// 	log.Fatal(err)
+				// }
 				return nil
 			},
 		},
 	}
 	app.Action = func(c *cli.Context) error {
+		var err error
 
 		if c.Bool("verbose") {
 			log.SetLevel(log.DebugLevel)
@@ -227,14 +264,11 @@ func main() {
 			log.Warn("no webhook token set: --token")
 		}
 
-		// start elasticsearch database
-		elasticsearch.StartElasticsearch()
-
-		// wait for elasticsearch to load
-		err := elasticsearch.WaitForConnection(context.Background(), c.Int("timeout"), c.Bool("verbose"))
+		db, err = database.Open()
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
+		defer db.Close()
 
 		// create http routes
 		router := mux.NewRouter().StrictSlash(true)
@@ -318,6 +352,7 @@ func makeURL(scheme, host, port, path string) string {
 	if err != nil {
 		log.Error(err)
 	}
+
 	// don't show port if it is the HTTP/HTTPS port
 	if strings.EqualFold(port, "80") || strings.EqualFold(port, "443") {
 		u = fmt.Sprintf("%s://%s", scheme, host)

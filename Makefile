@@ -33,10 +33,6 @@ push: build ## Push docker image to docker registry
 
 update: stop dbstop ## Update scifgif images
 	@echo "===> Starting scifgif update..."
-	@echo " - Starting elasticsearch"
-	@docker run -d --name elasticsearch -p 9200:9200 -e http.cors.enabled=true -e http.cors.allow-origin="/https?:\/\/localhost(:[0-9]+)?/" blacktop/elasticsearch:5.6
-	@echo " - Starting kibana"
-	@sleep 10;docker run -d --name kibana --link elasticsearch -p 5601:5601 blacktop/kibana:5.6
 	@go run *.go -N 20 --xkcd-count 20 --date 2017-05-08 -V update
 	@echo "===> Updating web deps..."
 	@cd public; npm install
@@ -51,7 +47,7 @@ web: stop ## Start scifgif web-service
 .PHONY: export
 export: stop ## Export scifgif DB
 	docker run -d --name scifgif $(ORG)/$(NAME):$(VERSION) -V export; sleep 15
-	docker cp scifgif:/mount/backups/snapshot ./elasticsearch/snapshots/
+	docker cp scifgif:/mount/backups/snapshot ./database/snapshots/
 
 run: stop ## Run scifgif
 	@docker run -d --name scifgif -p 3993:3993 $(ORG)/$(NAME):$(VERSION) --host 127.0.0.1
@@ -72,32 +68,18 @@ test: ## Test build plugin
 	@ls -lah city.jpg
 	@rm city.jpg
 
-circle: ci-size ## Get docker image size from CircleCI
-	@sed -i.bu 's/docker%20image-.*-blue/docker%20image-$(shell cat .circleci/SIZE)-blue/' README.md
-	@echo "===> Image size is: $(shell cat .circleci/SIZE)"
-
-ci-build:
-	@echo "===> Getting CircleCI build number"
-	@http https://circleci.com/api/v1.1/project/github/${REPO} | jq '.[0].build_num' > .circleci/build_num
-
-ci-size: ci-build
-	@echo "===> Getting image build size from CircleCI"
-	@http "$(shell http https://circleci.com/api/v1.1/project/github/${REPO}/$(shell cat .circleci/build_num)/artifacts circle-token==${CIRCLE_TOKEN} | jq '.[].url')" > .circleci/SIZE
-
 clean: ## Clean docker image and stop all running containers
-	docker-clean stop
-	docker rmi $(ORG)/$(NAME):$(VERSION) || true
+	# docker-clean stop
+	# docker rmi $(ORG)/$(NAME):$(VERSION) || true
 	rm images/giphy/*.gif || true
 	rm images/xkcd/*.jpg || true
 	rm images/dilbert/*.jpg || true
+	rm scifgif.db || true
+	rm -r scifgif.bleve || true
 	rm -rf mattermost-docker
 
 stop: ## Kill running scifgif-plugin docker containers
 	@docker rm -f scifgif || true
-
-dbstop: ## Kill DB containers
-		@docker rm -f elasticsearch || true
-		@docker rm -f kibana || true
 
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
