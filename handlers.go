@@ -708,7 +708,7 @@ func updateImageKeywords(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// update image's keywords
-	image.Text += strings.Join(keywords, " ")
+	image.Text += " " + strings.Join(keywords, " ")
 	err = db.UpdateKeywords(image)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
