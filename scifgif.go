@@ -1,7 +1,6 @@
 package main
 
 import (
-	// "context"
 	"crypto/md5"
 	"fmt"
 	"io"
@@ -12,15 +11,13 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/blacktop/scifgif/ascii"
-	// "github.com/blevesearch/bleve"
-	// _ "github.com/blevesearch/bleve/config"
 	"github.com/blacktop/scifgif/database"
 	"github.com/blacktop/scifgif/giphy"
 	"github.com/blacktop/scifgif/xkcd"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -143,39 +140,6 @@ func main() {
 			Aliases: []string{"u"},
 			Usage:   "Update images",
 			Action: func(c *cli.Context) error {
-				// if _, err := os.Stat("scifgif.bleve"); os.IsNotExist(err) {
-				// 	indexMapping := bleve.NewIndexMapping()
-				// 	imageMapping := bleve.NewDocumentMapping()
-				// 	indexMapping.AddDocumentMapping("giphy", imageMapping)
-				// 	index, err := bleve.New("scifgif.bleve", indexMapping)
-				// 	if err != nil {
-				// 		return err
-				// 	}
-				// 	index.Close()
-				// }
-
-				// index, err := bleve.Open("scifgif.bleve")
-				// if err != nil {
-				// 	return err
-				// }
-				// defer index.Close()
-
-				// query := bleve.NewFuzzyQuery("bitch")
-				// query.SetFuzziness(1)
-				// searchRequest := bleve.NewSearchRequest(query)
-				// // searchRequest.Fields
-				// // searchRequest.Highlight = bleve.NewHighlightWithStyle("ansi")
-				// searchResults, err := index.Search(searchRequest)
-				// if err != nil {
-				// 	return err
-				// }
-				// if len(searchResults.Hits) > 0 {
-				// 	for _, hit := range searchResults.Hits {
-				// 		fmt.Printf("%#v\n", hit)
-				// 		fmt.Println(hit.Fragments["text"][0])
-				// 	}
-				// }
-				// return nil
 
 				log.WithFields(log.Fields{
 					"search_for": "reactions",
@@ -199,7 +163,7 @@ func main() {
 					"search_for": "futurama",
 					"number":     min(c.GlobalInt("number"), 250),
 				}).Info("download futurama Giphy gifs and ingest metadata into database")
-				err = giphy.GetAllGiphy(giphyFolder, []string{"rick","and","morty"}, min(c.GlobalInt("number"), 500))
+				err = giphy.GetAllGiphy(giphyFolder, []string{"rick", "and", "morty"}, min(c.GlobalInt("number"), 500))
 				if err != nil {
 					return err
 				}
@@ -230,25 +194,6 @@ func main() {
 				if err != nil {
 					return err
 				}
-				return nil
-			},
-		},
-		{
-			Name:    "export",
-			Aliases: []string{"u"},
-			Usage:   "Export Database",
-			Action: func(c *cli.Context) error {
-				// // start database database
-				// database.StartElasticsearch()
-				// // wait for database to load
-				// err := database.WaitForConnection(context.Background(), 60, c.GlobalBool("verbose"))
-				// if err != nil {
-				// 	log.Fatal(err)
-				// }
-				// err = database.CreateSnapshot()
-				// if err != nil {
-				// 	log.Fatal(err)
-				// }
 				return nil
 			},
 		},

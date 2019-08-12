@@ -1,13 +1,30 @@
 ##############################################
-# BUILDER                                    #
+# API BUILDER                                #
 ##############################################
-FROM golang:1 as builder
+FROM golang:alpine as api
 
 COPY . /go/src/github.com/blacktop/scifgif
 
 RUN echo "===> Building scifgif binary..."
+RUN apk add build-base
+
 WORKDIR /go/src/github.com/blacktop/scifgif
+
 RUN go build -ldflags "-X main.Version=$(cat VERSION) -X main.BuildTime=$(date -u +%Y%m%d)" -o /bin/scifgif
+
+##############################################
+# WEB BUILDER                                #
+##############################################
+FROM node:12-alpine as web
+
+COPY . /scifgif
+
+RUN echo "===> Building scifgif Web UI..."
+
+WORKDIR /scifgif/web
+
+RUN yarn
+RUN yarn build
 
 ##############################################
 # SCIFGIF                                    #
@@ -18,7 +35,7 @@ LABEL maintainer "https://github.com/blacktop"
 
 RUN apk --no-cache add ca-certificates
 
-COPY --from=builder /bin/scifgif /bin/scifgif
+COPY --from=api /bin/scifgif /bin/scifgif
 
 ARG IMAGE_XKCD_COUNT=-1
 ARG IMAGE_DILBERT_DATE=2016-04-28
@@ -41,11 +58,7 @@ COPY images/icons/giphy-icon.png /scifgif/images/icons/giphy-icon.png
 COPY images/icons/xkcd-icon.jpg /scifgif/images/icons/xkcd-icon.jpg
 COPY images/icons/dilbert-icon.png /scifgif/images/icons/dilbert-icon.png
 
-# Add web app resources
-COPY public/index.html /scifgif/public/index.html
-COPY public/bundle.js /scifgif/public/bundle.js
-COPY public/style/ /scifgif/public/style/
-COPY public/etc/passwd /public/public/etc/passwd
+COPY --from=web /scifgif/web/build /scifgif/web/build
 
 EXPOSE 3993
 

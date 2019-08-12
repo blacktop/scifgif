@@ -6,12 +6,7 @@ REPO=$(ORG)/$(NAME)
 VERSION?=$(shell cat VERSION)
 
 build: ## Build docker image
-	cd public; npm run build
-	docker build --pull --build-arg IMAGE_XKCD_COUNT=100 --build-arg IMAGE_NUMBER=100 -t $(ORG)/$(NAME):$(VERSION) .
-
-dev: base ## Build docker dev image
-	cd public; npm run build
-	docker build -f Dockerfile.dev -t $(ORG)/$(NAME):$(VERSION) .
+	docker build --build-arg IMAGE_XKCD_COUNT=100 --build-arg IMAGE_NUMBER=100 -t $(ORG)/$(NAME):$(VERSION) .
 
 size: tags ## Update docker image size in README.md
 	sed -i.bu 's/docker%20image-.*-blue/docker%20image-$(shell docker images --format "{{.Size}}" $(ORG)/$(NAME):$(VERSION)| cut -d' ' -f1)-blue/' README.md
@@ -51,8 +46,8 @@ export: stop ## Export scifgif DB
 
 run: stop ## Run scifgif
 	@docker run -d --name scifgif -p 3993:3993 $(ORG)/$(NAME):$(VERSION) --host 127.0.0.1
-	@open http://localhost:8080/webpack-dev-server/
-	@cd public; npm run start
+	# @open http://localhost:8080/webpack-dev-server/
+	# @cd public; npm run start
 
 mattermost: ## Start mattermost
 	git clone https://github.com/mattermost/mattermost-docker.git || true

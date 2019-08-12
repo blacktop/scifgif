@@ -1,22 +1,16 @@
 package database
 
 import (
-	// "fmt"
-	// "context"
-	// "errors"
-	// "math/rand"
-	// "reflect"
-	"strings"
 	"math/rand"
+	"strings"
 	"time"
+
 	"github.com/blevesearch/bleve"
-	// log "github.com/sirupsen/logrus"
 )
 
-const size = 30
+const size = 75
 
-
-func init()  {
+func init() {
 	rand.Seed(time.Now().Unix())
 }
 
@@ -41,7 +35,7 @@ func (db *Database) SearchImage(search []string, itype string) (ImageMetaData, e
 		// id := searchResults.Hits[0].ID
 		id := searchResults.Hits[rand.Intn(len(searchResults.Hits))].ID
 
-		if db.SQL.Find(&image, ImageMetaData{ID:id, Source: itype}).RecordNotFound() {
+		if db.SQL.Find(&image, ImageMetaData{ID: id, Source: itype}).RecordNotFound() {
 			return ImageMetaData{}, ErrNoImagesFound
 		}
 
@@ -70,7 +64,7 @@ func (db *Database) SearchGetAll(search []string, itype string) ([]ImageMetaData
 	if searchResults.Total > 0 {
 		for _, hit := range searchResults.Hits {
 			image = ImageMetaData{}
-			db.SQL.Find(&image, ImageMetaData{ID:hit.ID, Source: itype})
+			db.SQL.Find(&image, ImageMetaData{ID: hit.ID, Source: itype})
 			images = append(images, image)
 		}
 
