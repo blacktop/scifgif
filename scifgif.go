@@ -303,7 +303,7 @@ func main() {
 		router.HandleFunc("/dilbert/slash", postDilbertMattermostSlash).Methods("POST")
 		// reactJS Web App routes
 		router.HandleFunc("/web/search", getWebSearch).Methods("GET")
-		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./public")))
+		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./web/build")))
 
 		// start microservice
 		log.WithFields(log.Fields{
