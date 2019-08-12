@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/apex/log"
 	"github.com/blacktop/scifgif/database"
 	xkcd "github.com/nishanths/go-xkcd"
 )
@@ -40,7 +40,7 @@ func GetAllXkcd(folder string, count int) error {
 	for i := start; i <= latest.Number; i++ {
 		comic, err := client.Get(i)
 		if err != nil {
-			log.Error(err)
+			log.WithError(err).Error("xkcd client failed")
 			continue
 		}
 		basename := path.Base(comic.ImageURL)

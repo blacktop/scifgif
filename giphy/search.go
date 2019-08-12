@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/apex/log"
 )
 
 // Search Search all GIPHY GIFs for a word or phrase. Punctuation will be stripped and ignored.

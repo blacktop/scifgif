@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/apex/log"
 )
 
 // DownloadImage downloads image to filepath
@@ -15,13 +15,13 @@ func DownloadImage(url, filepath string) {
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("file create failed")
 	}
 	defer out.Close()
 
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 	defer resp.Body.Close()
 
@@ -34,7 +34,7 @@ func DownloadImage(url, filepath string) {
 	// Writer the body to file
 	_, err = io.Copy(out, resp.Body)
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("file copy failed")
 	}
 }
 
@@ -42,7 +42,7 @@ func removeNonAlphaNumericChars(searchTerms []string) []string {
 	var cleaned []string
 	reg, err := regexp.Compile("[^a-zA-Z0-9]+")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 	for _, term := range searchTerms {
 		processedString := reg.ReplaceAllString(term, " ")

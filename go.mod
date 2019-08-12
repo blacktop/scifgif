@@ -5,6 +5,8 @@ require (
 	github.com/PuerkitoBio/goquery v1.1.0
 	github.com/RoaringBitmap/roaring v0.4.18 // indirect
 	github.com/andybalholm/cascadia v1.0.0 // indirect
+	github.com/apex/httplog v0.0.0-20170124183939-d677fdf2ae1f
+	github.com/apex/log v1.1.1
 	github.com/blevesearch/bleve v0.8.0
 	github.com/blevesearch/blevex v0.0.0-20180227211930-4b158bb555a3 // indirect
 	github.com/blevesearch/go-porterstemmer v1.0.2 // indirect
@@ -20,7 +22,6 @@ require (
 	github.com/facebookgo/stack v0.0.0-20160209184415-751773369052 // indirect
 	github.com/facebookgo/subset v0.0.0-20150612182917-8dac2c3c4870 // indirect
 	github.com/google/go-cmp v0.3.1 // indirect
-	github.com/gorilla/handlers v1.4.0
 	github.com/gorilla/mux v1.6.2
 	github.com/jinzhu/gorm v1.9.10
 	github.com/jmhodges/levigo v1.0.0 // indirect
@@ -29,8 +30,9 @@ require (
 	github.com/lib/pq v1.2.0 // indirect
 	github.com/mattn/go-sqlite3 v1.11.0 // indirect
 	github.com/nishanths/go-xkcd v0.0.0-20160531092901-9497d909de39
+	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20190728182440-6a916e37a237 // indirect
-	github.com/sirupsen/logrus v1.4.2
+	github.com/smartystreets/assertions v1.0.1 // indirect
 	github.com/steveyen/gtreap v0.0.0-20150807155958-0abe01ef9be2 // indirect
 	github.com/syndtr/goleveldb v1.0.0 // indirect
 	github.com/tecbot/gorocksdb v0.0.0-20190705090504-162552197222 // indirect

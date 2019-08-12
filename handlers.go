@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/apex/log"
 	"github.com/blacktop/scifgif/database"
 	"github.com/gorilla/mux"
 )
@@ -44,7 +44,7 @@ func getWebSearch(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		err := errors.New("bad request - please supply `query` and `type` params")
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("getWebSearch failed")
 		return
 	}
 
@@ -52,7 +52,7 @@ func getWebSearch(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		// log.Error(err)
+		log.WithError(err).Error("getWebSearch failed")
 		return
 	}
 
@@ -62,7 +62,7 @@ func getWebSearch(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(images); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
@@ -73,7 +73,7 @@ func getRandomXKCD(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, "no images found for the xkcd source")
-		log.Error(err)
+		log.WithError(err).Error("getRandomXKCD failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -88,7 +88,7 @@ func getXkcdByNumber(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("getXkcdByNumber failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -102,7 +102,7 @@ func getSearchXKCD(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("getSearchXKCD failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -116,7 +116,7 @@ func postXkcdMattermost(w http.ResponseWriter, r *http.Request) {
 	if !strings.EqualFold(Token, r.Form["token"][0]) {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-		log.Error(errors.New("unauthorized - bad token"))
+		log.Error("unauthorized - bad token")
 		return
 	}
 
@@ -124,7 +124,7 @@ func postXkcdMattermost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("postXkcdMattermost failed")
 		return
 	}
 
@@ -142,7 +142,7 @@ func postXkcdMattermost(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
@@ -158,7 +158,7 @@ func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	// if !strings.EqualFold(Token, r.Form["token"][0]) {
 	// 	w.WriteHeader(http.StatusUnauthorized)
 	// 	fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-	// 	log.Error(errors.New("unauthorized - bad token"))
+	// 	log.Error("unauthorized - bad token")
 	// 	return
 	// }
 
@@ -180,7 +180,7 @@ func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("postXkcdMattermostSlash failed")
 		return
 	}
 
@@ -200,7 +200,7 @@ func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
@@ -210,7 +210,7 @@ func getRandomDilbert(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, "no images found for the xkcd source")
-		log.Error(err)
+		log.WithError(err).Error("getRandomDilbert failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -224,7 +224,7 @@ func getDilbertByDate(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("getDilbertByDate failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -238,7 +238,7 @@ func getSearchDilbert(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("getSearchDilbert failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -252,7 +252,7 @@ func postDilbertMattermost(w http.ResponseWriter, r *http.Request) {
 	if !strings.EqualFold(Token, r.Form["token"][0]) {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-		log.Error(errors.New("unauthorized - bad token"))
+		log.Error("unauthorized - bad token")
 		return
 	}
 
@@ -260,7 +260,7 @@ func postDilbertMattermost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("postDilbertMattermost failed")
 		return
 	}
 
@@ -278,7 +278,7 @@ func postDilbertMattermost(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
@@ -294,7 +294,7 @@ func postDilbertMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	// if !strings.EqualFold(Token, r.Form["token"][0]) {
 	// 	w.WriteHeader(http.StatusUnauthorized)
 	// 	fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-	// 	log.Error(errors.New("unauthorized - bad token"))
+	// 	log.Error("unauthorized - bad token")
 	// 	return
 	// }
 
@@ -316,7 +316,7 @@ func postDilbertMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("postDilbertMattermostSlash failed")
 		return
 	}
 
@@ -336,7 +336,7 @@ func postDilbertMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
@@ -346,7 +346,7 @@ func getRandomGiphy(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, "no images found for the giphy source")
-		log.Error(err)
+		log.WithError(err).Error("getRandomGiphy failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -360,7 +360,7 @@ func getSearchGiphy(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("getSearchGiphy failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -374,7 +374,7 @@ func postGiphyMattermost(w http.ResponseWriter, r *http.Request) {
 	if !strings.EqualFold(Token, r.Form["token"][0]) {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-		log.Error(errors.New("unauthorized - bad token"))
+		log.Error("unauthorized - bad token")
 		return
 	}
 
@@ -382,7 +382,7 @@ func postGiphyMattermost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("postGiphyMattermost failed")
 		return
 	}
 
@@ -396,7 +396,7 @@ func postGiphyMattermost(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
@@ -412,7 +412,7 @@ func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	// if !strings.EqualFold(Token, r.Form["token"][0]) {
 	// 	w.WriteHeader(http.StatusUnauthorized)
 	// 	fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-	// 	log.Error(errors.New("unauthorized - bad token"))
+	// 	log.Error("unauthorized - bad token")
 	// 	return
 	// }
 
@@ -431,7 +431,7 @@ func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("postGiphyMattermostSlash failed")
 		return
 	}
 
@@ -450,7 +450,7 @@ func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
@@ -459,7 +459,7 @@ func getRandomASCII(w http.ResponseWriter, r *http.Request) {
 	ascii, err := db.GetRandomASCII()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
-		log.Error(err)
+		log.WithError(err).Error("getRandomASCII failed")
 		return
 	}
 	log.Debugf("GET %s", ascii.Keywords)
@@ -473,7 +473,7 @@ func getSearchASCII(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("getSearchASCII failed")
 		return
 	}
 	log.Debugf("GET %s", r.Form["query"])
@@ -487,7 +487,7 @@ func getSearchASCII(w http.ResponseWriter, r *http.Request) {
 // 	if !strings.EqualFold(Token, r.Form["token"][0]) {
 // 		w.WriteHeader(http.StatusUnauthorized)
 // 		fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-// 		log.Error(errors.New("unauthorized - bad token"))
+// 		log.Error("unauthorized - bad token")
 // 		return
 // 	}
 //
@@ -509,7 +509,7 @@ func getSearchASCII(w http.ResponseWriter, r *http.Request) {
 // 	w.WriteHeader(http.StatusOK)
 //
 // 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-// 		log.Error(err)
+// 		log.WithError(err).Error("json encoder failed")
 // 	}
 // }
 
@@ -525,7 +525,7 @@ func postASCIIMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	// if !strings.EqualFold(Token, r.Form["token"][0]) {
 	// 	w.WriteHeader(http.StatusUnauthorized)
 	// 	fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-	// 	log.Error(errors.New("unauthorized - bad token"))
+	// 	log.Error("unauthorized - bad token")
 	// 	return
 	// }
 
@@ -544,7 +544,7 @@ func postASCIIMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("postASCIIMattermostSlash failed")
 		return
 	}
 
@@ -558,7 +558,7 @@ func postASCIIMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
@@ -599,7 +599,7 @@ func addImage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintln(w, "failed to open database")
-		log.Error(err)
+		log.WithError(err).Error("addImage failed")
 		return
 	}
 	defer db.Close()
@@ -625,7 +625,7 @@ func addImage(w http.ResponseWriter, r *http.Request) {
 	file, handler, err := r.FormFile("upload")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Error(err)
+		log.WithError(err).Error("addImage failed")
 		return
 	}
 	defer file.Close()
@@ -651,7 +651,7 @@ func addImage(w http.ResponseWriter, r *http.Request) {
 	f, err := os.OpenFile(fPath, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Error(err)
+		log.WithError(err).Error("addImage failed")
 		return
 	}
 	defer f.Close()
@@ -660,7 +660,7 @@ func addImage(w http.ResponseWriter, r *http.Request) {
 	_, err = io.Copy(f, file)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Error(err)
+		log.WithError(err).Error("addImage failed")
 		return
 	}
 
@@ -704,7 +704,7 @@ func updateImageKeywords(w http.ResponseWriter, r *http.Request) {
 	image, err := db.GetImageByPath(path)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
-		log.Error(err)
+		log.WithError(err).Error("updateImageKeywords failed")
 		return
 	}
 	// update image's keywords
@@ -712,7 +712,7 @@ func updateImageKeywords(w http.ResponseWriter, r *http.Request) {
 	err = db.UpdateKeywords(image)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Error(err)
+		log.WithError(err).Error("updateImageKeywords failed")
 		return
 	}
 	fmt.Fprintln(w, "image successfully updated")
@@ -737,7 +737,7 @@ func deleteImage(w http.ResponseWriter, r *http.Request) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, "image not found")
-		log.Error(err)
+		log.WithError(err).Error("deleteImage failed")
 		return
 	}
 
@@ -747,14 +747,14 @@ func deleteImage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err, "unable to remove image")
+		log.WithError(err).Error("unable to remove image")
 		return
 	}
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintln(w, "image successfully removed")
-		log.Error(err)
+		log.WithError(err).Error("deleteImage")
 		return
 	}
 }

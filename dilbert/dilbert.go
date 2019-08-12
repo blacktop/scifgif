@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	log "github.com/sirupsen/logrus"
+	"github.com/apex/log"
 	"github.com/blacktop/scifgif/database"
 	"github.com/jpillora/backoff"
 )

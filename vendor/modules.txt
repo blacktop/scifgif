@@ -4,6 +4,11 @@ github.com/PuerkitoBio/goquery
 github.com/RoaringBitmap/roaring
 # github.com/andybalholm/cascadia v1.0.0
 github.com/andybalholm/cascadia
+# github.com/apex/httplog v0.0.0-20170124183939-d677fdf2ae1f
+github.com/apex/httplog
+# github.com/apex/log v1.1.1
+github.com/apex/log
+github.com/apex/log/handlers/logfmt
 # github.com/blevesearch/bleve v0.8.0
 github.com/blevesearch/bleve
 github.com/blevesearch/bleve/analysis
@@ -56,14 +61,14 @@ github.com/edsrzf/mmap-go
 github.com/etcd-io/bbolt
 # github.com/glycerine/go-unsnap-stream v0.0.0-20181221182339-f9677308dec2
 github.com/glycerine/go-unsnap-stream
+# github.com/go-logfmt/logfmt v0.4.0
+github.com/go-logfmt/logfmt
 # github.com/golang/protobuf v1.3.2
 github.com/golang/protobuf/proto
 # github.com/golang/snappy v0.0.1
 github.com/golang/snappy
 # github.com/gorilla/context v1.1.1
 github.com/gorilla/context
-# github.com/gorilla/handlers v1.4.0
-github.com/gorilla/handlers
 # github.com/gorilla/mux v1.6.2
 github.com/gorilla/mux
 # github.com/jinzhu/gorm v1.9.10
@@ -73,8 +78,8 @@ github.com/jinzhu/gorm/dialects/sqlite
 github.com/jinzhu/inflection
 # github.com/jpillora/backoff v0.0.0-20180909062703-3050d21c67d7
 github.com/jpillora/backoff
-# github.com/konsorten/go-windows-terminal-sequences v1.0.1
-github.com/konsorten/go-windows-terminal-sequences
+# github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515
+github.com/kr/logfmt
 # github.com/mattn/go-sqlite3 v1.11.0
 github.com/mattn/go-sqlite3
 # github.com/mschoch/smat v0.0.0-20160514031455-90eadee771ae
@@ -83,8 +88,8 @@ github.com/mschoch/smat
 github.com/nishanths/go-xkcd
 # github.com/philhofer/fwd v1.0.0
 github.com/philhofer/fwd
-# github.com/sirupsen/logrus v1.4.2
-github.com/sirupsen/logrus
+# github.com/pkg/errors v0.8.1
+github.com/pkg/errors
 # github.com/steveyen/gtreap v0.0.0-20150807155958-0abe01ef9be2
 github.com/steveyen/gtreap
 # github.com/tinylib/msgp v1.1.0

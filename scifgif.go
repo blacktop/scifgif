@@ -11,13 +11,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/apex/httplog"
+	"github.com/apex/log"
+	"github.com/apex/log/handlers/logfmt"
 	"github.com/blacktop/scifgif/ascii"
 	"github.com/blacktop/scifgif/database"
 	"github.com/blacktop/scifgif/giphy"
 	"github.com/blacktop/scifgif/xkcd"
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -71,6 +72,10 @@ Commands:
   {{end}}
 Run '{{.Name}} COMMAND --help' for more information on a command.
 `
+
+func init() {
+	log.SetHandler(logfmt.Default)
+}
 
 func main() {
 
@@ -295,15 +300,15 @@ func main() {
 			"port":  Port,
 			"token": Token,
 		}).Info("web service listening")
-		loggedRouter := handlers.LoggingHandler(os.Stdout, router)
-		log.Fatal(http.ListenAndServe(":"+Port, loggedRouter))
+		err = http.ListenAndServe(":"+Port, httplog.New(router))
+		log.WithError(err).Fatal("error listening")
 
 		return nil
 	}
 
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 }
 
@@ -334,7 +339,7 @@ func makeURL(scheme, host, port, path string) string {
 
 	p, err := url.Parse(path)
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("url parse failed")
 	}
 
 	// don't show port if it is the HTTP/HTTPS port
@@ -342,7 +347,7 @@ func makeURL(scheme, host, port, path string) string {
 		u = fmt.Sprintf("%s://%s", scheme, host)
 		base, err = url.Parse(u)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal(err.Error())
 		}
 		return base.ResolveReference(p).String()
 	}
@@ -350,7 +355,7 @@ func makeURL(scheme, host, port, path string) string {
 	u = fmt.Sprintf("%s://%s:%s", scheme, host, port)
 	base, err = url.Parse(u)
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("url parse failed")
 	}
 
 	return base.ResolveReference(p).String()

@@ -9,7 +9,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/blacktop/scifgif/database"
-	log "github.com/sirupsen/logrus"
+	"github.com/apex/log"
 )
 
 // Helper function to pull the tag attribute from a Token
@@ -18,7 +18,7 @@ func getTags(url string, search string) []string {
 
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("new document failed")
 	}
 
 	// Find the script items
