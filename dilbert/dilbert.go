@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	log "github.com/Sirupsen/logrus"
-	"github.com/blacktop/scifgif/elasticsearch"
+	"github.com/apex/log"
+	"github.com/blacktop/scifgif/database"
 	"github.com/jpillora/backoff"
 )
 
@@ -107,10 +107,10 @@ func GetAllDilbert(folder string, date string) error {
 		}).Debug("downloading file")
 
 		filepath := filepath.Join(folder, date+".jpg")
-		go elasticsearch.DownloadImage(comic.ImageURL, filepath)
+		go database.DownloadImage(comic.ImageURL, filepath)
 
-		// index into elasticsearch
-		elasticsearch.WriteImageToDatabase(elasticsearch.ImageMetaData{
+		// index into database
+		database.WriteImageToDatabase(database.ImageMetaData{
 			Name:   comic.Title,
 			ID:     date,
 			Source: "dilbert",

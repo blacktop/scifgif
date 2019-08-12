@@ -1,0 +1,4 @@
+.image-card:hover {
+  -webkit-filter: sepia(100%);
+  filter: sepia(100%);
+}

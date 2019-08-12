@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	log "github.com/Sirupsen/logrus"
-	"github.com/blacktop/scifgif/elasticsearch"
+	"github.com/apex/log"
+	"github.com/blacktop/scifgif/database"
 	"github.com/gorilla/mux"
 )
 
@@ -44,15 +44,15 @@ func getWebSearch(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		err := errors.New("bad request - please supply `query` and `type` params")
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("getWebSearch failed")
 		return
 	}
 
-	images, err := elasticsearch.SearchGetAll(r.Form["query"], r.Form["type"][0])
+	images, err := db.SearchGetAll(r.Form["query"], r.Form["type"][0])
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		// log.Error(err)
+		log.WithError(err).Error("getWebSearch failed")
 		return
 	}
 
@@ -62,17 +62,18 @@ func getWebSearch(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(images); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
 // getRandomXKCD serves a random xkcd comic
 func getRandomXKCD(w http.ResponseWriter, r *http.Request) {
-	image, err := elasticsearch.GetRandomImage("xkcd")
+
+	image, err := db.GetRandomImage("xkcd")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, "no images found for the xkcd source")
-		log.Error(err)
+		log.WithError(err).Error("getRandomXKCD failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -82,11 +83,12 @@ func getRandomXKCD(w http.ResponseWriter, r *http.Request) {
 // getXkcdByNumber serves a comic by it's number
 func getXkcdByNumber(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	image, err := elasticsearch.GetImageByID(vars["number"])
+
+	image, err := db.GetImageByID(vars["number"])
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("getXkcdByNumber failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -96,11 +98,11 @@ func getXkcdByNumber(w http.ResponseWriter, r *http.Request) {
 // getSearchXKCD serves a comic by searching for text
 func getSearchXKCD(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	image, err := elasticsearch.SearchImage(r.Form["query"], "xkcd")
+	image, err := db.SearchImage(r.Form["query"], "xkcd")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("getSearchXKCD failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -114,15 +116,15 @@ func postXkcdMattermost(w http.ResponseWriter, r *http.Request) {
 	if !strings.EqualFold(Token, r.Form["token"][0]) {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-		log.Error(errors.New("unauthorized - bad token"))
+		log.Error("unauthorized - bad token")
 		return
 	}
 
-	image, err := elasticsearch.SearchImage(r.Form["trigger_word"], "xkcd")
+	image, err := db.SearchImage(r.Form["trigger_word"], "xkcd")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("postXkcdMattermost failed")
 		return
 	}
 
@@ -140,13 +142,13 @@ func postXkcdMattermost(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
 // postXkcdMattermostSlash handles xkcd webhook POST for use with a slash command
 func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
-	var image elasticsearch.ImageMetaData
+	var image database.ImageMetaData
 	var err error
 
 	r.ParseForm()
@@ -156,7 +158,7 @@ func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	// if !strings.EqualFold(Token, r.Form["token"][0]) {
 	// 	w.WriteHeader(http.StatusUnauthorized)
 	// 	fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-	// 	log.Error(errors.New("unauthorized - bad token"))
+	// 	log.Error("unauthorized - bad token")
 	// 	return
 	// }
 
@@ -167,18 +169,18 @@ func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
 
 	if strings.EqualFold(strings.TrimSpace(textArg), "?") {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting random xkcd")
-		image, err = elasticsearch.GetRandomImage("xkcd")
+		image, err = db.GetRandomImage("xkcd")
 	} else if isNumeric(textArg) {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting xkcd by number")
-		image, err = elasticsearch.GetImageByID(textArg)
+		image, err = db.GetImageByID(textArg)
 	} else {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting xkcd by title")
-		image, err = elasticsearch.SearchImage(r.Form["text"], "xkcd")
+		image, err = db.SearchImage(r.Form["text"], "xkcd")
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("postXkcdMattermostSlash failed")
 		return
 	}
 
@@ -198,17 +200,17 @@ func postXkcdMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
 // getRandomDilbert serves a random dilbert comic
 func getRandomDilbert(w http.ResponseWriter, r *http.Request) {
-	image, err := elasticsearch.GetRandomImage("dilbert")
+	image, err := db.GetRandomImage("dilbert")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, "no images found for the xkcd source")
-		log.Error(err)
+		log.WithError(err).Error("getRandomDilbert failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -218,11 +220,11 @@ func getRandomDilbert(w http.ResponseWriter, r *http.Request) {
 // getDilbertByDate serves a comic by it's date
 func getDilbertByDate(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	image, err := elasticsearch.GetImageByID(vars["date"])
+	image, err := db.GetImageByID(vars["date"])
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("getDilbertByDate failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -232,11 +234,11 @@ func getDilbertByDate(w http.ResponseWriter, r *http.Request) {
 // getSearchDilbert serves a comic by searching for text
 func getSearchDilbert(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	image, err := elasticsearch.SearchImage(r.Form["query"], "dilbert")
+	image, err := db.SearchImage(r.Form["query"], "dilbert")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("getSearchDilbert failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -250,15 +252,15 @@ func postDilbertMattermost(w http.ResponseWriter, r *http.Request) {
 	if !strings.EqualFold(Token, r.Form["token"][0]) {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-		log.Error(errors.New("unauthorized - bad token"))
+		log.Error("unauthorized - bad token")
 		return
 	}
 
-	image, err := elasticsearch.SearchImage(r.Form["trigger_word"], "dilbert")
+	image, err := db.SearchImage(r.Form["trigger_word"], "dilbert")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("postDilbertMattermost failed")
 		return
 	}
 
@@ -276,13 +278,13 @@ func postDilbertMattermost(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
 // postDilbertMattermostSlash handles dilbert webhook POST for use with a slash command
 func postDilbertMattermostSlash(w http.ResponseWriter, r *http.Request) {
-	var image elasticsearch.ImageMetaData
+	var image database.ImageMetaData
 	var err error
 
 	r.ParseForm()
@@ -292,7 +294,7 @@ func postDilbertMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	// if !strings.EqualFold(Token, r.Form["token"][0]) {
 	// 	w.WriteHeader(http.StatusUnauthorized)
 	// 	fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-	// 	log.Error(errors.New("unauthorized - bad token"))
+	// 	log.Error("unauthorized - bad token")
 	// 	return
 	// }
 
@@ -303,18 +305,18 @@ func postDilbertMattermostSlash(w http.ResponseWriter, r *http.Request) {
 
 	if strings.EqualFold(strings.TrimSpace(textArg), "?") {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting random dilbert")
-		image, err = elasticsearch.GetRandomImage("dilbert")
+		image, err = db.GetRandomImage("dilbert")
 	} else if isNumeric(textArg) {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting dilbert by number")
-		image, err = elasticsearch.GetImageByID(textArg)
+		image, err = db.GetImageByID(textArg)
 	} else {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting dilbert by title")
-		image, err = elasticsearch.SearchImage(r.Form["text"], "dilbert")
+		image, err = db.SearchImage(r.Form["text"], "dilbert")
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("postDilbertMattermostSlash failed")
 		return
 	}
 
@@ -334,17 +336,17 @@ func postDilbertMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
 // getRandomGiphy serves a random giphy gif
 func getRandomGiphy(w http.ResponseWriter, r *http.Request) {
-	image, err := elasticsearch.GetRandomImage("giphy")
+	image, err := db.GetRandomImage("giphy")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, "no images found for the giphy source")
-		log.Error(err)
+		log.WithError(err).Error("getRandomGiphy failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -354,11 +356,11 @@ func getRandomGiphy(w http.ResponseWriter, r *http.Request) {
 // getSearchGiphy serves a comic by searching for text
 func getSearchGiphy(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	image, err := elasticsearch.SearchImage(r.Form["query"], "giphy")
+	image, err := db.SearchImage(r.Form["query"], "giphy")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("getSearchGiphy failed")
 		return
 	}
 	log.Debugf("GET %s", image.Path)
@@ -372,15 +374,15 @@ func postGiphyMattermost(w http.ResponseWriter, r *http.Request) {
 	if !strings.EqualFold(Token, r.Form["token"][0]) {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-		log.Error(errors.New("unauthorized - bad token"))
+		log.Error("unauthorized - bad token")
 		return
 	}
 
-	image, err := elasticsearch.SearchImage(r.Form["trigger_word"], "giphy")
+	image, err := db.SearchImage(r.Form["trigger_word"], "giphy")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("postGiphyMattermost failed")
 		return
 	}
 
@@ -394,13 +396,13 @@ func postGiphyMattermost(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
 // postGiphyMattermostSlash handles giphy webhook POST for use with a slash command
 func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
-	var image elasticsearch.ImageMetaData
+	var image database.ImageMetaData
 	var err error
 
 	r.ParseForm()
@@ -410,7 +412,7 @@ func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	// if !strings.EqualFold(Token, r.Form["token"][0]) {
 	// 	w.WriteHeader(http.StatusUnauthorized)
 	// 	fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-	// 	log.Error(errors.New("unauthorized - bad token"))
+	// 	log.Error("unauthorized - bad token")
 	// 	return
 	// }
 
@@ -421,15 +423,15 @@ func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
 
 	if strings.EqualFold(strings.TrimSpace(textArg), "?") {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting random gif")
-		image, err = elasticsearch.GetRandomImage("giphy")
+		image, err = db.GetRandomImage("giphy")
 	} else {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting gif by keyword")
-		image, err = elasticsearch.SearchImage(r.Form["text"], "giphy")
+		image, err = db.SearchImage(r.Form["text"], "giphy")
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("postGiphyMattermostSlash failed")
 		return
 	}
 
@@ -448,16 +450,16 @@ func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
 // getRandomASCII serves a random ascii emoji
 func getRandomASCII(w http.ResponseWriter, r *http.Request) {
-	ascii, err := elasticsearch.GetRandomASCII()
+	ascii, err := db.GetRandomASCII()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
-		log.Error(err)
+		log.WithError(err).Error("getRandomASCII failed")
 		return
 	}
 	log.Debugf("GET %s", ascii.Keywords)
@@ -467,11 +469,11 @@ func getRandomASCII(w http.ResponseWriter, r *http.Request) {
 // getSearchASCII serves a comic by searching for text
 func getSearchASCII(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	ascii, err := elasticsearch.SearchASCII(r.Form["query"])
+	ascii, err := db.SearchASCII(r.Form["query"])
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("getSearchASCII failed")
 		return
 	}
 	log.Debugf("GET %s", r.Form["query"])
@@ -485,11 +487,11 @@ func getSearchASCII(w http.ResponseWriter, r *http.Request) {
 // 	if !strings.EqualFold(Token, r.Form["token"][0]) {
 // 		w.WriteHeader(http.StatusUnauthorized)
 // 		fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-// 		log.Error(errors.New("unauthorized - bad token"))
+// 		log.Error("unauthorized - bad token")
 // 		return
 // 	}
 //
-// 	image, err := elasticsearch.SearchImage(r.Form["trigger_word"], "ascii")
+// 	image, err := db.SearchImage(r.Form["trigger_word"], "ascii")
 // 	if err != nil {
 // 		w.WriteHeader(http.StatusNotFound)
 // 		fmt.Fprintln(w, err.Error())
@@ -507,13 +509,13 @@ func getSearchASCII(w http.ResponseWriter, r *http.Request) {
 // 	w.WriteHeader(http.StatusOK)
 //
 // 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-// 		log.Error(err)
+// 		log.WithError(err).Error("json encoder failed")
 // 	}
 // }
 
 // postASCIIMattermostSlash handles ascii webhook POST for use with a slash command
 func postASCIIMattermostSlash(w http.ResponseWriter, r *http.Request) {
-	var ascii elasticsearch.ASCIIData
+	var ascii database.ASCIIData
 	var err error
 
 	r.ParseForm()
@@ -523,7 +525,7 @@ func postASCIIMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	// if !strings.EqualFold(Token, r.Form["token"][0]) {
 	// 	w.WriteHeader(http.StatusUnauthorized)
 	// 	fmt.Fprintln(w, errors.New("unauthorized - bad token"))
-	// 	log.Error(errors.New("unauthorized - bad token"))
+	// 	log.Error("unauthorized - bad token")
 	// 	return
 	// }
 
@@ -534,15 +536,15 @@ func postASCIIMattermostSlash(w http.ResponseWriter, r *http.Request) {
 
 	if strings.EqualFold(strings.TrimSpace(textArg), "?") {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting random ascii")
-		ascii, err = elasticsearch.GetRandomASCII()
+		ascii, err = db.GetRandomASCII()
 	} else {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting ascii by keyword")
-		ascii, err = elasticsearch.SearchASCII(r.Form["text"])
+		ascii, err = db.SearchASCII(r.Form["text"])
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err)
+		log.WithError(err).Error("postASCIIMattermostSlash failed")
 		return
 	}
 
@@ -556,7 +558,7 @@ func postASCIIMattermostSlash(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(webhook); err != nil {
-		log.Error(err)
+		log.WithError(err).Error("json encoder failed")
 	}
 }
 
@@ -592,6 +594,16 @@ func getDefaultImage(source string) string {
 // addImage add scifgif GIF
 func addImage(w http.ResponseWriter, r *http.Request) {
 
+	// open database
+	db, err := database.Open()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintln(w, "failed to open database")
+		log.WithError(err).Error("addImage failed")
+		return
+	}
+	defer db.Close()
+
 	if r.Method != "PUT" {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		fmt.Fprintln(w, "method not allowed")
@@ -613,7 +625,7 @@ func addImage(w http.ResponseWriter, r *http.Request) {
 	file, handler, err := r.FormFile("upload")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Error(err)
+		log.WithError(err).Error("addImage failed")
 		return
 	}
 	defer file.Close()
@@ -639,7 +651,7 @@ func addImage(w http.ResponseWriter, r *http.Request) {
 	f, err := os.OpenFile(fPath, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Error(err)
+		log.WithError(err).Error("addImage failed")
 		return
 	}
 	defer f.Close()
@@ -648,11 +660,11 @@ func addImage(w http.ResponseWriter, r *http.Request) {
 	_, err = io.Copy(f, file)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Error(err)
+		log.WithError(err).Error("addImage failed")
 		return
 	}
 
-	elasticsearch.WriteImageToDatabase(elasticsearch.ImageMetaData{
+	db.WriteImageToDatabase(database.ImageMetaData{
 		ID:     fMD5,
 		Source: "giphy",
 		Name:   filepath.Base(handler.Filename),
@@ -680,27 +692,40 @@ func updateImageKeywords(w http.ResponseWriter, r *http.Request) {
 	keywords := strings.Split(r.FormValue("keywords"), ",")
 	log.Debugf("keywords: %#v", keywords)
 
+	if len(keywords) < 1 {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "must supply keywords")
+		return
+	}
+
 	// get image by path
 	file = filepath.Clean(filepath.Base(file))
 	path := filepath.Join("images", folder, file)
-	image, err := elasticsearch.GetImageByPath(path)
+	image, err := db.GetImageByPath(path)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
-		log.Error(err)
+		log.WithError(err).Error("updateImageKeywords failed")
 		return
 	}
 	// update image's keywords
 	image.Text += " " + strings.Join(keywords, " ")
-	err = elasticsearch.UpdateKeywords(image)
+	err = db.UpdateKeywords(image)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Error(err)
+		log.WithError(err).Error("updateImageKeywords failed")
 		return
 	}
 	fmt.Fprintln(w, "image successfully updated")
 }
 
 func deleteImage(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "DELETE" {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		fmt.Fprintln(w, "method not allowed")
+		return
+	}
+
 	vars := mux.Vars(r)
 	folder := vars["source"]
 	file := vars["file"]
@@ -712,7 +737,7 @@ func deleteImage(w http.ResponseWriter, r *http.Request) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, "image not found")
-		log.Error(err)
+		log.WithError(err).Error("deleteImage failed")
 		return
 	}
 
@@ -722,14 +747,14 @@ func deleteImage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintln(w, err.Error())
-		log.Error(err, "unable to remove image")
+		log.WithError(err).Error("unable to remove image")
 		return
 	}
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintln(w, "image successfully removed")
-		log.Error(err)
+		log.WithError(err).Error("deleteImage")
 		return
 	}
 }

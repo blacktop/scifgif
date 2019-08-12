@@ -28,7 +28,7 @@ test.go
 mattermost-docker/
 .vagrant
 .DS_Store
-elasticsearch/snapshots/snapshot*
+database/snapshots/snapshot*
 
 # NodeJS #########################################################################
 # Logs
@@ -90,3 +90,6 @@ typings/
 # dotenv environment variables file
 .env
 
+scifgif.bleve
+scifgif.db
+__debug_bin

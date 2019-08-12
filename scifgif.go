@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"crypto/md5"
 	"fmt"
 	"io"
@@ -12,12 +11,13 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
+	"github.com/apex/httplog"
+	"github.com/apex/log"
+	"github.com/apex/log/handlers/logfmt"
 	"github.com/blacktop/scifgif/ascii"
-	"github.com/blacktop/scifgif/elasticsearch"
+	"github.com/blacktop/scifgif/database"
 	"github.com/blacktop/scifgif/giphy"
 	"github.com/blacktop/scifgif/xkcd"
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/urfave/cli"
 )
@@ -42,6 +42,8 @@ var (
 	Port string
 	// APIkey stores Giphy's API key
 	APIkey string
+
+	db *database.Database
 )
 
 // WebHookResponse mattermost webhook response struct
@@ -71,6 +73,10 @@ Commands:
 Run '{{.Name}} COMMAND --help' for more information on a command.
 `
 
+func init() {
+	log.SetHandler(logfmt.Default)
+}
+
 func main() {
 
 	cli.AppHelpTemplate = appHelpTemplate
@@ -90,7 +96,7 @@ func main() {
 		cli.IntFlag{
 			Name:   "timeout",
 			Value:  60,
-			Usage:  "elasticsearch timeout (in seconds)",
+			Usage:  "database timeout (in seconds)",
 			EnvVar: "TIMEOUT",
 		},
 		cli.IntFlag{
@@ -139,85 +145,105 @@ func main() {
 			Aliases: []string{"u"},
 			Usage:   "Update images",
 			Action: func(c *cli.Context) error {
-				// start elasticsearch database
-				elasticsearch.StartElasticsearch()
-				// wait for elasticsearch to load
-				err := elasticsearch.WaitForConnection(context.Background(), 60, c.GlobalBool("verbose"))
-				if err != nil {
-					log.Fatal(err)
-				}
+
 				log.WithFields(log.Fields{
 					"search_for": "reactions",
 					"number":     c.GlobalInt("number"),
-				}).Info("download Giphy gifs and ingest metadata into elasticsearch")
-				err = giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, c.GlobalInt("number"))
+				}).Info("download Giphy gifs and ingest metadata into database")
+				err := giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, c.GlobalInt("number"))
 				if err != nil {
 					return err
 				}
+
 				log.WithFields(log.Fields{
 					"search_for": "star wars",
 					"number":     min(c.GlobalInt("number"), 250),
-				}).Info("download star wars Giphy gifs and ingest metadata into elasticsearch")
+				}).Info("download star wars Giphy gifs and ingest metadata into database")
 				err = giphy.GetAllGiphy(giphyFolder, []string{"star", "wars"}, min(c.GlobalInt("number"), 500))
 				if err != nil {
 					return err
 				}
+
 				log.WithFields(log.Fields{
 					"search_for": "futurama",
 					"number":     min(c.GlobalInt("number"), 250),
-				}).Info("download futurama Giphy gifs and ingest metadata into elasticsearch")
-				err = giphy.GetAllGiphy(giphyFolder, []string{"futurama"}, min(c.GlobalInt("number"), 500))
+				}).Info("download futurama Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"futurama"}, min(c.GlobalInt("number"), 250))
 				if err != nil {
 					return err
 				}
+
+				log.WithFields(log.Fields{
+					"search_for": "rick and morty",
+					"number":     min(c.GlobalInt("number"), 250),
+				}).Info("download futurama Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"rick", "and", "morty"}, min(c.GlobalInt("number"), 250))
+				if err != nil {
+					return err
+				}
+
+				log.WithFields(log.Fields{
+					"search_for": "office space",
+					"number":     min(c.GlobalInt("number"), 250),
+				}).Info("download futurama Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"office", "space"}, min(c.GlobalInt("number"), 250))
+				if err != nil {
+					return err
+				}
+
+				log.WithFields(log.Fields{
+					"search_for": "it crowd",
+					"number":     min(c.GlobalInt("number"), 250),
+				}).Info("download futurama Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"it", "crowd"}, min(c.GlobalInt("number"), 250))
+				if err != nil {
+					return err
+				}
+
+				log.WithFields(log.Fields{
+					"search_for": "hacker",
+					"number":     min(c.GlobalInt("number"), 250),
+				}).Info("download futurama Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"hacker"}, min(c.GlobalInt("number"), 250))
+				if err != nil {
+					return err
+				}
+
 				log.WithFields(log.Fields{
 					"number": c.GlobalInt("number"),
-				}).Info("download xkcd comics and ingest metadata into elasticsearch")
-				err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("xkcd-count"))
+				}).Info("download xkcd comics and ingest metadata into database")
+				err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("number"))
+				// err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("xkcd-count"))
 				if err != nil {
 					return err
 				}
-				log.Info("load all ascii-emojis into elasticsearch")
+
+				log.Info("load all ascii-emojis into database")
 				err = ascii.GetAllASCIIEmoji()
 				if err != nil {
 					return err
 				}
+
 				// log.WithFields(log.Fields{
 				// 	"date": c.GlobalString("date"),
-				// }).Info("download dilbert comics and ingest metadata into elasticsearch")
+				// }).Info("download dilbert comics and ingest metadata into database")
 				// err = dilbert.GetAllDilbert(dilbertFolder, c.GlobalString("date"))
 				// if err != nil {
 				// 	return err
 				// }
-				log.Info("* finalize elasticsearch db")
-				err = elasticsearch.Finalize()
+
+				log.Info("* finalize database db")
+				err = database.Finalize()
 				if err != nil {
 					return err
 				}
-				return nil
-			},
-		},
-		{
-			Name:    "export",
-			Aliases: []string{"u"},
-			Usage:   "Export Database",
-			Action: func(c *cli.Context) error {
-				// start elasticsearch database
-				elasticsearch.StartElasticsearch()
-				// wait for elasticsearch to load
-				err := elasticsearch.WaitForConnection(context.Background(), 60, c.GlobalBool("verbose"))
-				if err != nil {
-					log.Fatal(err)
-				}
-				err = elasticsearch.CreateSnapshot()
-				if err != nil {
-					log.Fatal(err)
-				}
+
 				return nil
 			},
 		},
 	}
 	app.Action = func(c *cli.Context) error {
+		var err error
 
 		if c.Bool("verbose") {
 			log.SetLevel(log.DebugLevel)
@@ -227,14 +253,11 @@ func main() {
 			log.Warn("no webhook token set: --token")
 		}
 
-		// start elasticsearch database
-		elasticsearch.StartElasticsearch()
-
-		// wait for elasticsearch to load
-		err := elasticsearch.WaitForConnection(context.Background(), c.Int("timeout"), c.Bool("verbose"))
+		db, err = database.Open()
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
+		defer db.Close()
 
 		// create http routes
 		router := mux.NewRouter().StrictSlash(true)
@@ -269,7 +292,7 @@ func main() {
 		router.HandleFunc("/dilbert/slash", postDilbertMattermostSlash).Methods("POST")
 		// reactJS Web App routes
 		router.HandleFunc("/web/search", getWebSearch).Methods("GET")
-		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./public")))
+		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./web/build")))
 
 		// start microservice
 		log.WithFields(log.Fields{
@@ -277,15 +300,15 @@ func main() {
 			"port":  Port,
 			"token": Token,
 		}).Info("web service listening")
-		loggedRouter := handlers.LoggingHandler(os.Stdout, router)
-		log.Fatal(http.ListenAndServe(":"+Port, loggedRouter))
+		err = http.ListenAndServe(":"+Port, httplog.New(router))
+		log.WithError(err).Fatal("error listening")
 
 		return nil
 	}
 
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 }
 
@@ -316,14 +339,15 @@ func makeURL(scheme, host, port, path string) string {
 
 	p, err := url.Parse(path)
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("url parse failed")
 	}
+
 	// don't show port if it is the HTTP/HTTPS port
 	if strings.EqualFold(port, "80") || strings.EqualFold(port, "443") {
 		u = fmt.Sprintf("%s://%s", scheme, host)
 		base, err = url.Parse(u)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal(err.Error())
 		}
 		return base.ResolveReference(p).String()
 	}
@@ -331,7 +355,7 @@ func makeURL(scheme, host, port, path string) string {
 	u = fmt.Sprintf("%s://%s:%s", scheme, host, port)
 	base, err = url.Parse(u)
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("url parse failed")
 	}
 
 	return base.ResolveReference(p).String()

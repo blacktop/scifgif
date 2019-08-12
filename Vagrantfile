@@ -86,7 +86,6 @@ Vagrant.configure("2") do |config|
     curl -L https://github.com/docker/compose/releases/download/1.15.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
     chmod +x /usr/local/bin/docker-compose
     sudo service docker start
-    sudo docker pull blacktop/elasticsearch:5.5
     sudo sysctl -w vm.max_map_count=262144
     curl -s https://raw.githubusercontent.com/ZZROTDesign/docker-clean/v2.0.4/docker-clean | sudo tee /usr/local/bin/docker-clean > /dev/null
     sudo chmod +x /usr/local/bin/docker-clean
