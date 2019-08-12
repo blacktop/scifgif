@@ -75,15 +75,33 @@ func (db *Database) SearchGetAll(search []string, itype string) ([]ImageMetaData
 }
 
 // SearchASCII searches ascii by keywords and returns a random matching ascii
-func SearchASCII(keywords []string) (ASCIIData, error) {
+func (db *Database) SearchASCII(keywords []string) (ASCIIData, error) {
 
-	// keywordsStr := strings.Join(removeNonAlphaNumericChars(keywords), " ")
+	keywordsStr := strings.Join(removeNonAlphaNumericChars(keywords), " ")
 
-	// return ASCIIData{}, ErrNoASCIIFound
+	query := bleve.NewMatchPhraseQuery(keywordsStr)
+	searchRequest := bleve.NewSearchRequest(query)
 
-	// return default 404 images
-	return ASCIIData{
-		ID:       "not found",
-		Keywords: "10",
-		Emoji:    "¯\\_(ツ)_/¯"}, nil
+	searchResults, err := db.IDX.Search(searchRequest)
+	if err != nil {
+		return ASCIIData{}, err
+	}
+
+	if searchResults.Total > 0 {
+		var ascii ASCIIData
+
+		id := searchResults.Hits[rand.Intn(len(searchResults.Hits))].ID
+
+		if db.SQL.Find(&ascii, ASCIIData{ID: id, Source: "ascii"}).RecordNotFound() {
+			// return default 404 images
+			return ASCIIData{
+				ID:       "not found",
+				Keywords: "10",
+				Emoji:    "¯\\_(ツ)_/¯"}, nil
+		}
+
+		return ascii, nil
+	}
+
+	return ASCIIData{}, ErrNoASCIIFound
 }

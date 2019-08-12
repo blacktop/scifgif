@@ -163,7 +163,43 @@ func main() {
 					"search_for": "futurama",
 					"number":     min(c.GlobalInt("number"), 250),
 				}).Info("download futurama Giphy gifs and ingest metadata into database")
-				err = giphy.GetAllGiphy(giphyFolder, []string{"rick", "and", "morty"}, min(c.GlobalInt("number"), 500))
+				err = giphy.GetAllGiphy(giphyFolder, []string{"futurama"}, min(c.GlobalInt("number"), 250))
+				if err != nil {
+					return err
+				}
+
+				log.WithFields(log.Fields{
+					"search_for": "rick and morty",
+					"number":     min(c.GlobalInt("number"), 250),
+				}).Info("download futurama Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"rick", "and", "morty"}, min(c.GlobalInt("number"), 250))
+				if err != nil {
+					return err
+				}
+
+				log.WithFields(log.Fields{
+					"search_for": "office space",
+					"number":     min(c.GlobalInt("number"), 250),
+				}).Info("download futurama Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"office", "space"}, min(c.GlobalInt("number"), 250))
+				if err != nil {
+					return err
+				}
+
+				log.WithFields(log.Fields{
+					"search_for": "it crowd",
+					"number":     min(c.GlobalInt("number"), 250),
+				}).Info("download futurama Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"it", "crowd"}, min(c.GlobalInt("number"), 250))
+				if err != nil {
+					return err
+				}
+
+				log.WithFields(log.Fields{
+					"search_for": "hacker",
+					"number":     min(c.GlobalInt("number"), 250),
+				}).Info("download futurama Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"hacker"}, min(c.GlobalInt("number"), 250))
 				if err != nil {
 					return err
 				}
@@ -182,6 +218,7 @@ func main() {
 				if err != nil {
 					return err
 				}
+
 				// log.WithFields(log.Fields{
 				// 	"date": c.GlobalString("date"),
 				// }).Info("download dilbert comics and ingest metadata into database")
@@ -189,11 +226,13 @@ func main() {
 				// if err != nil {
 				// 	return err
 				// }
+
 				log.Info("* finalize database db")
 				err = database.Finalize()
 				if err != nil {
 					return err
 				}
+
 				return nil
 			},
 		},

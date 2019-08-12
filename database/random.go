@@ -1,11 +1,6 @@
 package database
 
-import (
-	// "context"
-	// "reflect"
-	// "fmt"
-	"github.com/jinzhu/gorm"
-)
+import "github.com/jinzhu/gorm"
 
 // GetRandomImage returns a random image path from source (xkcd/giphy)
 func (db *Database) GetRandomImage(source string) (ImageMetaData, error) {
@@ -20,6 +15,13 @@ func (db *Database) GetRandomImage(source string) (ImageMetaData, error) {
 }
 
 // GetRandomASCII returns a random ascii-emoji
-func GetRandomASCII() (ASCIIData, error) {
-	return ASCIIData{}, ErrNoASCIIFound
+func (db *Database) GetRandomASCII() (ASCIIData, error) {
+
+	var ascii ASCIIData
+
+	if db.SQL.Order(gorm.Expr("random()")).Where("source = ?", "ascii").First(&ascii).RecordNotFound() {
+		return ASCIIData{}, ErrNoASCIIFound
+	}
+
+	return ascii, nil
 }

@@ -456,7 +456,7 @@ func postGiphyMattermostSlash(w http.ResponseWriter, r *http.Request) {
 
 // getRandomASCII serves a random ascii emoji
 func getRandomASCII(w http.ResponseWriter, r *http.Request) {
-	ascii, err := database.GetRandomASCII()
+	ascii, err := db.GetRandomASCII()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		log.Error(err)
@@ -469,7 +469,7 @@ func getRandomASCII(w http.ResponseWriter, r *http.Request) {
 // getSearchASCII serves a comic by searching for text
 func getSearchASCII(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	ascii, err := database.SearchASCII(r.Form["query"])
+	ascii, err := db.SearchASCII(r.Form["query"])
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err.Error())
@@ -536,10 +536,10 @@ func postASCIIMattermostSlash(w http.ResponseWriter, r *http.Request) {
 
 	if strings.EqualFold(strings.TrimSpace(textArg), "?") {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting random ascii")
-		ascii, err = database.GetRandomASCII()
+		ascii, err = db.GetRandomASCII()
 	} else {
 		log.WithFields(log.Fields{"text": textArg}).Debug("getting ascii by keyword")
-		ascii, err = database.SearchASCII(r.Form["text"])
+		ascii, err = db.SearchASCII(r.Form["text"])
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -692,6 +692,12 @@ func updateImageKeywords(w http.ResponseWriter, r *http.Request) {
 	keywords := strings.Split(r.FormValue("keywords"), ",")
 	log.Debugf("keywords: %#v", keywords)
 
+	if len(keywords) < 1 {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "must supply keywords")
+		return
+	}
+
 	// get image by path
 	file = filepath.Clean(filepath.Base(file))
 	path := filepath.Join("images", folder, file)
@@ -702,8 +708,8 @@ func updateImageKeywords(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// update image's keywords
-	image.Text += " " + strings.Join(keywords, " ")
-	err = database.UpdateKeywords(image)
+	image.Text += strings.Join(keywords, " ")
+	err = db.UpdateKeywords(image)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Error(err)

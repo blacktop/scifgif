@@ -1,21 +1,19 @@
 package database
 
 import (
-	"os"
 	"errors"
+	"os"
+
 	"github.com/blevesearch/bleve"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	// log "github.com/sirupsen/logrus"
 )
 
-
 const (
 	bleveIndex = "scifgif.bleve"
 	sqliteFile = "scifgif.db"
 )
-
-
 
 var (
 	// ErrNoImagesFound represents a failure to find images.
@@ -26,13 +24,13 @@ var (
 
 // Database database object
 type Database struct {
-	SQL   *gorm.DB
+	SQL *gorm.DB
 	IDX bleve.Index
 }
 
 // ImageMetaData image meta-data object
 type ImageMetaData struct {
-	ID     string `json:"id,omitempty" gorm:"primary_key"`
+	ID string `json:"id,omitempty" gorm:"primary_key"`
 	// ID     string `json:"id,omitempty" gorm:"primary_key"`
 	Source string `json:"source,omitempty"`
 	Name   string `json:"name,omitempty"`
@@ -43,7 +41,7 @@ type ImageMetaData struct {
 
 // ASCIIData ascii-emoji object
 type ASCIIData struct {
-	ID       string `json:"id,omitempty"`
+	ID       string `json:"id,omitempty" gorm:"primary_key"`
 	Source   string `json:"source,omitempty"`
 	Keywords string `json:"keywords,omitempty"`
 	Emoji    string `json:"emoji,omitempty"`
@@ -75,6 +73,7 @@ func Open() (*Database, error) {
 	}
 
 	sql.AutoMigrate(&ImageMetaData{})
+	sql.AutoMigrate(&ASCIIData{})
 
 	return &Database{sql, index}, nil
 }
@@ -96,18 +95,20 @@ func (db *Database) WriteImageToDatabase(image ImageMetaData, itype string) erro
 		return err
 	}
 
-	// log.WithFields(log.Fields{
-	// 	"id":    image.Id,
-	// 	"index": put.Index,
-	// 	"type":  put.Type,
-	// }).Debug("indexed image")
-
 	return nil
 }
 
 // WriteASCIIToDatabase upserts ascii metadata into Database
-func WriteASCIIToDatabase(ascii ASCIIData) error {
-	// var err error
+func (db *Database) WriteASCIIToDatabase(ascii ASCIIData) error {
+
+	// add to sqlite
+	db.SQL.Create(&ascii)
+	// add to bleve
+	err := db.IDX.Index(ascii.ID, ascii)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

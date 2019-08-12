@@ -9,6 +9,14 @@ import (
 
 // GetAllASCIIEmoji loads all ascii-emojis into database
 func GetAllASCIIEmoji() error {
+
+	// open database
+	db, err := database.Open()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
 	file, err := ioutil.ReadFile("ascii/emoji.json")
 	if err != nil {
 		return err
@@ -22,12 +30,13 @@ func GetAllASCIIEmoji() error {
 
 	for _, e := range emojis {
 		// index into database
-		database.WriteASCIIToDatabase(database.ASCIIData{
+		db.WriteASCIIToDatabase(database.ASCIIData{
 			ID:       e.ID,
 			Source:   "ascii",
 			Keywords: e.Keywords,
 			Emoji:    e.Emoji,
 		})
 	}
+
 	return nil
 }

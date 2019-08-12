@@ -62,3 +62,9 @@ http://localhost:5601/app/kibana#/discover?_g=()&_a=(columns:!(emoji),filters:!(
 ## ElasticDump 2 JSON
 
 * https://github.com/medcl/esm
+
+## Update `keywords`
+
+```bash
+$  http --form PATCH http://localhost:3993/images/giphy/rick-and-morty12.gif keywords="green"
+```
