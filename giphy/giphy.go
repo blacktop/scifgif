@@ -2,14 +2,15 @@ package giphy
 
 import (
 	"fmt"
+	"net/url"
 	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/blacktop/scifgif/database"
 	"github.com/apex/log"
+	"github.com/blacktop/scifgif/database"
 )
 
 // Helper function to pull the tag attribute from a Token
@@ -63,6 +64,12 @@ func GetAllGiphy(folder string, search []string, count int) error {
 		}
 
 		for iter, gif := range gifSearch.Data {
+			// check for a valid download URL
+			_, err := url.ParseRequestURI(gif.Images.Downsized.URL)
+			if err != nil {
+				log.WithError(err).Errorf("url parsing failed for: %s", gif.Images.Downsized.URL)
+				continue
+			}
 			// download gif
 			gifName := fmt.Sprintf("%s%d.gif", strings.Join(search, "-"), iter+i)
 			filepath := filepath.Join(folder, path.Base(gifName))
