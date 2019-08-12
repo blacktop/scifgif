@@ -21,7 +21,7 @@ func DownloadImage(url, filepath string) {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.WithError(err).Fatal("http GET in DownloadImage failed")
 	}
 	defer resp.Body.Close()
 
@@ -42,7 +42,7 @@ func removeNonAlphaNumericChars(searchTerms []string) []string {
 	var cleaned []string
 	reg, err := regexp.Compile("[^a-zA-Z0-9]+")
 	if err != nil {
-		log.Fatal(err.Error())
+		log.WithError(err).Fatal("regexp.Compile in removeNonAlphaNumericChars failed")
 	}
 	for _, term := range searchTerms {
 		processedString := reg.ReplaceAllString(term, " ")

@@ -308,7 +308,7 @@ func main() {
 
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.WithError(err).Fatal("running app failed")
 	}
 }
 
@@ -347,7 +347,7 @@ func makeURL(scheme, host, port, path string) string {
 		u = fmt.Sprintf("%s://%s", scheme, host)
 		base, err = url.Parse(u)
 		if err != nil {
-			log.Fatal(err.Error())
+			log.WithError(err).Error("url parse failed")
 		}
 		return base.ResolveReference(p).String()
 	}
