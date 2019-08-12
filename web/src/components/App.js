@@ -1,5 +1,5 @@
 import React from 'react';
-import scifgif from '../api/scifgif';
+import axios from 'axios';
 import Header from './Header';
 import SearchBar from './SearchBar';
 import ImageList from './ImageList';
@@ -8,11 +8,13 @@ class App extends React.Component {
   state = { images: [] };
 
   onSearchSubmit = async term => {
-    const response = await scifgif.get('web/search', {
+    const response = await axios.get('/web/search', {
       params: { query: term , type: "giphy" }
-    });
-    console.log('response.data :', response.data);
-    this.setState({ images: response.data });
+    })
+    // console.log('response.data', response.data)
+    if (response.data) {
+      this.setState({ images: response.data });
+    }
   };
 
   render() {
