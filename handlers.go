@@ -719,6 +719,13 @@ func updateImageKeywords(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteImage(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "DELETE" {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		fmt.Fprintln(w, "method not allowed")
+		return
+	}
+
 	vars := mux.Vars(r)
 	folder := vars["source"]
 	file := vars["file"]
