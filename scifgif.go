@@ -149,7 +149,7 @@ func main() {
 				log.WithFields(log.Fields{
 					"search_for": "reactions",
 					"number":     c.GlobalInt("number"),
-				}).Info("download Giphy gifs and ingest metadata into database")
+				}).Info("download reactions Giphy gifs and ingest metadata into database")
 				err := giphy.GetAllGiphy(giphyFolder, []string{"reactions"}, c.GlobalInt("number"))
 				if err != nil {
 					return err
@@ -176,7 +176,7 @@ func main() {
 				log.WithFields(log.Fields{
 					"search_for": "rick and morty",
 					"number":     min(c.GlobalInt("number"), 250),
-				}).Info("download futurama Giphy gifs and ingest metadata into database")
+				}).Info("download rick and morty Giphy gifs and ingest metadata into database")
 				err = giphy.GetAllGiphy(giphyFolder, []string{"rick", "and", "morty"}, min(c.GlobalInt("number"), 250))
 				if err != nil {
 					return err
@@ -185,7 +185,7 @@ func main() {
 				log.WithFields(log.Fields{
 					"search_for": "office space",
 					"number":     min(c.GlobalInt("number"), 250),
-				}).Info("download futurama Giphy gifs and ingest metadata into database")
+				}).Info("download office space Giphy gifs and ingest metadata into database")
 				err = giphy.GetAllGiphy(giphyFolder, []string{"office", "space"}, min(c.GlobalInt("number"), 250))
 				if err != nil {
 					return err
@@ -194,8 +194,17 @@ func main() {
 				log.WithFields(log.Fields{
 					"search_for": "it crowd",
 					"number":     min(c.GlobalInt("number"), 250),
-				}).Info("download futurama Giphy gifs and ingest metadata into database")
+				}).Info("download it crowd Giphy gifs and ingest metadata into database")
 				err = giphy.GetAllGiphy(giphyFolder, []string{"it", "crowd"}, min(c.GlobalInt("number"), 250))
+				if err != nil {
+					return err
+				}
+
+				log.WithFields(log.Fields{
+					"search_for": "the office",
+					"number":     min(c.GlobalInt("number"), 250),
+				}).Info("download the office Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"the", "office"}, min(c.GlobalInt("number"), 250))
 				if err != nil {
 					return err
 				}
