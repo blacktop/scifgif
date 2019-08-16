@@ -49,7 +49,7 @@ RUN echo "===> Updating images..." \
   && mkdir -p /scifgif/images/giphy \
   && mkdir -p /scifgif/images/contrib \
   && mkdir -p /scifgif/images/dilbert \
-  && scifgif update
+  && scifgif -V update
 
 COPY images/default/giphy.gif /scifgif/images/default/giphy.gif
 COPY images/default/xkcd.png /scifgif/images/default/xkcd.png

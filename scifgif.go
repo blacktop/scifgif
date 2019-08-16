@@ -16,6 +16,7 @@ import (
 	"github.com/apex/log/handlers/logfmt"
 	"github.com/blacktop/scifgif/ascii"
 	"github.com/blacktop/scifgif/database"
+	"github.com/blacktop/scifgif/dilbert"
 	"github.com/blacktop/scifgif/giphy"
 	"github.com/blacktop/scifgif/xkcd"
 	"github.com/gorilla/mux"
@@ -146,6 +147,10 @@ func main() {
 			Usage:   "Update images",
 			Action: func(c *cli.Context) error {
 
+				if c.GlobalBool("verbose") {
+					log.SetLevel(log.DebugLevel)
+				}
+
 				log.WithFields(log.Fields{
 					"search_for": "reactions",
 					"number":     c.GlobalInt("number"),
@@ -232,13 +237,13 @@ func main() {
 					return err
 				}
 
-				// log.WithFields(log.Fields{
-				// 	"date": c.GlobalString("date"),
-				// }).Info("download dilbert comics and ingest metadata into database")
-				// err = dilbert.GetAllDilbert(dilbertFolder, c.GlobalString("date"))
-				// if err != nil {
-				// 	return err
-				// }
+				log.WithFields(log.Fields{
+					"date": c.GlobalString("date"),
+				}).Info("download dilbert comics and ingest metadata into database")
+				err = dilbert.GetAllDilbert(dilbertFolder, c.GlobalString("date"))
+				if err != nil {
+					return err
+				}
 
 				log.Info("* finalize database db")
 				err = database.Finalize()
