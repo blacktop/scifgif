@@ -219,10 +219,9 @@ func main() {
 				}
 
 				log.WithFields(log.Fields{
-					"number": c.GlobalInt("number"),
+					"number": c.GlobalInt("xkcd-count"),
 				}).Info("download xkcd comics and ingest metadata into database")
-				err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("number"))
-				// err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("xkcd-count"))
+				err = xkcd.GetAllXkcd(xkcdFolder, c.GlobalInt("xkcd-count"))
 				if err != nil {
 					return err
 				}
