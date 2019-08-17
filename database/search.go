@@ -104,16 +104,16 @@ func (db *Database) SearchGetAll(search []string, itype string) ([]ImageMetaData
 		}
 	}
 
-	if strings.EqualFold(itype, "xkcd") {
-		return []ImageMetaData{ImageMetaData{
-			Title: "not found",
-			Text:  searchStr,
-			Path:  "images/default/xkcd.png"}}, nil
-	}
-	if strings.EqualFold(itype, "giphy") {
+	switch itype {
+	case "xkcd":
+		return []ImageMetaData{ImageMetaData{Path: "images/default/xkcd.png"}}, nil
+	case "giphy":
 		return []ImageMetaData{ImageMetaData{Path: "images/default/giphy.gif"}}, nil
+	case "dilbert":
+		return []ImageMetaData{ImageMetaData{Path: "images/default/dilbert.png"}}, nil
+	default:
+		return nil, ErrNoImagesFound
 	}
-	return nil, ErrNoImagesFound
 }
 
 // SearchASCII searches ascii by keywords and returns a random matching ascii

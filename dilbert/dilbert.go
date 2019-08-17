@@ -112,7 +112,7 @@ func GetComicMetaData(dilbertURL, date string) (Comic, error) {
 
 	doc, err := goquery.NewDocumentFromResponse(res)
 	if err != nil {
-		log.WithError(err).Error("goquery.NewDocument failed")
+		log.WithError(err).Error("goquery NewDocumentFromResponse failed")
 	}
 
 	if doc != nil {
@@ -169,7 +169,7 @@ func GetAllDilbert(folder string, date string) error {
 
 	_, err = getRandomProxies()
 	if err != nil {
-		return errors.Wrap(err, "getting a random proxy URLs failed")
+		return errors.Wrap(err, "getting random proxy URLs failed")
 	}
 
 	if len(date) < 1 {
