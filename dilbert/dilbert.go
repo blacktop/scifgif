@@ -114,6 +114,7 @@ func GetComicMetaData(dilbertURL, date string) (Comic, error) {
 	if err != nil {
 		log.WithError(err).Error("goquery.NewDocument failed")
 	}
+
 	if doc != nil {
 		// GET TITLE
 		doc.Find(".comic-title-name").Each(func(i int, s *goquery.Selection) {
@@ -147,7 +148,7 @@ func GetComicMetaData(dilbertURL, date string) (Comic, error) {
 	attempt++
 	log.WithFields(log.Fields{
 		"attempt": attempt,
-		"proxy":   proxyURL,
+		"proxy":   proxies[attempt],
 	}).Info("retrying again")
 	// retry url meta data parse
 	return GetComicMetaData(dilbertURL, date)
