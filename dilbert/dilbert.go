@@ -81,7 +81,7 @@ func GetComicMetaData(dilbertURL, date string) (Comic, error) {
 		return comic, fmt.Errorf("attempts exceeded max attempts of %d", MaxAttempts)
 	}
 
-	proxyURL, err := url.Parse(proxies[attempt+3])
+	proxyURL, err := url.Parse(proxies[attempt])
 	if err != nil {
 		return Comic{}, errors.Wrap(err, "parsing proxy URL failed")
 	}
@@ -109,14 +109,14 @@ func GetComicMetaData(dilbertURL, date string) (Comic, error) {
 	if err != nil {
 		log.WithError(err).Error("client Do request failed")
 
-		log.WithFields(log.Fields{
-			"attempt": attempt,
-		}).Info("waiting to try to again")
-
 		time.Sleep(10 * time.Second)
 
 		// retry url meta data parse
 		attempt++
+		log.WithFields(log.Fields{
+			"attempt": attempt,
+		}).Info("retrying again")
+
 		GetComicMetaData(dilbertURL, date)
 	}
 
@@ -124,14 +124,14 @@ func GetComicMetaData(dilbertURL, date string) (Comic, error) {
 	if err != nil {
 		log.WithError(err).Error("goquery.NewDocument failed")
 
-		log.WithFields(log.Fields{
-			"attempt": attempt,
-		}).Info("waiting to try to again")
-
 		time.Sleep(10 * time.Second)
 
 		// retry url meta data parse
 		attempt++
+		log.WithFields(log.Fields{
+			"attempt": attempt,
+		}).Info("retrying again")
+
 		GetComicMetaData(dilbertURL, date)
 	}
 
@@ -190,8 +190,7 @@ func GetAllDilbert(folder string, date string) error {
 
 	for d := start; time.Now().After(d); d = d.AddDate(0, 0, 1) {
 		date := fmt.Sprintf("%04d-%02d-%02d", d.Year(), d.Month(), d.Day())
-		dilbertURL := "http://dilbert.com/strip/" + date
-		comic, err := GetComicMetaData(dilbertURL, date)
+		comic, err := GetComicMetaData("http://dilbert.com/strip/" + date, date)
 		if err != nil {
 			return errors.Wrap(err, "getting comic metadata failed")
 		}

@@ -22,6 +22,10 @@ class Filter extends React.Component {
                         <input className="form-check-input" type="radio" checked={type == "xkcd"} value="xkcd" name="xkcd" id="xkcdRadio" />
                         <label className="form-check-label" for="xkcdRadio">xkcd</label>
                     </div>
+                    <div class="form-check form-check-inline">
+                        <input className="form-check-input" type="radio" checked={type == "dilbert"} value="dilbert" name="dilbert" id="dilbertRadio" />
+                        <label className="form-check-label" for="dilbertRadio">dilbert</label>
+                    </div>
                 </div>
             </div>
         );
