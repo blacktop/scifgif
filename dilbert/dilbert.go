@@ -106,7 +106,7 @@ func GetComicMetaData(dilbertURL, date string) (Comic, error) {
 	req.Header.Set("User-Agent", randomAgent())
 
 	res, err := client.Do(req)
-	if err != nil {
+	if err != nil && res != nil {
 		log.WithError(err).Error("client Do request failed")
 
 		time.Sleep(10 * time.Second)
@@ -121,7 +121,7 @@ func GetComicMetaData(dilbertURL, date string) (Comic, error) {
 	}
 
 	doc, err := goquery.NewDocumentFromResponse(res)
-	if err != nil {
+	if err != nil && doc != nil {
 		log.WithError(err).Error("goquery.NewDocument failed")
 
 		time.Sleep(10 * time.Second)
