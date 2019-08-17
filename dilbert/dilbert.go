@@ -89,79 +89,68 @@ func GetComicMetaData(dilbertURL, date string) (Comic, error) {
 	client := &http.Client{
 		Transport: &http.Transport{
 			Dial: (&net.Dialer{
-				Timeout:   40 * time.Second,
-				KeepAlive: 40 * time.Second,
+				Timeout:   60 * time.Second,
+				KeepAlive: 60 * time.Second,
 			}).Dial,
-			TLSHandshakeTimeout:   20 * time.Second,
-			ResponseHeaderTimeout: 20 * time.Second,
+			TLSHandshakeTimeout:   60 * time.Second,
+			ResponseHeaderTimeout: 60 * time.Second,
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true,
 			},
 			Proxy: http.ProxyURL(proxyURL),
 		},
-		Timeout: 60 * time.Second,
+		Timeout: 120 * time.Second,
 	}
 
 	req, _ := http.NewRequest("GET", dilbertURL, nil)
 	req.Header.Set("User-Agent", randomAgent())
 
 	res, err := client.Do(req)
-	if err != nil || res != nil {
+	if err != nil {
 		log.WithError(err).Error("client Do request failed")
-
-		time.Sleep(10 * time.Second)
-
-		// retry url meta data parse
-		attempt++
-		log.WithFields(log.Fields{
-			"attempt": attempt,
-		}).Info("retrying again")
-
-		GetComicMetaData(dilbertURL, date)
 	}
 
 	doc, err := goquery.NewDocumentFromResponse(res)
-	if err != nil || doc != nil {
+	if err != nil {
 		log.WithError(err).Error("goquery.NewDocument failed")
+	}
+	if doc != nil {
+		// GET TITLE
+		doc.Find(".comic-title-name").Each(func(i int, s *goquery.Selection) {
+			comic.Title = s.Text()
+		})
 
-		time.Sleep(10 * time.Second)
+		// GET IMAGE URL
+		doc.Find(".img-comic-container").Each(func(i int, s *goquery.Selection) {
+			comic.ImageURL, _ = s.Find("img").Attr("src")
+			comic.ImageURL = "http:" + comic.ImageURL
+		})
 
-		// retry url meta data parse
-		attempt++
-		log.WithFields(log.Fields{
-			"attempt": attempt,
-		}).Info("retrying again")
+		// GET TAGS
+		doc.Find(".comic-tags").Each(func(i int, s *goquery.Selection) {
+			s.Find("a").Each(func(i int, a *goquery.Selection) {
+				comic.Tags = append(comic.Tags, strings.TrimPrefix(a.Text(), "#"))
+			})
+		})
 
-		GetComicMetaData(dilbertURL, date)
+		// GET TRANSCRIPT
+		id := "js-toggle-transcript-" + date
+		doc.Find("div#" + id).Each(func(i int, s *goquery.Selection) {
+			comic.Transcript = strings.TrimSpace(s.Text())
+			comic.Transcript = strings.TrimPrefix(comic.Transcript, "Transcript")
+			comic.Transcript = strings.TrimSpace(comic.Transcript)
+		})
+
+		return comic, nil
 	}
 
-	// GET TITLE
-	doc.Find(".comic-title-name").Each(func(i int, s *goquery.Selection) {
-		comic.Title = s.Text()
-	})
-
-	// GET IMAGE URL
-	doc.Find(".img-comic-container").Each(func(i int, s *goquery.Selection) {
-		comic.ImageURL, _ = s.Find("img").Attr("src")
-		comic.ImageURL = "http:" + comic.ImageURL
-	})
-
-	// GET TAGS
-	doc.Find(".comic-tags").Each(func(i int, s *goquery.Selection) {
-		s.Find("a").Each(func(i int, a *goquery.Selection) {
-			comic.Tags = append(comic.Tags, strings.TrimPrefix(a.Text(), "#"))
-		})
-	})
-
-	// GET TRANSCRIPT
-	id := "js-toggle-transcript-" + date
-	doc.Find("div#" + id).Each(func(i int, s *goquery.Selection) {
-		comic.Transcript = strings.TrimSpace(s.Text())
-		comic.Transcript = strings.TrimPrefix(comic.Transcript, "Transcript")
-		comic.Transcript = strings.TrimSpace(comic.Transcript)
-	})
-
-	return comic, nil
+	attempt++
+	log.WithFields(log.Fields{
+		"attempt": attempt,
+		"proxy":   proxyURL,
+	}).Info("retrying again")
+	// retry url meta data parse
+	return GetComicMetaData(dilbertURL, date)
 }
 
 // GetAllDilbert havest all teh comics strips
@@ -190,7 +179,7 @@ func GetAllDilbert(folder string, date string) error {
 
 	for d := start; time.Now().After(d); d = d.AddDate(0, 0, 1) {
 		date := fmt.Sprintf("%04d-%02d-%02d", d.Year(), d.Month(), d.Day())
-		comic, err := GetComicMetaData("http://dilbert.com/strip/" + date, date)
+		comic, err := GetComicMetaData("http://dilbert.com/strip/"+date, date)
 		if err != nil {
 			return errors.Wrap(err, "getting comic metadata failed")
 		}
