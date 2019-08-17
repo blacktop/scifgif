@@ -2,9 +2,8 @@ module github.com/blacktop/scifgif
 
 require (
 	cloud.google.com/go v0.44.0 // indirect
-	github.com/PuerkitoBio/goquery v1.1.0
+	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/RoaringBitmap/roaring v0.4.18 // indirect
-	github.com/andybalholm/cascadia v1.0.0 // indirect
 	github.com/apex/httplog v0.0.0-20170124183939-d677fdf2ae1f
 	github.com/apex/log v1.1.1
 	github.com/blevesearch/bleve v0.8.0
@@ -25,12 +24,12 @@ require (
 	github.com/gorilla/mux v1.6.2
 	github.com/jinzhu/gorm v1.9.10
 	github.com/jmhodges/levigo v1.0.0 // indirect
-	github.com/jpillora/backoff v0.0.0-20180909062703-3050d21c67d7
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/lib/pq v1.2.0 // indirect
 	github.com/mattn/go-sqlite3 v1.11.0 // indirect
 	github.com/nishanths/go-xkcd v0.0.0-20160531092901-9497d909de39
 	github.com/onsi/ginkgo v1.8.0 // indirect
+	github.com/pkg/errors v0.8.1
 	github.com/remyoudompheng/bigfft v0.0.0-20190728182440-6a916e37a237 // indirect
 	github.com/smartystreets/assertions v1.0.1 // indirect
 	github.com/steveyen/gtreap v0.0.0-20150807155958-0abe01ef9be2 // indirect
@@ -39,6 +38,6 @@ require (
 	github.com/urfave/cli v1.20.0
 	go.etcd.io/bbolt v1.3.3 // indirect
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4 // indirect
-	golang.org/x/net v0.0.0-20190724013045-ca1201d0de80 // indirect
-	golang.org/x/sys v0.0.0-20190804053845-51ab0e2deafa // indirect
+	golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7 // indirect
+	golang.org/x/sys v0.0.0-20190813064441-fde4db37ae7a // indirect
 )
