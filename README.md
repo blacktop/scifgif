@@ -19,8 +19,8 @@
 
 ```bash
 REPOSITORY           TAG                 SIZE
-blacktop/scifgif     latest              2GB
-blacktop/scifgif     1.0                 2GB
+blacktop/scifgif     latest              3GB
+blacktop/scifgif     1.0                 3GB
 blacktop/scifgif     0.3.0               2GB
 blacktop/scifgif     0.2.0               2GB
 blacktop/scifgif     0.1.0               2GB
@@ -28,8 +28,9 @@ blacktop/scifgif     0.1.0               2GB
 
 > **NOTE:** the reason the docker image is so large is that it contains:
 >
-> * ~2000 `giphy` gifs _(1500 reactions, 250 futurama and 250 star wars)_
+> * ~3000 `giphy` gifs _(1500 reactions, 250 futurama and 250 star wars)_
 > * all of `xkcd`
+> * bunch of `dilbert`
 
 ## Getting Started
 
@@ -45,7 +46,6 @@ $ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif --host local
 ![mattermost](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/mattermost.png)
 
 * [Image Search](https://github.com/blacktop/scifgif/blob/master/docs/image-search.md)
-  :construction: _[WIP]_
 
 ![mattermost](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/image-search.png)
 
@@ -61,7 +61,7 @@ $ docker run --init -d --name scifgif -p 3993:3993 blacktop/scifgif --host local
 * [x] remove non-alphanumerics so you can search for emojis :older_man:
 * [x] remove `xkcd` details _(can they be a mouse over?)_
 * [x] add ability to add GIFs and/or keywords to GIFs
-* [ ] add `dilbert` :construction:
+* [x] add `dilbert`
 * [ ] make search more "fuzzy"
 
 ## Issues
