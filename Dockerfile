@@ -38,7 +38,8 @@ RUN apk --no-cache add ca-certificates
 COPY --from=api /bin/scifgif /bin/scifgif
 
 ARG IMAGE_XKCD_COUNT=-1
-ARG IMAGE_DILBERT_DATE=2016-04-28
+# ARG IMAGE_DILBERT_DATE=2016-04-28
+ARG IMAGE_DILBERT_DATE=2018-01-01
 ARG IMAGE_NUMBER
 
 WORKDIR /scifgif
