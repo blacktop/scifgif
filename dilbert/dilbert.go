@@ -49,14 +49,14 @@ func randomAgent() string {
 	return userAgents[rand.Int()%len(userAgents)]
 }
 
-func getRandomProxies() (string, error) {
+func loadRandomProxies() error {
 
 	var proxy string
 
 	if len(proxies) == 0 {
 		doc, err := goquery.NewDocument("https://www.ip-adress.com/proxy-list")
 		if err != nil {
-			return "", err
+			return errors.Wrap(err, "failed to parse ip-adress.com")
 		}
 
 		doc.Find("table").Each(func(i int, tablehtml *goquery.Selection) {
@@ -69,7 +69,7 @@ func getRandomProxies() (string, error) {
 		})
 	}
 
-	return proxies[rand.Int()%len(proxies)], nil
+	return nil
 }
 
 // GetComicMetaData gets all the comic strips meta data
@@ -167,19 +167,19 @@ func GetAllDilbert(folder string, date string) error {
 	count := 0
 	attempt = 0
 
-	_, err = getRandomProxies()
-	if err != nil {
+	if err = loadRandomProxies(); err != nil {
 		return errors.Wrap(err, "getting random proxy URLs failed")
 	}
 
 	if len(date) < 1 {
 		// date = "1989-04-17"
-		date = "2018-01-01"
+		date = "2017-01-01"
 	}
 	start, _ := time.Parse("2006-01-02", date)
 
 	for d := start; time.Now().After(d); d = d.AddDate(0, 0, 1) {
 		date := fmt.Sprintf("%04d-%02d-%02d", d.Year(), d.Month(), d.Day())
+
 		comic, err := GetComicMetaData("http://dilbert.com/strip/"+date, date)
 		if err != nil {
 			return errors.Wrap(err, "getting comic metadata failed")
@@ -190,10 +190,6 @@ func GetAllDilbert(folder string, date string) error {
 		if err != nil {
 			log.WithError(err).Errorf("url parsing failed for: %s", comic.ImageURL)
 			continue
-		}
-
-		if attempt > MaxAttempts {
-			return errors.New("max number of attempts reached")
 		}
 
 		// download image
@@ -222,5 +218,6 @@ func GetAllDilbert(folder string, date string) error {
 	}
 
 	log.WithFields(log.Fields{"count": count}).Info("dilbert comic complete")
+
 	return nil
 }
