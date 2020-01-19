@@ -161,8 +161,53 @@ func main() {
 				}
 
 				log.WithFields(log.Fields{
+					"search_for": "star trek",
+					"number":     min(c.GlobalInt("number"), 500),
+				}).Info("download star trek Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"star", "trek"}, min(c.GlobalInt("number"), 500))
+				if err != nil {
+					return err
+				}
+
+				log.WithFields(log.Fields{
+					"search_for": "battlestar galactica",
+					"number":     min(c.GlobalInt("number"), 100),
+				}).Info("download battlestar galactica Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"battlestar", "galactica"}, min(c.GlobalInt("number"), 100))
+				if err != nil {
+					return err
+				}
+
+				log.WithFields(log.Fields{
+					"search_for": "mandalorian",
+					"number":     min(c.GlobalInt("number"), 100),
+				}).Info("download mandalorian Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"mandalorian"}, min(c.GlobalInt("number"), 100))
+				if err != nil {
+					return err
+				}
+
+				log.WithFields(log.Fields{
+					"search_for": "witcher",
+					"number":     min(c.GlobalInt("number"), 100),
+				}).Info("download witcher Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"witcher"}, min(c.GlobalInt("number"), 100))
+				if err != nil {
+					return err
+				}
+
+				log.WithFields(log.Fields{
+					"search_for": "the expanse",
+					"number":     min(c.GlobalInt("number"), 100),
+				}).Info("download the expanse Giphy gifs and ingest metadata into database")
+				err = giphy.GetAllGiphy(giphyFolder, []string{"the", "expanse"}, min(c.GlobalInt("number"), 100))
+				if err != nil {
+					return err
+				}
+
+				log.WithFields(log.Fields{
 					"search_for": "star wars",
-					"number":     min(c.GlobalInt("number"), 250),
+					"number":     min(c.GlobalInt("number"), 500),
 				}).Info("download star wars Giphy gifs and ingest metadata into database")
 				err = giphy.GetAllGiphy(giphyFolder, []string{"star", "wars"}, min(c.GlobalInt("number"), 500))
 				if err != nil {

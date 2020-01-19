@@ -30,11 +30,11 @@ update: stop dbstop ## Update scifgif images
 	@echo "===> Starting scifgif update..."
 	@go run *.go -N 20 --xkcd-count 20 --date 2017-05-08 -V update
 	@echo "===> Updating web deps..."
-	@cd public; npm install
+	@cd web; npm install
 
 web: stop ## Start scifgif web-service
 	@echo "===> Rebuilding web assets..."
-	@cd public; npm run build
+	@cd web; npm run build
 	@echo "===> Starting scifgif web service..."
 	@open http://localhost:3993
 	@go run *.go -V --host 127.0.0.1
