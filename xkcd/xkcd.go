@@ -1,6 +1,7 @@
 package xkcd
 
 import (
+	"context"
 	"path"
 	"path/filepath"
 	"strconv"
@@ -23,7 +24,7 @@ func GetAllXkcd(folder string, count int) error {
 	defer db.Close()
 
 	client := xkcd.NewClient()
-	latest, err := client.Latest()
+	latest, err := client.Latest(context.Background())
 	if err != nil {
 		return err
 	}
@@ -38,7 +39,7 @@ func GetAllXkcd(folder string, count int) error {
 	}
 	// get all images up to latest
 	for i := start; i <= latest.Number; i++ {
-		comic, err := client.Get(i)
+		comic, err := client.Get(context.Background(), i)
 		if err != nil {
 			log.WithError(err).Error("xkcd client failed")
 			continue
