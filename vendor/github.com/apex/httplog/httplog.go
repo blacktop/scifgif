@@ -77,7 +77,7 @@ func (l *Logger) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx = ctx.WithFields(log.Fields{
 		"status":   res.status,
 		"size":     res.written,
-		"duration": time.Since(start),
+		"duration": ms(time.Since(start)),
 	})
 
 	switch {
@@ -88,4 +88,9 @@ func (l *Logger) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	default:
 		ctx.Info("response")
 	}
+}
+
+// ms returns the duration in milliseconds.
+func ms(d time.Duration) int {
+	return int(d / time.Millisecond)
 }

@@ -29,7 +29,7 @@ RUN yarn build
 ##############################################
 # SCIFGIF                                    #
 ##############################################
-FROM alpine:3.10
+FROM alpine:3.12
 
 LABEL maintainer "https://github.com/blacktop"
 
