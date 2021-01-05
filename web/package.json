@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@fortawesome/react-fontawesome": "^0.1.4",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "bootstrap": "^4.3.1",
     "react": "^16.9.0",
     "react-copy-to-clipboard": "^5.0.1",
