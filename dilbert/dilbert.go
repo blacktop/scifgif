@@ -4,9 +4,9 @@ import (
 	"crypto/tls"
 	"fmt"
 	"math/rand"
-	"net"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -81,33 +81,47 @@ func GetComicMetaData(dilbertURL, date string) (Comic, error) {
 		return comic, fmt.Errorf("attempts exceeded max attempts of %d", MaxAttempts)
 	}
 
-	proxyURL, err := url.Parse(proxies[attempt])
-	if err != nil {
-		return Comic{}, errors.Wrap(err, "parsing proxy URL failed")
-	}
+	// proxyURL, err := url.Parse(proxies[attempt])
+	// if err != nil {
+	// 	return Comic{}, errors.Wrap(err, "parsing proxy URL failed")
+	// }
+
+	// client := &http.Client{
+	// 	Transport: &http.Transport{
+	// 		Dial: (&net.Dialer{
+	// 			Timeout:   60 * time.Second,
+	// 			KeepAlive: 60 * time.Second,
+	// 		}).Dial,
+	// 		TLSHandshakeTimeout:   60 * time.Second,
+	// 		ResponseHeaderTimeout: 60 * time.Second,
+	// 		TLSClientConfig: &tls.Config{
+	// 			InsecureSkipVerify: true,
+	// 		},
+	// 		Proxy: http.ProxyURL(proxyURL),
+	// 	},
+	// 	Timeout: 120 * time.Second,
+	// }
 
 	client := &http.Client{
 		Transport: &http.Transport{
-			Dial: (&net.Dialer{
-				Timeout:   60 * time.Second,
-				KeepAlive: 60 * time.Second,
-			}).Dial,
-			TLSHandshakeTimeout:   60 * time.Second,
-			ResponseHeaderTimeout: 60 * time.Second,
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-			Proxy: http.ProxyURL(proxyURL),
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
-		Timeout: 120 * time.Second,
 	}
 
-	req, _ := http.NewRequest("GET", dilbertURL, nil)
+	req, err := http.NewRequest("GET", dilbertURL, nil)
+	if err != nil {
+		return Comic{}, fmt.Errorf("failed to create GET request: %v", err)
+	}
 	req.Header.Set("User-Agent", randomAgent())
 
 	res, err := client.Do(req)
 	if err != nil {
-		log.WithError(err).Error("client Do request failed")
+		return Comic{}, fmt.Errorf("client Do request failed: %v", err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		return Comic{}, fmt.Errorf("failed to connect to %s: %s", dilbertURL, res.Status)
 	}
 
 	doc, err := goquery.NewDocumentFromResponse(res)
@@ -124,7 +138,7 @@ func GetComicMetaData(dilbertURL, date string) (Comic, error) {
 		// GET IMAGE URL
 		doc.Find(".img-comic-container").Each(func(i int, s *goquery.Selection) {
 			comic.ImageURL, _ = s.Find("img").Attr("src")
-			comic.ImageURL = "http:" + comic.ImageURL
+			// comic.ImageURL = "http:" + comic.ImageURL
 		})
 
 		// GET TAGS
@@ -173,16 +187,21 @@ func GetAllDilbert(folder string, date string) error {
 
 	if len(date) < 1 {
 		// date = "1989-04-17"
-		date = "2017-01-01"
+		date = "2019-01-01"
 	}
 	start, _ := time.Parse("2006-01-02", date)
 
 	for d := start; time.Now().After(d); d = d.AddDate(0, 0, 1) {
 		date := fmt.Sprintf("%04d-%02d-%02d", d.Year(), d.Month(), d.Day())
 
-		comic, err := GetComicMetaData("http://dilbert.com/strip/"+date, date)
+		comic, err := GetComicMetaData("https://dilbert.com/strip/"+date, date)
 		if err != nil {
 			return errors.Wrap(err, "getting comic metadata failed")
+		}
+
+		filepath := filepath.Join(folder, date+".gif")
+		if _, err := os.Stat(filepath); err == nil {
+			log.Warnf("dilbert comic already exists: %s", filepath)
 		}
 
 		// check for a valid download URL
@@ -199,7 +218,6 @@ func GetAllDilbert(folder string, date string) error {
 			"url":   dlURL.String(),
 		}).Debug("downloading file")
 
-		filepath := filepath.Join(folder, date+".jpg")
 		go database.DownloadImage(dlURL.String(), filepath)
 
 		// index into bleve database

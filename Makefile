@@ -26,7 +26,7 @@ push: build ## Push docker image to docker registry
 	@echo "===> Pushing $(ORG)/$(NAME):$(VERSION) to docker hub..."
 	@docker push $(ORG)/$(NAME):$(VERSION)
 
-update: stop dbstop ## Update scifgif images
+update: stop ## Update scifgif images
 	@echo "===> Starting scifgif update..."
 	@go run *.go -N 20 --xkcd-count 20 --date 2017-05-08 -V update
 	@echo "===> Updating web deps..."
