@@ -3,7 +3,30 @@
 ORG=blacktop
 NAME=scifgif
 REPO=$(ORG)/$(NAME)
-VERSION?=$(shell cat VERSION)
+VERSION=$(shell svu current)
+NEXT_VERSION=$(shell svu patch)
+
+
+.PHONY: bump
+bump: ## Incriment version patch number
+	@echo " > Bumping VERSION"
+	@chglog add --version ${NEXT_VERSION}
+
+.PHONY: changelog
+changelog: bump ## Create a new CHANGELOG.md
+	@echo " > Creating CHANGELOG.md"
+	@chglog format --template release > CHANGELOG.md
+
+.PHONY: release
+release: changelog ## Create a new release from the VERSION
+	@echo " > Creating Release"
+	@gh release create ${NEXT_VERSION} -F CHANGELOG.md
+
+.PHONY: destroy
+destroy: ## Remove release from the VERSION
+	@echo " > Deleting Release"
+	git tag -d v${VERSION}
+	git push origin :refs/tags/v${VERSION}
 
 build: ## Build docker image
 	docker build --build-arg IMAGE_XKCD_COUNT=100 --build-arg IMAGE_NUMBER=100 -t $(ORG)/$(NAME):$(VERSION) .
