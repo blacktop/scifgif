@@ -14,6 +14,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/apex/log"
 	"github.com/blacktop/scifgif/database"
+	"github.com/iand/microdata"
 	"github.com/pkg/errors"
 )
 
@@ -70,6 +71,28 @@ func loadRandomProxies() error {
 	}
 
 	return nil
+}
+
+func getMicroData(destURL string) (*microdata.Microdata, error) {
+	baseURL, err := url.Parse(destURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse url: %w", err)
+	}
+
+	resp, err := http.Get(baseURL.String())
+	if err != nil {
+		return nil, fmt.Errorf("failed to visit url: %w", err)
+	}
+	defer resp.Body.Close()
+
+	html, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response data: %w", err)
+	}
+
+	p := microdata.NewParser(bytes.NewReader(html), baseURL)
+
+	return p.Parse()
 }
 
 // GetComicMetaData gets all the comic strips meta data
