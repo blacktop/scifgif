@@ -10,7 +10,7 @@ RUN apk add build-base
 
 WORKDIR /go/src/github.com/blacktop/scifgif
 
-RUN go build -ldflags "-X main.Version=$(cat VERSION) -X main.BuildTime=$(date -u +%Y%m%d)" -o /bin/scifgif
+RUN go build -ldflags "-X main.Version=$(git describe --tags) -X main.BuildTime=$(date -u +%Y%m%d)" -o /bin/scifgif
 
 ##############################################
 # WEB BUILDER                                #
