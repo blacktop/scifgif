@@ -10,7 +10,7 @@ NEXT_VERSION=$(shell svu patch)
 .PHONY: bump
 bump: ## Incriment version patch number
 	@echo " > Bumping VERSION"
-	@chglog add --version v${NEXT_VERSION}
+	@chglog add --version ${NEXT_VERSION}
 
 .PHONY: changelog
 changelog: bump ## Create a new CHANGELOG.md
@@ -20,12 +20,12 @@ changelog: bump ## Create a new CHANGELOG.md
 .PHONY: release
 release: changelog ## Create a new release from the VERSION
 	@echo " > Creating Release"
-	@gh release create v${NEXT_VERSION} -F CHANGELOG.md
+	@gh release create ${NEXT_VERSION} -F CHANGELOG.md
 
 .PHONY: destroy
 destroy: ## Remove release from the VERSION
 	@echo " > Deleting Release"
-	git tag -d v${VERSION}
+	git tag -d ${VERSION}
 	git push origin :refs/tags/v${VERSION}
 
 build: ## Build docker image
