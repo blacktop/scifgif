@@ -1,8 +1,10 @@
 package dilbert
 
 import (
+	"bytes"
 	"crypto/tls"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"net/url"
