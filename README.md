@@ -1,5 +1,6 @@
 ![logo](https://raw.githubusercontent.com/blacktop/scifgif/master/docs/imgs/logo.png)
 
+[![Publish Docker Image](https://github.com/blacktop/scifgif/actions/workflows/docker-image.yml/badge.svg)](https://github.com/blacktop/scifgif/actions/workflows/docker-image.yml)
 [![License](https://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 [![Docker Stars](https://img.shields.io/docker/stars/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif)
 [![Docker Pulls](https://img.shields.io/docker/pulls/blacktop/scifgif.svg)](https://store.docker.com/community/images/blacktop/scifgif)
