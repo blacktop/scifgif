@@ -1,7 +1,6 @@
 # goquery - a little like that j-thing, only in Go
 
-[![builds.sr.ht status](https://builds.sr.ht/~mna/goquery/commits/fedora.yml.svg)](https://builds.sr.ht/~mna/goquery/commits/fedora.yml?)
-[![build status](https://secure.travis-ci.org/PuerkitoBio/goquery.svg?branch=master)](http://travis-ci.org/PuerkitoBio/goquery)
+[![Build Status](https://github.com/PuerkitoBio/goquery/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/PuerkitoBio/goquery/actions)
 [![Go Reference](https://pkg.go.dev/badge/github.com/PuerkitoBio/goquery.svg)](https://pkg.go.dev/github.com/PuerkitoBio/goquery)
 [![Sourcegraph Badge](https://sourcegraph.com/github.com/PuerkitoBio/goquery/-/badge.svg)](https://sourcegraph.com/github.com/PuerkitoBio/goquery?badge)
 
@@ -41,6 +40,8 @@ Please note that because of the net/html dependency, goquery requires Go1.1+ and
 
 **Note that goquery's API is now stable, and will not break.**
 
+*    **2023-02-18 (v1.8.1)** : Update `go.mod` dependencies, update CI workflow.
+*    **2021-10-25 (v1.8.0)** : Add `Render` function to render a `Selection` to an `io.Writer` (thanks [@anthonygedeon](https://github.com/anthonygedeon)).
 *    **2021-07-11 (v1.7.1)** : Update go.mod dependencies and add dependabot config (thanks [@jauderho](https://github.com/jauderho)).
 *    **2021-06-14 (v1.7.0)** : Add `Single` and `SingleMatcher` functions to optimize first-match selection (thanks [@gdollardollar](https://github.com/gdollardollar)).
 *    **2021-01-11 (v1.6.1)** : Fix panic when calling `{Prepend,Append,Set}Html` on a `Selection` that contains non-Element nodes.
@@ -154,6 +155,8 @@ func main() {
 - [Geziyor](https://github.com/geziyor/geziyor), a fast web crawling & scraping framework for Go. Supports JS rendering.
 - [Pagser](https://github.com/foolin/pagser), a simple, easy, extensible, configurable HTML parser to struct based on goquery and struct tags.
 - [stitcherd](https://github.com/vhodges/stitcherd), A server for doing server side includes using css selectors and DOM updates.
+- [goskyr](https://github.com/jakopako/goskyr), an easily configurable command-line scraper written in Go.
+- [goGetJS](https://github.com/davemolk/goGetJS), a tool for extracting, searching, and saving JavaScript files (with optional headless browser).
 
 ## Support
 
