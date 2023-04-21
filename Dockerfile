@@ -15,7 +15,7 @@ RUN go build -ldflags "-X main.Version=$(git describe --tags) -X main.BuildTime=
 ##############################################
 # WEB BUILDER                                #
 ##############################################
-FROM node:19-alpine as web
+FROM node:20-alpine as web
 
 COPY . /scifgif
 
