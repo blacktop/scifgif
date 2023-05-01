@@ -14,7 +14,7 @@ require (
 	github.com/lib/pq v1.10.7 // indirect
 	github.com/nishanths/go-xkcd v2.0.1-0.20200515110959-4726b81e9134+incompatible
 	github.com/pkg/errors v0.9.1
-	github.com/urfave/cli v1.22.12
+	github.com/urfave/cli v1.22.13
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
