@@ -134,7 +134,7 @@ github.com/russross/blackfriday/v2
 # github.com/steveyen/gtreap v0.1.0
 ## explicit; go 1.13
 github.com/steveyen/gtreap
-# github.com/urfave/cli v1.22.12
+# github.com/urfave/cli v1.22.14
 ## explicit; go 1.11
 github.com/urfave/cli
 # github.com/willf/bitset v1.1.10
