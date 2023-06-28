@@ -9,14 +9,14 @@ require (
 	github.com/blevesearch/bleve v1.0.14
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gorilla/mux v1.8.0
-	github.com/iand/microdata v0.0.3
+	github.com/iand/microdata v0.0.5
 	github.com/jinzhu/gorm v1.9.16
 	github.com/lib/pq v1.10.7 // indirect
 	github.com/nishanths/go-xkcd v2.0.1-0.20200515110959-4726b81e9134+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/urfave/cli v1.22.12
-	golang.org/x/net v0.8.0 // indirect
-	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/net v0.11.0 // indirect
+	golang.org/x/sys v0.9.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 )
 
